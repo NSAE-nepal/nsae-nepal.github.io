@@ -37,9 +37,13 @@ const formatType = (type: string) => {
   if (type === "agm") return "AGM";
   return type.charAt(0).toUpperCase() + type.slice(1).replace("-", " ");
 };
+
+const pageTitle = "Official Meeting Records";
+const pageDescription =
+  "Browse the minutes from our General, Executive, and Committee meetings.";
 ---
 
-<PageLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+<PageLayout title={pageTitle} description={pageDescription}>
   <main class="py-8 space-y-12">
     <section
       class="flex flex-col items-center justify-center gap-4 text-center"

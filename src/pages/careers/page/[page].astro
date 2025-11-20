@@ -30,9 +30,11 @@ interface Props {
 }
 
 const { page } = Astro.props;
+const pageTitle = "Our latest careers";
+const pageDescription = "Your Next Chapter Starts Here";
 ---
 
-<PageLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+<PageLayout title={pageTitle} description={pageDescription}>
   <section class="min-h-40 flex flex-col items-center justify-center gap-4">
     <Badge variant={"secondary"} size={"sm"}>Careers</Badge>
     <h1 class="text-6xl font-medium text-center">

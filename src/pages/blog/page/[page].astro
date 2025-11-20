@@ -34,9 +34,12 @@ interface Props {
   featuredPosts: CollectionEntry<"blog">[];
 }
 const { page, featuredPosts } = Astro.props;
+const pageTitle = "Our latest blog posts";
+const pageDescription =
+  "Read the latest articles and insights from our community.";
 ---
 
-<PageLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+<PageLayout title={pageTitle} description={pageDescription}>
   <header class="flex flex-col items-center justify-center py-6">
     <Badge variant={"secondary"} size={"sm"} class="capitalize">
       Blog & Articles

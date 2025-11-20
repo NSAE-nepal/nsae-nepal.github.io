@@ -27,12 +27,18 @@ interface Props {
 }
 
 const { page } = Astro.props;
+
+const pageTitle = "Our latest events";
+const pageDescription =
+  "Explore upcoming and past events organized by our community.";
 ---
 
-<PageLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+<PageLayout title={pageTitle} description={pageDescription}>
   <header class="flex flex-col items-center justify-center py-6">
     <Badge variant={"secondary"} size={"sm"} class="capitalize">Events</Badge>
-    <h1 class="text-5xl md:text-6xl font-medium pt-4">our latest Events</h1>
+    <h1 class="text-5xl md:text-6xl font-medium pt-4">
+      Explore our latest events
+    </h1>
   </header>
   <section class="mb-24">
     <div class="flex flex-col gap-6 mb-12">
