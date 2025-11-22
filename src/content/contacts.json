@@ -1,22 +1,27 @@
 [
   {
     "id": "nsae-contact",
-    "address": "123 Astro Way, Butwal, Lumbini Province, Nepal",
-    "addressLink": "https://maps.google.com/?q=123+Astro+Way+Butwal",
-    "phoneNumbers": ["+977 9800000001", "+977 9800000002"],
-    "emails": ["info@astroengineering.com", "support@astroengineering.com"],
+    "address": "Hariharbhawan, Lalitpur, Nepal",
+    "addressLink": "https://maps.app.goo.gl/SgzAsi6tEBVSF2zX9",
+    "phoneNumbers": [
+      "+977 9848036666",
+      "+977 9841893657"
+    ],
+    "emails": [
+      "nsaeoffice@gmail.com"
+    ],
     "socials": {
       "linkedin": {
-        "handle": "astro-engineering",
-        "link": "https://linkedin.com/company/astro-engineering"
+        "handle": "",
+        "link": ""
       },
       "x": {
-        "handle": "@AstroEng",
-        "link": "https://x.com/AstroEng"
+        "handle": "",
+        "link": ""
       },
       "facebook": {
-        "handle": "AstroEngineering",
-        "link": "https://facebook.com/AstroEngineering"
+        "handle": "Nepalese Society of Agricultural Engineers",
+        "link": "https://www.facebook.com/profile.php?id=100057469149410"
       }
     }
   }
