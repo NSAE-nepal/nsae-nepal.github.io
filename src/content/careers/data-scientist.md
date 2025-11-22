@@ -1,7 +1,7 @@
 ---
 title: "Agricultural Engineer"
 type: "Contract"
-status: "open"
+status: "open till 30 November"
 postedDate: 2025-11-19
 closingDate: 2025-11-30
 company:
