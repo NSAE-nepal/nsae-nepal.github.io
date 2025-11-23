@@ -13,7 +13,7 @@ import MissionPlaceholder4 from "src/assets/mission-placeholder-4.mp4";
 
 <section
   id="mission-brief"
-  class="mission-section relative space-y-12 py-24 md:py-32 bg-background text-foreground overflow-hidden"
+  class="mission-section relative space-y-12 pt-24 md:pt-32 bg-background text-foreground overflow-hidden"
 >
   <div
     class="mission-text border-b border-border/50 pb-12 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8"
@@ -35,7 +35,7 @@ import MissionPlaceholder4 from "src/assets/mission-placeholder-4.mp4";
         <span class="text-muted-foreground italic font-serif">Society.</span>
       </h1>
     </div>
-    <div class="max-w-xl">
+    <div class="max-w-xl lg:max-w-3xl">
       <p
         class="text-base md:text-lg text-muted-foreground font-sans leading-relaxed"
       >
@@ -227,32 +227,39 @@ import MissionPlaceholder4 from "src/assets/mission-placeholder-4.mp4";
   if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".mission-section",
-        start: "top 75%",
-        end: "top 20%",
-        toggleActions: "play none none reverse",
-      },
-    });
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: ".mission-text",
+          start: "top 80%",
+          end: "top 50%",
+          toggleActions: "play none none reverse",
+        },
+      })
+      .from(".mission-text h1, .mission-text p", {
+        y: 60,
+        opacity: 0,
+        duration: 1,
+        stagger: 0.1,
+        ease: "power3.out",
+      });
 
-    tl.from(".mission-text h1, .mission-text p", {
-      y: 60,
-      opacity: 0,
-      duration: 1,
-      stagger: 0.1,
-      ease: "power3.out",
-    }).from(
-      ".mission-card",
-      {
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: ".mission-section .grid",
+          start: "top 85%",
+          end: "top 60%",
+          toggleActions: "play none none reverse",
+        },
+      })
+      .from(".mission-card", {
         y: 60,
         opacity: 0,
         scale: 0.95,
-        stagger: 0.1,
+        stagger: 0.15,
         duration: 0.8,
         ease: "power2.out",
-      },
-      "-=0.6"
-    );
+      });
   }
 </script>

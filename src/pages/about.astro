@@ -6,13 +6,11 @@ import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 
 import ArrowRight from "@tabler/icons/outline/arrow-right.svg";
-import Quote from "@tabler/icons/outline/quote.svg";
 import Leaf from "@tabler/icons/outline/leaf.svg";
 import Bulb from "@tabler/icons/outline/bulb.svg";
 import Users from "@tabler/icons/outline/users.svg";
 import Gavel from "@tabler/icons/outline/gavel.svg";
 import Book from "@tabler/icons/outline/book.svg";
-import User from "@tabler/icons/outline/user.svg";
 
 const allCommittees = (
   await getCollection("committees", ({ data }) => {
@@ -88,7 +86,7 @@ function formatPosition(position: string) {
   description="Engineering the Future of Agriculture in Nepal."
 >
   <section
-    class="rounded-2xl relative flex min-h-[60vh] md:min-h-[75vh] items-center overflow-hidden px-6 py-20 md:px-12 md:py-32 text-white"
+    class="rounded-2xl relative flex min-h-[60vh] md:min-h-[90vh] items-center overflow-hidden px-6 py-20 md:px-12 md:py-32 text-white"
   >
     <div class="absolute top-32 left-6 md:left-12 z-20 hidden md:block">
       <span
@@ -137,10 +135,10 @@ function formatPosition(position: string) {
     </div>
   </section>
 
-  <div class="space-y-24 md:space-y-32 py-24">
-    <section class="px-6 md:px-12">
+  <div class="space-y-12 pt-24 md:pt-32 mb-0">
+    <section>
       <div
-        class="flex flex-col lg:flex-row justify-between items-start gap-12 lg:gap-24 border-b border-border/50 pb-24"
+        class="flex flex-col lg:flex-row justify-between items-start gap-12 lg:gap-24 border-b border-border/50"
       >
         <div class="flex flex-col gap-8 lg:w-1/2 lg:sticky lg:top-32">
           <div class="flex items-center gap-4">
@@ -202,32 +200,11 @@ function formatPosition(position: string) {
             post-harvest technology, our members are at the forefront of
             innovation.
           </p>
-
-          <div class="my-12 not-prose">
-            <div
-              class="bg-secondary/40 dark:bg-secondary/20 rounded-3xl p-8 border border-border relative overflow-hidden"
-            >
-              <Quote
-                class="absolute top-6 left-6 size-10 text-primary/20 rotate-180"
-              />
-              <p
-                class="relative z-10 font-sans text-xl font-medium italic text-center pt-4 pb-2 text-foreground"
-              >
-                "Agriculture is the most healthful, most useful, and most noble
-                employment of man."
-              </p>
-              <p
-                class="font-mono text-xs uppercase tracking-widest text-center text-muted-foreground"
-              >
-                — George Washington
-              </p>
-            </div>
-          </div>
         </div>
       </div>
     </section>
 
-    <section class="px-6 md:px-12">
+    <section class="pt-24 md:pt-32 mb-0">
       <div
         class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6"
       >
@@ -272,9 +249,9 @@ function formatPosition(position: string) {
       </div>
     </section>
 
-    <section class="px-6 md:px-12">
+    <section class="pt-24 md:pt-32 mb-0">
       <div
-        class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6"
+        class="flex flex-col md:flex-row justify-between items-end pb-12 gap-6"
       >
         <div class="space-y-4">
           <div class="flex items-center gap-4 mb-4">
@@ -357,7 +334,7 @@ function formatPosition(position: string) {
       </div>
     </section>
 
-    <section class="px-6 md:px-12 pb-12">
+    <section class="py-24 md:py-32">
       <div
         class="bg-secondary text-secondary-foreground rounded-3xl p-8 md:p-16 text-center flex flex-col items-center gap-8 relative overflow-hidden"
       >

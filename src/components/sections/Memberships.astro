@@ -206,7 +206,6 @@ import GeneralMemberImg from "src/assets/mission-placeholder-3.avif";
     }
   }
 </style>
-
 <script>
   import gsap from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -251,13 +250,21 @@ import GeneralMemberImg from "src/assets/mission-placeholder-3.avif";
 
     gsap.set(cursor, { xPercent: -50, yPercent: -50 });
 
-    const tl = gsap.timeline();
-    tl.from(".reveal-text", {
-      y: "120%",
-      duration: 1.2,
-      stagger: 0.1,
-      ease: "power4.out",
-    })
+    const headerTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: "#membership-container",
+        start: "top 50%",
+        toggleActions: "play none none reverse",
+      },
+    });
+
+    headerTl
+      .from(".reveal-text", {
+        y: "120%",
+        duration: 1.2,
+        stagger: 0.1,
+        ease: "power4.out",
+      })
       .from(
         ".reveal-opacity",
         {
@@ -276,5 +283,22 @@ import GeneralMemberImg from "src/assets/mission-placeholder-3.avif";
         },
         "-=0.5"
       );
+
+    const cardsTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".grid.grid-cols-1.lg\\:grid-cols-2",
+        start: "top 95%",
+        end: "top 70%",
+        toggleActions: "play none none reverse",
+      },
+    });
+
+    cardsTl.from(".hover-trigger", {
+      y: 80,
+      opacity: 0,
+      stagger: 0.2,
+      duration: 1,
+      ease: "power3.out",
+    });
   }
 </script>
