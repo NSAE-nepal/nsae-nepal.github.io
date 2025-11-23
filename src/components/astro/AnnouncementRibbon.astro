@@ -27,7 +27,7 @@ const storageKey = `announcement-dismissed-${id}`;
   id={id}
   data-storage-key={storageKey}
   class:list={[
-    "announcement-ribbon bg-foreground rounded-md text-background px-4 py-1 flex items-center gap-2 mb-4 transition-opacity duration-300",
+    "announcement-ribbon text-sm bg-foreground rounded-md text-background px-4 py-1.5 flex items-center gap-2 mb-4 transition-opacity duration-300",
     className,
   ]}
 >
@@ -51,7 +51,9 @@ const storageKey = `announcement-dismissed-${id}`;
       {label}:
     </span>
 
-    <span class="font-medium">{message}</span>
+    <span class="font-medium line-clamp-1 overflow-hidden">
+      {message}
+    </span>
 
     {
       href && (
