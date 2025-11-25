@@ -4,7 +4,6 @@ import Badge from "../astro/Badge.astro";
 import ArrowRight from "@tabler/icons/outline/arrow-right.svg";
 const faqs = await getCollection("faq");
 import Plus from "@tabler/icons/outline/plus.svg";
-import Minus from "@tabler/icons/outline/minus.svg";
 ---
 
 <section id="faq-section" class="py-24 md:py-32">
@@ -12,7 +11,7 @@ import Minus from "@tabler/icons/outline/minus.svg";
     <Badge
       variant="secondary"
       size="sm"
-      class={"font-mono text-xs uppercase tracking-widest"}
+      class={"font-mono text-xs uppercase tracking-widest faq-badge"}
     >
       FAQ
     </Badge>
@@ -26,26 +25,28 @@ import Minus from "@tabler/icons/outline/minus.svg";
 
   {
     faqs.length > 0 ? (
-      <div class="space-y-4 ">
-        {faqs.map((faq) => (
+      <div class="space-y-4">
+        {faqs.map((faq, index) => (
           <details
-            class="group rounded-xl bg-secondary/50 border border-border/50 p-6 [&_summary::-webkit-details-marker]:hidden overflow-hidden"
+            class=" p-6 group rounded-xl bg-secondary/50 border border-border/50 [&_summary::-webkit-details-marker]:hidden overflow-hidden"
             name="faq-accordion"
           >
-            <summary class="flex cursor-pointer items-center justify-between gap-4 text-lg font-sans font-medium text-foreground marker:content-none hover:text-primary transition-colors select-none">
-              <span>{faq.data.question}</span>
+            <summary class="faq-summary flex cursor-pointer items-center justify-between gap-4 text-lg font-sans font-medium text-foreground marker:content-none select-none relative z-10">
+              <span class="question-text transition-colors duration-300">
+                {faq.data.question}
+              </span>
 
-              <span class="relative flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-background transition-colors group-hover:border-primary/50">
-                {/* Note: We handle rotation in GSAP now, but keeping classes for fallback */}
+              <span class="relative flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-background transition-colors duration-300 group-hover:border-primary/50 group-hover:bg-secondary/30">
                 <div class="icon-container relative size-4">
-                  <Plus class="absolute inset-0 size-4 transition-opacity duration-300 icon-plus" />
-                  <Minus class="absolute inset-0 size-4 opacity-0 transition-opacity duration-300 icon-minus" />
+                  <Plus class="absolute inset-0 size-4 transition-all duration-300" />
                 </div>
               </span>
             </summary>
 
-            <div class="faq-content font-sans text-muted-foreground leading-relaxed border-t border-border/50 mt-4 pt-4">
-              <div class="overflow-hidden">{faq.data.answer}</div>
+            <div class="faq-content-wrapper overflow-hidden h-0 opacity-0">
+              <div class="faq-inner-content font-sans text-muted-foreground leading-relaxed border-t border-border mt-4 pt-4">
+                {faq.data.answer}
+              </div>
             </div>
           </details>
         ))}
@@ -57,7 +58,9 @@ import Minus from "@tabler/icons/outline/minus.svg";
     )
   }
 
-  <div class="mt-12 flex flex-col items-center gap-3 text-center cta-content">
+  <div
+    class="mt-12 flex flex-col items-center gap-3 text-center cta-content opacity-0 translate-y-8"
+  >
     <p class="font-sans text-lg text-muted-foreground text-balance">
       Need a personalized answer?
     </p>
@@ -70,94 +73,138 @@ import Minus from "@tabler/icons/outline/minus.svg";
   </div>
 </section>
 
-<style>
-  .faq-content {
-    height: 0;
-    opacity: 0;
-    overflow: hidden;
-    will-change: height, opacity;
-  }
-
-  .icon-plus,
-  .icon-minus {
-    transform-origin: center;
-  }
-</style>
-
 <script>
   import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
 
   if (typeof window !== "undefined") {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: "#faq-section",
+        start: "top 80%",
+      },
+    });
+
+    tl.from("#faq-section .header-content > *", {
+      y: 40,
+      opacity: 0,
+      duration: 1,
+      stagger: 0.1,
+      ease: "power3.out",
+    })
+      .from(
+        "#faq-section details",
+        {
+          y: 20,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.05,
+          ease: "power2.out",
+        },
+        "-=0.6"
+      )
+      .to(
+        ".cta-content",
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          ease: "power3.out",
+        },
+        "-=0.4"
+      );
+
     const detailsElements = document.querySelectorAll("#faq-section details");
 
     detailsElements.forEach((detail) => {
       const summary = detail.querySelector("summary");
-      const content = detail.querySelector(".faq-content");
-      const plusIcon = detail.querySelector(".icon-plus");
-      const minusIcon = detail.querySelector(".icon-minus");
+      const contentWrapper = detail.querySelector(".faq-content-wrapper");
+      const innerContent = detail.querySelector(".faq-inner-content");
       const iconContainer = detail.querySelector(".icon-container");
 
-      if (summary && content) {
-        summary.addEventListener("click", (e) => {
-          e.preventDefault();
-
-          const isOpen = detail.hasAttribute("open");
-
-          if (!isOpen) {
-            detailsElements.forEach((otherDetail) => {
-              if (otherDetail !== detail && otherDetail.hasAttribute("open")) {
-                const otherContent = otherDetail.querySelector(".faq-content");
-                const otherPlus = otherDetail.querySelector(".icon-plus");
-                const otherMinus = otherDetail.querySelector(".icon-minus");
-                const otherIconContainer =
-                  otherDetail.querySelector(".icon-container");
-
-                gsap.to(otherContent, {
-                  height: 0,
-                  opacity: 0,
-                  duration: 0.3,
-                  ease: "power2.in",
-                  onComplete: () => otherDetail.removeAttribute("open"),
-                });
-                gsap.to(otherIconContainer, { rotation: 0, duration: 0.3 });
-                gsap.to(otherPlus, { opacity: 1, duration: 0.3 });
-                gsap.to(otherMinus, { opacity: 0, duration: 0.3 });
-              }
-            });
-          }
-
-          if (isOpen) {
-            gsap.to(content, {
-              height: 0,
-              opacity: 0,
-              duration: 0.3,
-              ease: "power2.in",
-              onComplete: () => detail.removeAttribute("open"),
-            });
-
-            gsap.to(iconContainer, { rotation: 0, duration: 0.3 });
-            gsap.to(plusIcon, { opacity: 1, duration: 0.3 });
-            gsap.to(minusIcon, { opacity: 0, duration: 0.3 });
-          } else {
-            detail.setAttribute("open", "true");
-
-            gsap.fromTo(
-              content,
-              { height: 0, opacity: 0 },
-              {
-                height: "auto",
-                opacity: 1,
-                duration: 0.5,
-                ease: "power2.out",
-              }
-            );
-
-            gsap.to(iconContainer, { rotation: 180, duration: 0.5 });
-            gsap.to(plusIcon, { opacity: 0, duration: 0.3 });
-            gsap.to(minusIcon, { opacity: 1, duration: 0.3 });
-          }
-        });
+      if (!summary || !contentWrapper || !innerContent || !iconContainer) {
+        return;
       }
+      summary.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        if (gsap.isTweening(contentWrapper)) return;
+
+        const isOpen = detail.hasAttribute("open");
+
+        if (!isOpen) {
+          detailsElements.forEach((otherDetail) => {
+            if (otherDetail !== detail && otherDetail.hasAttribute("open")) {
+              const otherWrapper = otherDetail.querySelector(
+                ".faq-content-wrapper"
+              );
+              const otherIcon = otherDetail.querySelector(".icon-container");
+
+              gsap.to(otherWrapper, {
+                height: 0,
+                opacity: 0,
+                duration: 0.4,
+                ease: "power3.inOut",
+                onComplete: () => otherDetail.removeAttribute("open"),
+              });
+              gsap.to(otherIcon, {
+                rotation: 0,
+                duration: 0.4,
+                ease: "power3.inOut",
+              });
+            }
+          });
+        }
+
+        if (isOpen) {
+          gsap.to(contentWrapper, {
+            height: 0,
+            opacity: 0,
+            duration: 0.4,
+            ease: "power3.inOut",
+            onComplete: () => detail.removeAttribute("open"),
+          });
+
+          gsap.to(iconContainer, {
+            rotation: 0,
+            duration: 0.4,
+            ease: "power3.inOut",
+          });
+        } else {
+          detail.setAttribute("open", "true");
+
+          gsap.fromTo(
+            contentWrapper,
+            { height: 0, opacity: 1 },
+            {
+              height: "auto",
+              opacity: 1,
+              duration: 0.6,
+              ease: "expo.out",
+            }
+          );
+
+          gsap.fromTo(
+            innerContent,
+            { y: 20, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.5,
+              delay: 0.1,
+              ease: "power3.out",
+            }
+          );
+
+          gsap.to(iconContainer, {
+            rotation: 45,
+            duration: 0.4,
+            ease: "back.out(1.7)",
+          });
+        }
+      });
     });
   }
 </script>

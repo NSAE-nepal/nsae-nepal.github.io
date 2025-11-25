@@ -9,7 +9,6 @@ import type { GetStaticPaths, Page } from "astro";
 import { PAGE_SIZE } from "@/consts";
 import Pagination from "@/components/astro/Pagination.astro";
 import type { CollectionEntry } from "astro:content";
-import MoodEmpty from "@tabler/icons/outline/mood-empty.svg";
 import Empty from "@/components/astro/Empty.astro";
 
 export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
@@ -39,15 +38,17 @@ const pageDescription = "Updates, announcements, and official notices.";
 
 <PageLayout title={pageTitle} description={pageDescription}>
   <header class="flex flex-col items-center justify-center py-16 md:py-24">
-    <Badge
-      variant={"secondary"}
-      size={"sm"}
-      class="font-mono uppercase tracking-widest text-xs mb-3 border border-border/50"
-    >
-      Announcements
-    </Badge>
+    <div class="anim-header-badge opacity-0 scale-50">
+      <Badge
+        variant={"secondary"}
+        size={"sm"}
+        class="font-mono uppercase tracking-widest text-xs mb-3 border border-border/50"
+      >
+        Announcements
+      </Badge>
+    </div>
     <h1
-      class="font-sans text-5xl md:text-7xl font-medium tracking-tighter pt-4 text-center max-w-4xl leading-tight"
+      class="anim-header-title font-sans text-5xl md:text-7xl font-medium tracking-tighter pt-4 text-center max-w-4xl leading-tight"
     >
       Notices & Updates
     </h1>
@@ -55,7 +56,7 @@ const pageDescription = "Updates, announcements, and official notices.";
 
   <section class="mb-12">
     <h2
-      class="font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2"
+      class="anim-section-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
     >
       Latest Notices
     </h2>
@@ -63,7 +64,7 @@ const pageDescription = "Updates, announcements, and official notices.";
     {
       page.data.length > 0 ? (
         <>
-          <div class="grid grid-cols-2 ">
+          <div class="grid grid-cols-2">
             {page.data.map((post, index) => (
               <>
                 <ClickableCard
@@ -82,12 +83,12 @@ const pageDescription = "Updates, announcements, and official notices.";
                   )}
                 </ClickableCard>
                 {index < page.data.length - 1 && (
-                  <div class="col-span-2 my-6  border-b-2 border-dashed border-secondary-foreground" />
+                  <div class="col-span-2 my-6 border-b-2 border-dashed border-secondary-foreground" />
                 )}
               </>
             ))}
           </div>
-          <div class="flex justify-center mt-16">
+          <div class="anim-pagination flex justify-center mt-16 opacity-0">
             <Pagination
               url={page.url}
               class="font-mono text-sm uppercase tracking-widest"
@@ -95,11 +96,81 @@ const pageDescription = "Updates, announcements, and official notices.";
           </div>
         </>
       ) : (
-        <Empty
-          description="We haven't published any official notices yet. Please check back later."
-          title="No notices found"
-        />
+        <div class="anim-empty-state opacity-0 scale-95">
+          <Empty
+            description="We haven't published any official notices yet. Please check back later."
+            title="No notices found"
+          />
+        </div>
       )
     }
   </section>
 </PageLayout>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { SplitText } from "gsap/SplitText";
+
+  if (typeof window !== "undefined") {
+    gsap.registerPlugin(ScrollTrigger, SplitText);
+
+    const headerTl = gsap.timeline({
+      defaults: { ease: "power3.out" },
+    });
+
+    const titleSplit = SplitText.create(".anim-header-title", {
+      type: "lines, words",
+      linesClass: "overflow-hidden",
+    });
+
+    headerTl
+      .to(".anim-header-badge", {
+        scale: 1,
+        opacity: 1,
+        duration: 0.8,
+        ease: "back.out(1.7)",
+      })
+      .from(
+        titleSplit.words,
+        {
+          yPercent: 100,
+          opacity: 0,
+          duration: 1,
+          stagger: 0.05,
+          ease: "power4.out",
+        },
+        "-=0.4"
+      )
+      .to(
+        ".anim-section-title",
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+        },
+        "-=0.5"
+      );
+
+    if (document.querySelector(".anim-pagination")) {
+      gsap.to(".anim-pagination", {
+        opacity: 1,
+        duration: 1,
+        scrollTrigger: {
+          trigger: ".anim-pagination",
+          start: "top 95%",
+        },
+      });
+    }
+
+    if (document.querySelector(".anim-empty-state")) {
+      gsap.to(".anim-empty-state", {
+        scale: 1,
+        opacity: 1,
+        duration: 0.8,
+        ease: "back.out(1.5)",
+        delay: 0.5,
+      });
+    }
+  }
+</script>

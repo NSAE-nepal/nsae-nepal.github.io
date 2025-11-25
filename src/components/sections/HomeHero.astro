@@ -7,7 +7,7 @@ import homeimage from "../../assets/nsae_logo.jpg";
 ---
 
 <section
-  class="home-hero-section relative flex min-h-[85vh] items-center overflow-hidden px-6 py-20 md:px-12 md:py-32"
+  class="home-hero-section rounded-2xl relative flex min-h-[85vh] items-center overflow-hidden px-6 py-20 md:px-12 md:py-32"
 >
   <div
     class="home-hero-redg-text absolute top-32 left-6 md:left-12 z-20 hidden md:block"
@@ -26,30 +26,41 @@ import homeimage from "../../assets/nsae_logo.jpg";
       class="font-sans text-[3.5rem] font-medium leading-[0.9] text-white md:text-[7rem] tracking-tighter"
     >
       <div class="relative inline-block">
-        <span
-          class="font-bold italic underline decoration-2 underline-offset-12 decoration-white/30"
-        >
-          Engineering
-        </span>
+        <div class="overflow-hidden inline-block align-bottom pb-4">
+          <span
+            class="engineering-text-anim inline-block font-bold italic underline decoration-2 underline-offset-12 decoration-white/30"
+          >
+            Engineering
+          </span>
+        </div>
         <Badge
-          class="absolute -top-8 -right-12 rotate-12 font-mono text-xs tracking-wide border-white/40"
+          class="badge-anim-wrapper opacity-0 absolute -top-8 -right-12 rotate-12 font-mono text-xs tracking-wide border-white/40"
           size="sm"
         >
           EST. 1990
         </Badge>
       </div>
+
       <br />
-      <span class="text-white/80">Tomorrow’s Food &</span>
+      <span class="subtitle-lines inline-block text-white/80"
+        >Tomorrow’s Food &</span
+      >
       <br />
-      <span class="text-white/80">Environmental Systems</span>
+      <span class="subtitle-lines inline-block text-white/80"
+        >Environmental Systems</span
+      >
     </h2>
 
-    <p class="max-w-xl text-lg text-white/70 font-sans leading-relaxed">
+    <p
+      class="hero-desc-anim max-w-xl text-lg text-white/70 font-sans leading-relaxed opacity-0 translate-y-4"
+    >
       NSAE connects leading engineers, scientists, and students dedicated to
       creating practical solutions for real‑world agricultural challenges.
     </p>
 
-    <div class="mt-4 flex items-center gap-6 dark">
+    <div
+      class="hero-actions-anim mt-4 flex items-center gap-6 dark opacity-0 translate-y-4"
+    >
       <Button
         href={"/contact"}
         class="rounded-full px-8 py-4 font-sans font-medium"
@@ -65,40 +76,51 @@ import homeimage from "../../assets/nsae_logo.jpg";
       </a>
     </div>
   </div>
-
+  <div
+    class="scroll-indicator absolute bottom-10 right-12 z-20 hidden md:flex items-center gap-4 opacity-0"
+  >
+    <span class="font-mono text-xs text-white/50 uppercase"
+      >Scroll to explore</span
+    >
+    <div class="scroll-line h-[1px] w-0 bg-white/30"></div>
+  </div>
   <div class="absolute inset-0 z-10">
     <div
       class="absolute rounded-2xl inset-0 z-20 bg-linear-to-r from-black/80 via-black/50 to-transparent"
     >
     </div>
-    <div class="absolute inset-0 z-10 bg-black/40 rounded-2xl"></div>
+
+    <div
+      class="hero-image-wrapper absolute inset-0 z-10 bg-black/40 rounded-2xl"
+    >
+    </div>
 
     <Image
-      class="absolute inset-0 h-full w-full object-cover rounded-2xl"
+      class="hero-image-anim absolute inset-0 h-full w-full object-cover rounded-2xl"
       alt="Agricultural Engineering"
       inferSize
       src={homeimage}
     />
-  </div>
-
-  <div
-    class="absolute bottom-10 right-12 z-20 hidden md:flex items-center gap-4"
-  >
-    <span class="font-mono text-xs text-white/50 uppercase"
-      >Scroll to explore</span
-    >
-    <div class="h-[1px] w-12 bg-white/30"></div>
   </div>
 </section>
 
 <script>
   import gsap from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { SplitText } from "gsap/SplitText";
 
   if (typeof window !== "undefined") {
-    gsap.registerPlugin(ScrollTrigger);
+    gsap.registerPlugin(ScrollTrigger, SplitText);
+    const section = document.querySelectorAll(".home-hero-section");
+    gsap.set(section, { autoAlpha: 1 });
+
+    const subtitleInner = SplitText.create(".subtitle-lines", {
+      type: "lines",
+      linesClass: "line-inner will-change-transform",
+    });
 
     const tl = gsap.timeline({
+      defaults: { ease: "power3.out" },
       scrollTrigger: {
         trigger: ".home-hero-section",
         start: "top 75%",
@@ -106,13 +128,89 @@ import homeimage from "../../assets/nsae_logo.jpg";
         toggleActions: "play none none reverse",
       },
     });
+    tl.to(
+      ".hero-image-anim",
+      {
+        scale: 1,
+        duration: 2.5,
+        ease: "expo.out",
+      },
+      0
+    );
+    tl.from(
+      ".home-hero-redg-text",
+      {
+        y: -20,
+        opacity: 0,
+        duration: 1.5,
+        ease: "power3.out",
+      },
+      0.2
+    );
 
-    tl.from(".home-hero-redg-text, .home-hero-text h2, .home-hero-text p", {
-      y: 60,
-      opacity: 0,
-      duration: 1,
-      stagger: 0.1,
-      ease: "power3.out",
+    tl.from(
+      ".engineering-text-anim",
+      {
+        yPercent: 100,
+        rotation: 2,
+        opacity: 0,
+        duration: 1.2,
+        ease: "power4.out",
+      },
+      0.3
+    );
+
+    tl.to(
+      ".badge-anim-wrapper",
+      {
+        opacity: 1,
+        scale: 1,
+        rotation: 12,
+        startAt: { scale: 0, rotation: 0 },
+        duration: 0.8,
+        ease: "back.out(1.7)",
+      },
+      0.8
+    );
+
+    tl.from(
+      subtitleInner.lines,
+      {
+        yPercent: 100,
+        opacity: 0,
+        duration: 1.1,
+        stagger: 0.1,
+        ease: "power4.out",
+      },
+      0.5
+    );
+
+    tl.to(
+      [".hero-desc-anim", ".hero-actions-anim"],
+      {
+        y: 0,
+        opacity: 1,
+        stagger: 0.1,
+        duration: 0.5,
+      },
+      "-=1"
+    );
+    tl.to(".scroll-indicator", { opacity: 1, duration: 1 }, "-=1");
+    tl.to(
+      ".scroll-line",
+      { width: 48, duration: 1, ease: "expo.out" },
+      "-=0.5"
+    );
+
+    gsap.to(".hero-image-anim", {
+      yPercent: 20,
+      ease: "none",
+      scrollTrigger: {
+        trigger: ".home-hero-section",
+        start: "top top",
+        end: "bottom top",
+        scrub: true,
+      },
     });
   }
 </script>

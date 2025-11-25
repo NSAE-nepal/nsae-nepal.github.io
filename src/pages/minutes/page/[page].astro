@@ -35,27 +35,27 @@ const pageDescription =
 
 <PageLayout title={pageTitle} description={pageDescription}>
   <main class="py-16 md:py-24 space-y-12">
-    <section
-      class="flex flex-col items-center justify-center gap-4 text-center"
-    >
-      <Badge
-        variant={"secondary"}
-        size={"sm"}
-        class="font-mono uppercase tracking-widest text-xs mb-3 border border-border/50"
-      >
-        Transparency
-      </Badge>
+    <header class="flex flex-col items-center justify-center gap-4 text-center">
+      <div class="anim-header-badge opacity-0 scale-50">
+        <Badge
+          variant={"secondary"}
+          size={"sm"}
+          class="font-mono uppercase tracking-widest text-xs mb-3 border border-border/50"
+        >
+          Transparency
+        </Badge>
+      </div>
       <h1
-        class="font-sans text-5xl md:text-7xl font-medium tracking-tighter leading-tight max-w-4xl text-balance"
+        class="anim-header-title font-sans text-5xl md:text-7xl font-medium tracking-tighter leading-tight max-w-4xl text-balance"
       >
         Official Meeting Records
       </h1>
       <p
-        class="font-sans text-lg text-muted-foreground max-w-2xl text-balance pt-2"
+        class="anim-header-desc font-sans text-lg text-muted-foreground max-w-2xl text-balance pt-2 opacity-0 translate-y-4"
       >
         Browse the minutes from our General, Executive, and Committee meetings.
       </p>
-    </section>
+    </header>
 
     <section>
       {
@@ -71,7 +71,7 @@ const pageDescription =
                 </ClickableCard>
               ))}
             </div>
-            <div class="flex justify-center mt-16">
+            <div class="anim-pagination flex justify-center mt-16 opacity-0">
               <Pagination
                 url={page.url}
                 class="font-mono text-sm uppercase tracking-widest"
@@ -79,7 +79,7 @@ const pageDescription =
             </div>
           </>
         ) : (
-          <div class="flex flex-col items-center justify-center py-8 text-center border border-dashed border-border/60 rounded-xl bg-secondary/5">
+          <div class="anim-empty-state flex flex-col items-center justify-center py-8 text-center border border-dashed border-border/60 rounded-xl bg-secondary/5 opacity-0 scale-95">
             <div class="p-4 bg-secondary rounded-full mb-4">
               <MoodEmpty class="size-8 text-muted-foreground" />
             </div>
@@ -96,3 +96,71 @@ const pageDescription =
     </section>
   </main>
 </PageLayout>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { SplitText } from "gsap/SplitText";
+
+  if (typeof window !== "undefined") {
+    gsap.registerPlugin(ScrollTrigger, SplitText);
+
+    const headerTl = gsap.timeline({
+      defaults: { ease: "power3.out" },
+    });
+
+    const titleSplit = SplitText.create(".anim-header-title", {
+      type: "lines, words",
+      linesClass: "overflow-hidden",
+    });
+
+    headerTl
+      .to(".anim-header-badge", {
+        scale: 1,
+        opacity: 1,
+        duration: 0.8,
+        ease: "back.out(1.7)",
+      })
+      .from(
+        titleSplit.words,
+        {
+          yPercent: 100,
+          opacity: 0,
+          duration: 1,
+          stagger: 0.05,
+          ease: "power4.out",
+        },
+        "-=0.4"
+      )
+      .to(
+        ".anim-header-desc",
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+        },
+        "-=0.5"
+      );
+
+    if (document.querySelector(".anim-pagination")) {
+      gsap.to(".anim-pagination", {
+        opacity: 1,
+        duration: 1,
+        scrollTrigger: {
+          trigger: ".anim-pagination",
+          start: "top 95%",
+        },
+      });
+    }
+
+    if (document.querySelector(".anim-empty-state")) {
+      gsap.to(".anim-empty-state", {
+        scale: 1,
+        opacity: 1,
+        duration: 0.8,
+        ease: "back.out(1.5)",
+        delay: 0.5,
+      });
+    }
+  }
+</script>

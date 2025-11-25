@@ -86,9 +86,11 @@ function formatPosition(position: string) {
   description="Engineering the Future of Agriculture in Nepal."
 >
   <section
-    class="rounded-2xl relative flex min-h-[60vh] md:min-h-[90vh] items-center overflow-hidden px-6 py-20 md:px-12 md:py-32 text-white"
+    class="about-hero-section rounded-2xl relative flex min-h-[60vh] md:min-h-[90vh] items-center overflow-hidden px-6 py-20 md:px-12 md:py-32 text-white"
   >
-    <div class="absolute top-32 left-6 md:left-12 z-20 hidden md:block">
+    <div
+      class="about-est-text absolute top-32 left-6 md:left-12 z-20 hidden md:block opacity-0"
+    >
       <span
         class="font-mono text-xs text-white/60 tracking-widest uppercase vertical-lr"
       >
@@ -97,23 +99,27 @@ function formatPosition(position: string) {
     </div>
 
     <div class="relative z-20 flex max-w-4xl flex-col gap-6 md:gap-8 mt-12">
-      <Badge
-        variant="outline"
-        class="w-fit font-mono text-xs uppercase tracking-widest border-white/30 text-white"
-      >
-        Who We Are
-      </Badge>
+      <div class="anim-hero-badge opacity-0 translate-y-4">
+        <Badge
+          variant="outline"
+          class="w-fit font-mono text-xs uppercase tracking-widest border-white/30 text-white"
+        >
+          Who We Are
+        </Badge>
+      </div>
 
       <h1
-        class="font-sans text-5xl md:text-7xl lg:text-8xl font-medium leading-[0.9] tracking-tighter"
+        class="font-sans text-5xl md:text-7xl lg:text-8xl font-medium leading-[1.02] tracking-tighter"
       >
-        Engineering the <br />
-
-        <span class="text-white/80">Future of Agriculture</span>
+        <span class="anim-split-text inline-block">Engineering the</span>
+        <br />
+        <span class="anim-split-text inline-block text-white/80"
+          >Future of Agriculture</span
+        >
       </h1>
 
       <p
-        class="font-sans text-lg md:text-xl text-white/90 max-w-2xl leading-relaxed"
+        class="anim-hero-desc font-sans text-lg md:text-xl text-white/90 max-w-2xl leading-relaxed opacity-0 translate-y-4"
       >
         The Nepal Society of Agricultural Engineers (NSAE) is dedicated to
         advancing the profession and promoting sustainable agricultural
@@ -128,7 +134,7 @@ function formatPosition(position: string) {
       </div>
       <div class="absolute inset-0 z-10 bg-black/20"></div>
       <img
-        class="absolute inset-0 h-full w-full object-cover"
+        class="anim-hero-image absolute inset-0 h-full w-full object-cover scale-110"
         alt="Agricultural Engineering Field"
         src={AboutHeroImg}
       />
@@ -136,12 +142,12 @@ function formatPosition(position: string) {
   </section>
 
   <div class="space-y-12 pt-24 md:pt-32 mb-0">
-    <section>
+    <section class="mission-section">
       <div
-        class="flex flex-col lg:flex-row justify-between items-start gap-12 lg:gap-24 border-b border-border/50"
+        class="flex flex-col lg:flex-row justify-between items-start gap-12 lg:gap-24 border-b border-border/50 pb-12"
       >
         <div class="flex flex-col gap-8 lg:w-1/2 lg:sticky lg:top-32">
-          <div class="flex items-center gap-4">
+          <div class="anim-mission-header flex items-center gap-4 opacity-0">
             <Badge
               class="font-mono text-xs uppercase tracking-widest"
               size="sm"
@@ -155,7 +161,7 @@ function formatPosition(position: string) {
             </span>
           </div>
           <h2
-            class="font-sans text-4xl md:text-6xl font-medium tracking-tighter leading-tight"
+            class="anim-split-heading font-sans text-4xl md:text-6xl font-medium tracking-tighter leading-tight"
           >
             Bridging traditional farming with modern engineering.
           </h2>
@@ -163,7 +169,7 @@ function formatPosition(position: string) {
           <div class="grid gap-6">
             {
               values.map((val) => (
-                <div class="group flex gap-4 p-5 rounded-xl border border-border/50 bg-card/50 hover:bg-secondary/40 transition-colors">
+                <div class="anim-value-card group flex gap-4 p-5 rounded-xl border border-border/50 bg-card/50 hover:bg-secondary/40 transition-colors opacity-0 translate-y-8">
                   <div class="p-2 h-fit rounded-lg bg-primary/10 text-primary shrink-0">
                     <val.icon class="size-6" />
                   </div>
@@ -184,32 +190,38 @@ function formatPosition(position: string) {
         <div
           class="lg:w-1/2 prose prose-lg prose-headings:font-sans prose-p:font-sans dark:prose-invert"
         >
-          <p class="lead text-xl font-medium text-foreground">
-            Our mission is to unite agricultural engineers under a common
-            umbrella to foster professional growth, ethical standards, and
-            technological advancement.
-          </p>
-          <p class="text-foreground/80">
-            By collaborating with governmental bodies, educational institutions,
-            and the private sector, we strive to influence policies that enhance
-            food security and rural development.
-          </p>
-          <p class="text-foreground/80">
-            We believe that engineering solutions are the key to unlocking
-            Nepal's agricultural potential. From irrigation systems to
-            post-harvest technology, our members are at the forefront of
-            innovation.
-          </p>
+          <div class="anim-mission-text opacity-0 translate-y-8">
+            <p class="lead text-xl font-medium text-foreground">
+              Our mission is to unite agricultural engineers under a common
+              umbrella to foster professional growth, ethical standards, and
+              technological advancement.
+            </p>
+          </div>
+          <div class="anim-mission-text opacity-0 translate-y-8">
+            <p class="text-foreground/80">
+              By collaborating with governmental bodies, educational
+              institutions, and the private sector, we strive to influence
+              policies that enhance food security and rural development.
+            </p>
+          </div>
+          <div class="anim-mission-text opacity-0 translate-y-8">
+            <p class="text-foreground/80">
+              We believe that engineering solutions are the key to unlocking
+              Nepal's agricultural potential. From irrigation systems to
+              post-harvest technology, our members are at the forefront of
+              innovation.
+            </p>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="pt-24 md:pt-32 mb-0">
+    <section class="focus-section pt-24 md:pt-32 mb-0">
       <div
         class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6"
       >
         <div class="space-y-4">
-          <div class="flex items-center gap-4 mb-4">
+          <div class="anim-focus-header flex items-center gap-4 mb-4 opacity-0">
             <Badge
               class="font-mono text-xs uppercase tracking-widest"
               size="sm"
@@ -223,7 +235,7 @@ function formatPosition(position: string) {
             </span>
           </div>
           <h2
-            class="font-sans text-4xl md:text-5xl font-medium tracking-tighter text-balance"
+            class="anim-split-heading font-sans text-4xl md:text-5xl font-medium tracking-tighter text-balance"
           >
             Strategic Focus
           </h2>
@@ -233,7 +245,7 @@ function formatPosition(position: string) {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         {
           focusAreas.map((area) => (
-            <div class="p-8 rounded-2xl bg-secondary/30 border border-border/50 hover:border-primary/50 transition-colors group">
+            <div class="anim-focus-card p-8 rounded-2xl bg-secondary/30 border border-border/50 hover:border-primary/50 transition-colors group opacity-0 translate-y-12">
               <div class="mb-6 w-12 h-12 rounded-full bg-background border border-border flex items-center justify-center text-muted-foreground group-hover:text-primary group-hover:border-primary/50 transition-colors">
                 <area.icon class="size-6" />
               </div>
@@ -249,12 +261,12 @@ function formatPosition(position: string) {
       </div>
     </section>
 
-    <section class="pt-24 md:pt-32 mb-0">
+    <section class="team-section pt-24 md:pt-32 mb-0">
       <div
         class="flex flex-col md:flex-row justify-between items-end pb-12 gap-6"
       >
         <div class="space-y-4">
-          <div class="flex items-center gap-4 mb-4">
+          <div class="anim-team-header flex items-center gap-4 mb-4 opacity-0">
             <Badge
               class="font-mono text-xs uppercase tracking-widest"
               size="sm"
@@ -268,32 +280,34 @@ function formatPosition(position: string) {
             </span>
           </div>
           <h2
-            class="font-sans text-4xl md:text-5xl font-medium tracking-tighter text-balance"
+            class="anim-split-heading font-sans text-4xl md:text-5xl font-medium tracking-tighter text-balance"
           >
             Executive Committee
           </h2>
           {
             latestCommittee && (
-              <p class="font-mono text-sm text-muted-foreground uppercase tracking-widest">
+              <p class="anim-team-iter font-mono text-sm text-muted-foreground uppercase tracking-widest opacity-0">
                 Current Iteration: {latestCommittee.data.committeeIteration}
               </p>
             )
           }
         </div>
-        <Button
-          href={`/past-committee/${latestCommittee?.id}`}
-          variant="ghost"
-          class="hidden md:flex font-mono text-xs uppercase tracking-widest gap-2"
-        >
-          View Full Committee <ArrowRight class="size-4" />
-        </Button>
+        <div class="anim-team-btn opacity-0">
+          <Button
+            href={`/past-committee/${latestCommittee?.id}`}
+            variant="ghost"
+            class="hidden md:flex font-mono text-xs uppercase tracking-widest gap-2"
+          >
+            View Full Committee <ArrowRight class="size-4" />
+          </Button>
+        </div>
       </div>
 
       {
         latestCommittee ? (
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredMembers.map((member) => (
-              <div class="relative overflow-hidden rounded-lg shadow-lg group">
+              <div class="anim-member-card relative overflow-hidden rounded-lg shadow-lg group opacity-0 translate-y-12">
                 {member.profileImage ? (
                   <Image
                     src={member.profileImage}
@@ -336,7 +350,7 @@ function formatPosition(position: string) {
 
     <section class="py-24 md:py-32">
       <div
-        class="bg-secondary text-secondary-foreground rounded-3xl p-8 md:p-16 text-center flex flex-col items-center gap-8 relative overflow-hidden"
+        class="anim-cta-box bg-secondary text-secondary-foreground rounded-3xl p-8 md:p-16 text-center flex flex-col items-center gap-8 relative overflow-hidden opacity-0 scale-95"
       >
         <div class="relative z-10 flex flex-col items-center gap-6">
           <h2
@@ -365,3 +379,198 @@ function formatPosition(position: string) {
     </section>
   </div>
 </PageLayout>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { SplitText } from "gsap/SplitText";
+
+  if (typeof window !== "undefined") {
+    gsap.registerPlugin(ScrollTrigger, SplitText);
+
+    const heroTl = gsap.timeline({
+      defaults: { ease: "power3.out" },
+    });
+
+    const heroSplit = SplitText.create(".anim-split-text", {
+      type: "lines",
+      linesClass: "line-inner will-change-transform overflow-hidden",
+    });
+
+    heroTl.from(
+      ".anim-hero-image",
+      {
+        scale: 1.2,
+        duration: 2.5,
+        ease: "expo.out",
+      },
+      0
+    );
+
+    heroTl.to(
+      ".about-est-text",
+      {
+        opacity: 1,
+        y: 0,
+        startAt: { y: -20 },
+        duration: 1.5,
+      },
+      0.2
+    );
+
+    heroTl.to(
+      ".anim-hero-badge",
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+      },
+      0.3
+    );
+
+    heroTl.from(
+      heroSplit.lines,
+      {
+        yPercent: 100,
+        opacity: 0,
+        duration: 1.2,
+        stagger: 0.1,
+        ease: "power4.out",
+      },
+      0.4
+    );
+
+    heroTl.to(
+      ".anim-hero-desc",
+      {
+        y: 0,
+        opacity: 1,
+        duration: 1,
+      },
+      0.8
+    );
+
+    gsap.to(".anim-hero-image", {
+      yPercent: 20,
+      ease: "none",
+      scrollTrigger: {
+        trigger: ".about-hero-section",
+        start: "top top",
+        end: "bottom top",
+        scrub: true,
+      },
+    });
+
+    const missionSplit = SplitText.create(
+      ".mission-section .anim-split-heading",
+      {
+        type: "lines, words",
+        linesClass: "overflow-hidden",
+      }
+    );
+
+    const missionTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".mission-section",
+        start: "top 75%",
+      },
+    });
+
+    missionTl
+      .to(".anim-mission-header", { opacity: 1, duration: 0.5 })
+      .from(
+        missionSplit.words,
+        {
+          yPercent: 100,
+          duration: 0.8,
+          stagger: 0.02,
+          ease: "power4.out",
+        },
+        "-=0.3"
+      )
+      .to(
+        [".anim-value-card", ".anim-mission-text"],
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "power3.out",
+        },
+        "-=0.5"
+      );
+
+    const focusSplit = SplitText.create(".focus-section .anim-split-heading", {
+      type: "lines, chars",
+      linesClass: "overflow-hidden",
+    });
+
+    const focusTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".focus-section",
+        start: "top 70%",
+      },
+    });
+
+    focusTl
+      .to(".anim-focus-header", { opacity: 1, duration: 0.5 })
+      .from(
+        focusSplit.chars,
+        {
+          opacity: 0,
+          y: 20,
+          duration: 0.5,
+          stagger: 0.02,
+          ease: "back.out",
+        },
+        "-=0.3"
+      )
+      .to(
+        ".anim-focus-card",
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "power3.out",
+        },
+        "-=0.3"
+      );
+
+    const teamTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".team-section",
+        start: "top 70%",
+      },
+    });
+
+    teamTl
+      .to([".anim-team-header", ".anim-team-iter", ".anim-team-btn"], {
+        opacity: 1,
+        duration: 0.5,
+        stagger: 0.1,
+      })
+      .to(
+        ".anim-member-card",
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "power3.out",
+        },
+        "-=0.3"
+      );
+
+    gsap.to(".anim-cta-box", {
+      opacity: 1,
+      scale: 1,
+      duration: 1,
+      ease: "elastic.out(1, 0.75)",
+      scrollTrigger: {
+        trigger: ".anim-cta-box",
+        start: "top 85%",
+      },
+    });
+  }
+</script>

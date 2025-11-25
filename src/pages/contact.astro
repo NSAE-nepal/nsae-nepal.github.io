@@ -32,22 +32,24 @@ const socialIcons: Record<string, any> = {
   description="Have a question or a project in mind? - NSAE"
 >
   <header
-    class="flex flex-col items-center justify-center py-16 md:py-24 text-center px-4"
+    class="contact-header flex flex-col items-center justify-center py-16 md:py-24 text-center px-4"
   >
-    <Badge
-      variant={"secondary"}
-      size={"sm"}
-      class="font-mono text-xs uppercase tracking-widest mb-6"
-    >
-      Contact us
-    </Badge>
+    <div class="anim-header-badge opacity-0 scale-50">
+      <Badge
+        variant={"secondary"}
+        size={"sm"}
+        class="font-mono text-xs uppercase tracking-widest mb-6"
+      >
+        Contact us
+      </Badge>
+    </div>
     <h1
-      class="font-sans text-5xl md:text-7xl font-medium tracking-tighter pb-4"
+      class="anim-header-title font-sans text-5xl md:text-7xl font-medium tracking-tighter pb-4"
     >
       Get in touch
     </h1>
     <p
-      class="font-sans text-xl text-muted-foreground max-w-2xl leading-relaxed"
+      class="anim-header-desc font-sans text-xl text-muted-foreground max-w-2xl leading-relaxed opacity-0 translate-y-4"
     >
       Have a question or a project in mind? We'd love to hear from you.
     </p>
@@ -55,7 +57,7 @@ const socialIcons: Record<string, any> = {
 
   <section class="pb-24 px-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
     <div
-      class="col-span-1 rounded-2xl p-8 bg-secondary/30 border border-border/50 flex flex-col justify-between gap-12 hover:bg-secondary/50 transition-colors"
+      class="anim-contact-card col-span-1 rounded-2xl p-8 bg-secondary/30 border border-border/50 flex flex-col justify-between gap-12 hover:bg-secondary/50 transition-colors opacity-0 translate-y-8"
     >
       <div class="space-y-6">
         <span
@@ -84,7 +86,7 @@ const socialIcons: Record<string, any> = {
     </div>
 
     <div
-      class="col-span-1 rounded-2xl p-8 bg-secondary/30 border border-border/50 flex flex-col justify-between gap-12 hover:bg-secondary/50 transition-colors"
+      class="anim-contact-card col-span-1 rounded-2xl p-8 bg-secondary/30 border border-border/50 flex flex-col justify-between gap-12 hover:bg-secondary/50 transition-colors opacity-0 translate-y-8"
     >
       <div class="space-y-6">
         <span
@@ -113,7 +115,7 @@ const socialIcons: Record<string, any> = {
     </div>
 
     <div
-      class="col-span-1 rounded-2xl p-8 bg-secondary/30 border border-border/50 flex flex-col justify-between gap-12 hover:bg-secondary/50 transition-colors"
+      class="anim-contact-card col-span-1 rounded-2xl p-8 bg-secondary/30 border border-border/50 flex flex-col justify-between gap-12 hover:bg-secondary/50 transition-colors opacity-0 translate-y-8"
     >
       <div class="space-y-6">
         <span
@@ -146,7 +148,7 @@ const socialIcons: Record<string, any> = {
 
     {
       socials && (
-        <div class="col-span-1 lg:col-span-3 rounded-2xl p-8 bg-secondary/30 border border-border/50 flex flex-col md:flex-row items-center justify-between gap-6 mt-4">
+        <div class="anim-socials-wrapper col-span-1 lg:col-span-3 rounded-2xl p-8 bg-secondary/30 border border-border/50 flex flex-col md:flex-row items-center justify-between gap-6 mt-4 opacity-0 translate-y-8">
           <span class="font-mono text-xs uppercase tracking-widest text-muted-foreground">
             Follow our socials
           </span>
@@ -160,7 +162,7 @@ const socialIcons: Record<string, any> = {
                   href={socialData.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="p-3 rounded-full bg-background border border-border/50 hover:border-primary hover:text-primary transition-all duration-300"
+                  class="anim-social-icon opacity-0 scale-50 p-3 rounded-full bg-background border border-border/50 hover:border-primary hover:text-primary transition-all duration-300"
                   aria-label={`Follow on ${platform}`}
                   title={socialData.handle ? `@${socialData.handle}` : platform}
                 >
@@ -178,3 +180,88 @@ const socialIcons: Record<string, any> = {
     }
   </section>
 </PageLayout>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { SplitText } from "gsap/SplitText";
+
+  if (typeof window !== "undefined") {
+    gsap.registerPlugin(ScrollTrigger, SplitText);
+
+    const headerTl = gsap.timeline({
+      defaults: { ease: "power3.out" },
+    });
+
+    const titleSplit = SplitText.create(".anim-header-title", {
+      type: "lines, words",
+      linesClass: "overflow-hidden",
+    });
+
+    headerTl
+      .to(".anim-header-badge", {
+        scale: 1,
+        opacity: 1,
+        duration: 0.8,
+        ease: "back.out(1.7)",
+      })
+      .from(
+        titleSplit.words,
+        {
+          yPercent: 100,
+          opacity: 0,
+          duration: 1,
+          stagger: 0.05,
+          ease: "power4.out",
+        },
+        "-=0.4"
+      )
+      .to(
+        ".anim-header-desc",
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+        },
+        "-=0.6"
+      );
+
+    gsap.to(".anim-contact-card", {
+      y: 0,
+      opacity: 1,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: ".anim-contact-card",
+        start: "top 85%",
+      },
+    });
+
+    const socialTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".anim-socials-wrapper",
+        start: "top 90%",
+      },
+    });
+
+    socialTl
+      .to(".anim-socials-wrapper", {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        ease: "power2.out",
+      })
+      .to(
+        ".anim-social-icon",
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 0.5,
+          stagger: 0.05,
+          ease: "back.out(2)",
+        },
+        "-=0.4"
+      );
+  }
+</script>
