@@ -2,7 +2,7 @@
 title: "The Rise of Autonomous Tractors: A New Era for Farm Machinery"
 subtitle: "How robotics and AI are solving labor shortages and increasing efficiency"
 description: "We explore the intersection of heavy machinery and artificial intelligence, looking at how autonomous systems are redefining daily farm operations."
-pubDate: 2026-01-29T22:44:00+5:45
+pubDate: 2026-01-29T20:44:00+5:45
 heroImage: "https://cdn.prod.website-files.com/68d7c06dc68ea0c551b91d5a/68d93ff6ee5fe7120b6ebebf_Article%20Image-3.png"
 authors:
   - jane-doe
