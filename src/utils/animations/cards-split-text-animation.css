@@ -1,0 +1,18 @@
+  .split-word {
+    position: relative;
+    display: inline-block;
+    margin-right: 0.25em;
+    --underline-scale: 0;
+    --transform-origin: right center;
+  }
+  .split-word::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: currentColor;
+    transform: scaleX(var(--underline-scale));
+    transform-origin: var(--transform-origin);
+  }

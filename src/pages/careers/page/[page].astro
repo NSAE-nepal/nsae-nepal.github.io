@@ -94,24 +94,28 @@ const pageDescription = "Your Next Chapter Starts Here";
   if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger, SplitText);
 
+    const headerTitleEl = document.querySelector(".anim-header-title");
+    const headerDescEl = document.querySelector(".anim-header-desc");
+    const sectionTitleEl = document.querySelector(".anim-section-title");
+
     const headerTl = gsap.timeline({
       defaults: { ease: "power3.out" },
     });
 
-    const titleSplit = SplitText.create(".anim-header-title", {
-      type: "lines, words",
-      linesClass: "overflow-hidden",
+    headerTl.to(".anim-header-badge", {
+      scale: 1,
+      opacity: 1,
+      duration: 0.8,
+      ease: "back.out(1.7)",
     });
 
-    headerTl
-      .to(".anim-header-badge", {
-        scale: 1,
-        opacity: 1,
-        duration: 0.8,
-        ease: "back.out(1.7)",
-      })
-      .set(".anim-header-title", { autoAlpha: 1 }, "-=0.4")
-      .from(
+    if (headerTitleEl) {
+      const titleSplit = SplitText.create(headerTitleEl, {
+        type: "lines, words",
+        linesClass: "overflow-hidden",
+      });
+
+      headerTl.set(headerTitleEl, { autoAlpha: 1 }, "-=0.4").from(
         titleSplit.words,
         {
           yPercent: 100,
@@ -120,31 +124,49 @@ const pageDescription = "Your Next Chapter Starts Here";
           stagger: 0.05,
           ease: "power4.out",
         },
-        "<"
-      )
-      .to(
-        ".anim-section-title",
+        "<",
+      );
+    }
+
+    if (headerDescEl) {
+      headerTl.to(
+        headerDescEl,
         {
           y: 0,
           opacity: 1,
           duration: 0.8,
         },
-        "-=0.5"
+        "-=0.5",
       );
+    }
 
-    if (document.querySelector(".anim-pagination")) {
-      gsap.to(".anim-pagination", {
+    if (sectionTitleEl) {
+      headerTl.to(
+        sectionTitleEl,
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+        },
+        "-=0.5",
+      );
+    }
+
+    const paginationEl = document.querySelector(".anim-pagination");
+    if (paginationEl) {
+      gsap.to(paginationEl, {
         opacity: 1,
         duration: 1,
         scrollTrigger: {
-          trigger: ".anim-pagination",
+          trigger: paginationEl,
           start: "top 95%",
         },
       });
     }
 
-    if (document.querySelector(".anim-empty-state")) {
-      gsap.to(".anim-empty-state", {
+    const emptyStateEl = document.querySelector(".anim-empty-state");
+    if (emptyStateEl) {
+      gsap.to(emptyStateEl, {
         scale: 1,
         opacity: 1,
         duration: 0.8,

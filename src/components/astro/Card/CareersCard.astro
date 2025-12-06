@@ -50,11 +50,6 @@ const { data, id } = Astro.props;
 
   <div class="flex flex-row items-center justify-between mt-4">
     <span
-      *
-      Updated:
-      inline-flex,
-      leading-none
-      *
       class="inline-flex items-center gap-1.5 font-mono text-sm uppercase tracking-wider leading-none"
     >
       <MapPin class="size-4 shrink-0 text-primary/70" />
@@ -71,90 +66,12 @@ const { data, id } = Astro.props;
   </div>
 </article>
 
-<style is:global>
-  .split-word {
-    position: relative;
-    display: inline-block;
-    margin-right: 0.25em;
-    --underline-scale: 0;
-    --transform-origin: right center;
-  }
-  .split-word::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: currentColor;
-    transform: scaleX(var(--underline-scale));
-    transform-origin: var(--transform-origin);
-  }
-</style>
-
 <script>
-  import gsap from "gsap";
-  import SplitText from "gsap/SplitText";
+  import { initCardSplitTextAnimation } from "@/utils/animations/cards-split-text-animation";
 
   if (typeof window !== "undefined") {
     window.addEventListener("load", () => {
-      gsap.registerPlugin(SplitText);
-
-      const cards = document.querySelectorAll(".split-card");
-
-      cards.forEach((card) => {
-        const target = card.querySelector(".split-target");
-        if (!target) return;
-
-        let split = SplitText.create(target, {
-          type: "words",
-          wordsClass: "split-word",
-        });
-
-        const words = split.words;
-        let isInitialAnimComplete = false;
-
-        gsap.from(words, {
-          y: 20,
-          autoAlpha: 0,
-          duration: 0.6,
-          ease: "power2.out",
-          stagger: 0.05,
-          onComplete: () => {
-            isInitialAnimComplete = true;
-          },
-        });
-
-        card.addEventListener("mouseenter", () => {
-          if (!isInitialAnimComplete) return;
-
-          gsap.set(words, {
-            "--transform-origin": "left center",
-          });
-          gsap.to(words, {
-            "--underline-scale": 1,
-            duration: 0.4,
-            ease: "power3.out",
-            stagger: 0.04,
-            overwrite: "auto",
-          });
-        });
-
-        card.addEventListener("mouseleave", () => {
-          if (!isInitialAnimComplete) return;
-
-          gsap.set(words, {
-            "--transform-origin": "right center",
-          });
-          gsap.to(words, {
-            "--underline-scale": 0,
-            duration: 0.3,
-            ease: "power3.in",
-            stagger: 0.03,
-            overwrite: true,
-          });
-        });
-      });
+      initCardSplitTextAnimation();
     });
   }
 </script>

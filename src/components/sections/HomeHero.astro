@@ -105,12 +105,9 @@ import homeimage from "../../assets/nsae-logo.png";
 </section>
 
 <script>
-  import gsap from "gsap";
-  import { ScrollTrigger } from "gsap/ScrollTrigger";
-  import { SplitText } from "gsap/SplitText";
+  import { gsap, SplitText } from "@/utils/gsap-init";
 
   if (typeof window !== "undefined") {
-    gsap.registerPlugin(ScrollTrigger, SplitText);
     const section = document.querySelectorAll(".home-hero-section");
     gsap.set(section, { autoAlpha: 1 });
 
@@ -136,7 +133,7 @@ import homeimage from "../../assets/nsae-logo.png";
         duration: 2.5,
         ease: "expo.out",
       },
-      0
+      0,
     );
 
     tl.to(
@@ -147,7 +144,7 @@ import homeimage from "../../assets/nsae-logo.png";
         duration: 1.5,
         ease: "power3.out",
       },
-      0.2
+      0.2,
     );
 
     tl.set(".engineering-text-anim", { autoAlpha: 1 }, 0.3);
@@ -160,7 +157,7 @@ import homeimage from "../../assets/nsae-logo.png";
         duration: 1.2,
         ease: "power4.out",
       },
-      0.3
+      0.3,
     );
 
     tl.to(
@@ -173,7 +170,7 @@ import homeimage from "../../assets/nsae-logo.png";
         duration: 0.8,
         ease: "back.out(1.7)",
       },
-      0.8
+      0.8,
     );
 
     tl.set(".subtitle-lines", { autoAlpha: 1 }, 0.5);
@@ -186,7 +183,7 @@ import homeimage from "../../assets/nsae-logo.png";
         stagger: 0.1,
         ease: "power4.out",
       },
-      0.5
+      0.5,
     );
 
     tl.to(
@@ -197,13 +194,13 @@ import homeimage from "../../assets/nsae-logo.png";
         stagger: 0.1,
         duration: 0.5,
       },
-      "-=1"
+      "-=1",
     );
     tl.to(".scroll-indicator", { opacity: 1, duration: 1 }, "-=1");
     tl.to(
       ".scroll-line",
       { width: 48, duration: 1, ease: "expo.out" },
-      "-=0.5"
+      "-=0.5",
     );
 
     gsap.to(".hero-image-anim", {

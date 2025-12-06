@@ -9,7 +9,7 @@ import react from "@astrojs/react";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "http://nsae.org.np",
+  site: "https://nsae.org.np",
   integrations: [mdx(), sitemap(), react()],
   vite: {
     plugins: [tailwindcss()],

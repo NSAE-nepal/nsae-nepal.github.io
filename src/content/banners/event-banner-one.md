@@ -1,7 +1,7 @@
 ---
 backgroundImage: ../../assets/posts/blog/blog-placeholder-3.jpg
 contentPosition: left
-countdownTarget: 2026-01-29T22:44:00+5:45
+countdownTarget: 2026-02-05T09:00:00+05:45
 title: International conference 2026
 description: on agricultural engineerng and climate smart agriculture
 buttonText: Register Now
