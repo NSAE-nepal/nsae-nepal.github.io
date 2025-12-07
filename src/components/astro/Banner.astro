@@ -10,10 +10,6 @@ type Props = {
 const { banner } = Astro.props;
 
 const optimizedImage = await getImage({ src: banner.data.backgroundImage });
-const gradientOverlay =
-  banner.data.contentPosition === "left"
-    ? "linear-gradient(to right, rgba(0,0,0,0.85) 20%, transparent 80%)"
-    : "linear-gradient(to left, rgba(0,0,0,0.85) 20%, transparent 80%)";
 
 const contentBoxClasses = [
   "flex",
@@ -24,12 +20,32 @@ const contentBoxClasses = [
     ? "mr-auto items-start text-left"
     : "ml-auto items-end text-right",
 ];
+const baseOverlayColor = "15, 23, 42";
+
+const gradientDirection =
+  banner.data.contentPosition === "left" ? "to right" : "to left";
+
+const directionalScrim = `linear-gradient(
+  ${gradientDirection},
+  rgba(${baseOverlayColor}, 0.98) 0%,
+  rgba(${baseOverlayColor}, 0.92) 15%,
+  rgba(${baseOverlayColor}, 0.75) 30%,
+  rgba(${baseOverlayColor}, 0.40) 50%,
+  rgba(${baseOverlayColor}, 0.10) 75%,
+  transparent 100%
+)`;
+
+const subtleVignette = `radial-gradient(
+  circle at center,
+  transparent 40%,
+  rgba(${baseOverlayColor}, 0.4) 100%
+)`;
 ---
 
 <section class="pt-4">
   <div
     class="relative min-h-[400px] lg:min-h-[500px] bg-cover bg-center text-white flex items-center rounded-xl overflow-hidden shadow-sm"
-    style={`background-image: ${gradientOverlay}, url(${optimizedImage.src})`}
+    style={`background-image: ${directionalScrim}, ${subtleVignette}, url(${optimizedImage.src})`}
   >
     <div class:list={contentBoxClasses}>
       {
@@ -101,7 +117,7 @@ const contentBoxClasses = [
 
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
         const hours = Math.floor(
-          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
         );
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);

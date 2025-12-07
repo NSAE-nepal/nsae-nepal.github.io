@@ -27,7 +27,7 @@ const storageKey = `announcement-dismissed-${id}`;
   id={id}
   data-storage-key={storageKey}
   class:list={[
-    "announcement-ribbon text-sm bg-foreground rounded-md text-background px-4 py-1.5 flex items-center gap-2 mb-4 transition-opacity duration-300",
+    "announcement-ribbon text-sm bg-foreground rounded-md text-background px-4 py-2 md:py-1.5 flex items-center gap-2 mb-4 transition-opacity duration-300",
     className,
   ]}
 >
@@ -70,7 +70,7 @@ const storageKey = `announcement-dismissed-${id}`;
 
 <script>
   const ribbons = document.querySelectorAll<HTMLElement>(
-    ".announcement-ribbon"
+    ".announcement-ribbon",
   );
 
   ribbons.forEach((ribbon) => {

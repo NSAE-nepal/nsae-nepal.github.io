@@ -1,5 +1,5 @@
 ---
-backgroundImage: ../../assets/posts/blog/blog-placeholder-3.jpg
+backgroundImage: ../../assets/events/conference-theme.jpeg
 contentPosition: left
 countdownTarget: 2026-02-05T09:00:00+05:45
 title: International conference 2026
