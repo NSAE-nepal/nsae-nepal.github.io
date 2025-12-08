@@ -1,12 +1,13 @@
 ---
 title: "International Conference 2026"
-subtitle: "On agricultural engineering and climate smart agriculture"
+subtitle: "On Agricultural Engineering and Climate Smart Agriculture"
 coverImage: "../../assets/events/conference-banner.jpeg"
 eventStart: 2026-02-05T09:00:00+05:45
 eventEnd: 2026-02-06T17:00:00+05:45
 eventType: "conference"
 registrationDeadline: 2025-12-20 00:00:00+05:45
-registrationLink: "https://nsae.org.np/conference/register"
+registrationLink: "https://docs.google.com/forms/d/e/1FAIpQLSeoWd_98WUp-yDRaV6UFw_qzC77aYq2RuIAvZ2BU6c8f8eVIA/viewform?usp=publish-editor"
+papersubmissionLink: "https://docs.google.com/forms/d/e/1FAIpQLSfJFhqjlo1XBQBl9soO7Qt8Rfc0XS6glitQS2H2rLFEbJPNeA/viewform?usp=dialog"
 
 location:
   type: "in_person"
