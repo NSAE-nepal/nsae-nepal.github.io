@@ -74,12 +74,9 @@ import Plus from "@tabler/icons/outline/plus.svg";
 </section>
 
 <script>
-  import gsap from "gsap";
-  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { gsap } from "@/utils/gsap-init";
 
   if (typeof window !== "undefined") {
-    gsap.registerPlugin(ScrollTrigger);
-
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: "#faq-section",
@@ -103,7 +100,7 @@ import Plus from "@tabler/icons/outline/plus.svg";
           stagger: 0.05,
           ease: "power2.out",
         },
-        "-=0.6"
+        "-=0.6",
       )
       .to(
         ".cta-content",
@@ -113,7 +110,7 @@ import Plus from "@tabler/icons/outline/plus.svg";
           duration: 1,
           ease: "power3.out",
         },
-        "-=0.4"
+        "-=0.4",
       );
 
     const detailsElements = document.querySelectorAll("#faq-section details");
@@ -138,7 +135,7 @@ import Plus from "@tabler/icons/outline/plus.svg";
           detailsElements.forEach((otherDetail) => {
             if (otherDetail !== detail && otherDetail.hasAttribute("open")) {
               const otherWrapper = otherDetail.querySelector(
-                ".faq-content-wrapper"
+                ".faq-content-wrapper",
               );
               const otherIcon = otherDetail.querySelector(".icon-container");
 
@@ -183,7 +180,7 @@ import Plus from "@tabler/icons/outline/plus.svg";
               opacity: 1,
               duration: 0.6,
               ease: "expo.out",
-            }
+            },
           );
 
           gsap.fromTo(
@@ -195,7 +192,7 @@ import Plus from "@tabler/icons/outline/plus.svg";
               duration: 0.5,
               delay: 0.1,
               ease: "power3.out",
-            }
+            },
           );
 
           gsap.to(iconContainer, {

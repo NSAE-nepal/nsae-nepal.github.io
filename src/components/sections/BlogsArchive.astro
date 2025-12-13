@@ -99,12 +99,9 @@ if (featuredPosts.length > 0) {
 }
 
 <script>
-  import gsap from "gsap";
-  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { gsap } from "@/utils/gsap-init";
 
   if (typeof window !== "undefined") {
-    gsap.registerPlugin(ScrollTrigger);
-
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: ".blog-section",
@@ -127,7 +124,7 @@ if (featuredPosts.length > 0) {
         stagger: 0.2,
         ease: "power2.out",
       },
-      "-=0.4"
+      "-=0.4",
     );
   }
 </script>
