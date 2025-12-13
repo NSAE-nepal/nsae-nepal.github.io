@@ -224,12 +224,9 @@ import MissionPlaceholder4 from "src/assets/pages/mission-placeholder-4.mp4";
 </section>
 
 <script>
-  import gsap from "gsap";
-  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { gsap } from "@/utils/gsap-init";
 
   if (typeof window !== "undefined") {
-    gsap.registerPlugin(ScrollTrigger);
-
     gsap
       .timeline({
         scrollTrigger: {
