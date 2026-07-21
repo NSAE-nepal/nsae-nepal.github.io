@@ -22,7 +22,7 @@ const formatType = (type: string) => {
 <article class="split-card space-y-4">
   <div class="flex items-center justify-between">
     <div
-      class="flex items-center gap-1.5 font-mono text-sm text-muted-foreground"
+      class="flex content-center gap-1.5 font-mono text-sm text-muted-foreground flex-row"
     >
       <CalendarWeek class="size-4 text-primary/70" />
       <time datetime={new Date(data.pubDate).toISOString()}>
@@ -53,7 +53,7 @@ const formatType = (type: string) => {
 
     <div class="flex flex-row items-center justify-between mt-4">
       <span
-        class="flex items-center gap-1.5 font-mono text-sm text-muted-foreground"
+        class="flex content-center gap-1.5 font-mono text-sm text-muted-foreground"
       >
         <MapPin class="size-4 text-primary/70" />
         {data.location}

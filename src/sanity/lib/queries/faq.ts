@@ -8,18 +8,16 @@ export type FaqItem = {
 
 export type FaqDetails = {
 	_id: string;
-	title: string;
 	items: FaqItem[];
 };
 
-export async function getFaqDetails(): Promise<FaqDetails> {
+export async function getFaqDetails(): Promise<FaqDetails | null> {
 	const FAQ_QUERY = `
 *[
   _type == "faq" &&
   !(_id in path("drafts.**"))
 ][0]{
   _id,
-  title,
   items[] {
     _key,
     question,
@@ -28,7 +26,7 @@ export async function getFaqDetails(): Promise<FaqDetails> {
 }
 `;
 
-	const { data } = await loadQuery<FaqDetails>({
+	const { data } = await loadQuery<FaqDetails | null>({
 		query: FAQ_QUERY,
 	});
 

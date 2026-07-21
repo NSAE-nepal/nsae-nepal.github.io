@@ -4,7 +4,9 @@ import Plus from "@tabler/icons/outline/plus.svg";
 import { getFaqDetails } from "@/sanity/lib/queries/faq";
 import Badge from "../astro/Badge.astro";
 
-const { items: faqItems } = await getFaqDetails();
+const data = await getFaqDetails();
+const faqItems = data?.items ?? [];
+console.log(data);
 ---
 
 <section id="faq-section" class="py-24 md:py-32">
