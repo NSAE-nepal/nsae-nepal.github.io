@@ -1,29 +1,18 @@
 ---
-import PageLayout from "@/layouts/PageLayout.astro";
+import { Image } from "astro:assets";
+import ArrowRight from "@tabler/icons/outline/arrow-right.svg";
+import Book from "@tabler/icons/outline/book.svg";
+import Bulb from "@tabler/icons/outline/bulb.svg";
+import Gavel from "@tabler/icons/outline/gavel.svg";
+import Leaf from "@tabler/icons/outline/leaf.svg";
+import Users from "@tabler/icons/outline/users.svg";
 import Badge from "@/components/astro/Badge.astro";
 import Button from "@/components/astro/Button/Button.astro";
-import { Image } from "astro:assets";
-import { getCollection } from "astro:content";
+import PageLayout from "@/layouts/PageLayout.astro";
+import { getLatestCommitteeDetails } from "@/sanity/lib/queries/committee";
 
-import ArrowRight from "@tabler/icons/outline/arrow-right.svg";
-import Leaf from "@tabler/icons/outline/leaf.svg";
-import Bulb from "@tabler/icons/outline/bulb.svg";
-import Users from "@tabler/icons/outline/users.svg";
-import Gavel from "@tabler/icons/outline/gavel.svg";
-import Book from "@tabler/icons/outline/book.svg";
-
-const allCommittees = (
-  await getCollection("committees", ({ data }) => {
-    return import.meta.env.MODE !== "production" || data.draft === false;
-  })
-).sort(
-  (a, b) =>
-    b.data.committeeIteration.valueOf() - a.data.committeeIteration.valueOf()
-);
-
-const latestCommittee = allCommittees[0];
-const featuredMembers =
-  latestCommittee?.data.committeeMembers.slice(0, 4) || [];
+const latestCommittee = await getLatestCommitteeDetails();
+const featuredMembers = latestCommittee?.committeeMembers.slice(0, 4) || [];
 
 const values = [
   {
@@ -288,14 +277,14 @@ function formatPosition(position: string) {
           {
             latestCommittee && (
               <p class="anim-team-iter font-mono text-sm text-muted-foreground uppercase tracking-widest opacity-0">
-                Current Iteration: {latestCommittee.data.committeeIteration}
+                Current Iteration: {latestCommittee.committeeIteration}
               </p>
             )
           }
         </div>
         <div class="anim-team-btn opacity-0">
           <Button
-            href={`/past-committee/${latestCommittee?.id}`}
+            href={`/past-committee/${latestCommittee?.committeeIteration}`}
             variant="ghost"
             class="hidden md:flex font-mono text-xs uppercase tracking-widest gap-2"
           >
@@ -321,7 +310,10 @@ function formatPosition(position: string) {
                 )}
 
                 <div class="absolute bottom-4 right-4 bg-black/70 p-3 rounded-md text-white">
-                  <span class="block text-sm font-semibold">{member.name}</span>
+                  <span class="block text-sm font-semibold capitalize">
+                    {member.prefix ? `${member.prefix}. ` : null}
+                    {member.name}
+                  </span>
                   <span class="block text-xs">
                     {formatPosition(member.position)}
                   </span>
@@ -340,7 +332,7 @@ function formatPosition(position: string) {
 
       <div class="mt-8 md:hidden flex justify-center">
         <Button
-          href={`/past-committee/${latestCommittee?.id}`}
+          href={`/past-committee/${latestCommittee?.committeeIteration}`}
           variant="outline"
           class="font-mono text-xs uppercase tracking-widest"
         >
@@ -401,7 +393,7 @@ function formatPosition(position: string) {
         duration: 2.5,
         ease: "expo.out",
       },
-      0
+      0,
     );
 
     heroTl.to(
@@ -412,7 +404,7 @@ function formatPosition(position: string) {
         startAt: { y: -20 },
         duration: 1.5,
       },
-      0.2
+      0.2,
     );
 
     heroTl.to(
@@ -422,7 +414,7 @@ function formatPosition(position: string) {
         y: 0,
         duration: 1,
       },
-      0.3
+      0.3,
     );
 
     heroTl.set(".about-hero-section h1", { autoAlpha: 1 }, 0.4).from(
@@ -434,7 +426,7 @@ function formatPosition(position: string) {
         stagger: 0.1,
         ease: "power4.out",
       },
-      "<"
+      "<",
     );
 
     heroTl.to(
@@ -444,7 +436,7 @@ function formatPosition(position: string) {
         opacity: 1,
         duration: 1,
       },
-      0.8
+      0.8,
     );
 
     gsap.to(".anim-hero-image", {
@@ -464,7 +456,7 @@ function formatPosition(position: string) {
       {
         type: "lines, chars",
         linesClass: "overflow-hidden",
-      }
+      },
     );
 
     const missionTl = gsap.timeline({
@@ -486,7 +478,7 @@ function formatPosition(position: string) {
           stagger: 0.02,
           ease: "back.out",
         },
-        "<"
+        "<",
       )
       .to(
         [".anim-value-card", ".anim-mission-text"],
@@ -497,7 +489,7 @@ function formatPosition(position: string) {
           stagger: 0.1,
           ease: "power3.out",
         },
-        "-=0.3"
+        "-=0.3",
       );
 
     // 2. Focus Section Animation (Original character pop style)
@@ -525,7 +517,7 @@ function formatPosition(position: string) {
           stagger: 0.02,
           ease: "back.out",
         },
-        "<"
+        "<",
       )
       .to(
         ".anim-focus-card",
@@ -536,7 +528,7 @@ function formatPosition(position: string) {
           stagger: 0.1,
           ease: "power3.out",
         },
-        "-=0.3"
+        "-=0.3",
       );
 
     // 3. Team Section Animation (Updated to character-by-character back pop)
@@ -568,7 +560,7 @@ function formatPosition(position: string) {
           stagger: 0.02,
           ease: "back.out",
         },
-        "<"
+        "<",
       )
       .to(
         ".anim-member-card",
@@ -579,7 +571,7 @@ function formatPosition(position: string) {
           stagger: 0.1,
           ease: "power3.out",
         },
-        "-=0.3"
+        "-=0.3",
       );
 
     gsap.to(".anim-cta-box", {

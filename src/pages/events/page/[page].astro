@@ -1,37 +1,31 @@
 ---
+import MoodEmpty from "@tabler/icons/outline/mood-empty.svg";
+import type { GetStaticPaths, Page } from "astro";
 import Badge from "@/components/astro/Badge.astro";
 import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
-import { PAGE_SIZE } from "@/consts";
-import PageLayout from "@/layouts/PageLayout.astro";
 import EventCard from "@/components/astro/Card/EventCard.astro";
 import Pagination from "@/components/astro/Pagination.astro";
-import type { GetStaticPaths, Page } from "astro";
-import type { CollectionEntry } from "astro:content";
-import { getCollection } from "astro:content";
-import MoodEmpty from "@tabler/icons/outline/mood-empty.svg";
+import { PAGE_SIZE } from "@/consts";
+import PageLayout from "@/layouts/PageLayout.astro";
+import { type Event, getEvents } from "@/sanity/lib/queries/events";
 
 export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
-  const allPublishedEvents = (
-    await getCollection("events", ({ data }) => {
-      // In production, filter out drafts.
-      return import.meta.env.MODE !== "production" || data.draft === false;
-    })
-  ).sort((a, b) => b.data.eventStart.valueOf() - a.data.eventStart.valueOf());
+	const allPublishedEvents = (await getEvents()) || [];
 
-  return paginate(allPublishedEvents, {
-    pageSize: PAGE_SIZE,
-  });
+	return paginate(allPublishedEvents, {
+		pageSize: PAGE_SIZE,
+	});
 };
 
 interface Props {
-  page: Page<CollectionEntry<"events">>;
+	page: Page;
 }
 
 const { page } = Astro.props;
 
 const pageTitle = "Our latest events";
 const pageDescription =
-  "Explore upcoming and past events organized by our community.";
+	"Explore upcoming and past events organized by our community.";
 ---
 
 <PageLayout title={pageTitle} description={pageDescription} dataPagefindIgnore="all">
@@ -60,13 +54,13 @@ const pageDescription =
   {
   page.data.length > 0 ? (
       <div class="flex flex-col gap-6 mb-12">
-        {page.data.map((event) => {
+        {page.data.map((event: Event) => {
           return (
             <ClickableCard
-              href={`/events/${event.id}/`}
+              href={`/events/${event.slug}/`}
               class="anim-event-card group bg-secondary text-secondary-foreground rounded-2xl transition-colors overflow-hidden opacity-0 translate-y-4"
             >
-              <EventCard {...event} />
+              <EventCard data={event} />
             </ClickableCard>
           );
         })}

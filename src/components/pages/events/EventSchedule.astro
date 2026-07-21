@@ -1,12 +1,13 @@
 ---
-import { formatDate, formatTime } from "@/utils/datetime";
+import type { CollectionEntry } from "astro:content";
 import Clock from "@tabler/icons/outline/clock.svg";
 import MapPin from "@tabler/icons/outline/map-pin.svg";
 import User from "@tabler/icons/outline/user.svg";
-import type { CollectionEntry } from "astro:content";
+import type { EventDetails } from "@/sanity/lib/queries/events";
+import { formatDate, formatTime } from "@/utils/datetime";
 
 interface Props {
-  schedule: CollectionEntry<"events">["data"]["eventSchedule"];
+  schedule: EventDetails["eventSchedule"];
 }
 const { schedule } = Astro.props;
 
@@ -16,7 +17,7 @@ if (schedule) {
   schedule.forEach((session) => {
     const dayLabel =
       session.dayLabel ||
-      formatDate(session.day || session.startTime, {
+      formatDate(new Date(session.day), {
         weekday: "long",
         month: "short",
         day: "numeric",
@@ -46,8 +47,8 @@ if (schedule) {
                 <div class="group relative grid gap-1 pb-4 last:pb-0 border-l-2 border-muted pl-4 hover:border-primary transition-colors">
                   <p class="flex flex-row items-center gap-1 font-mono text-xs uppercase tracking-wide leading-none text-muted-foreground">
                     <Clock class="size-4 shrink-0" />
-                    {formatTime(session.startTime)} –{" "}
-                    {formatTime(session.endTime)}
+                    {formatTime(new Date(session.startTime))} –{" "}
+                    {formatTime(new Date(session.endTime))}
                   </p>
                   <p class="font-sans font-medium text-lg leading-none">
                     {session.sessionTitle}

@@ -1,25 +1,28 @@
 ---
-import { type CollectionEntry, getCollection, render } from "astro:content";
-import PageLayout from "@/layouts/PageLayout.astro";
-import FormattedDate from "@/components/FormattedDate.astro";
-import Badge from "@/components/astro/Badge.astro";
 import ArrowLeft from "@tabler/icons/outline/arrow-left.svg";
-import Download from "@tabler/icons/outline/download.svg";
-import Point from "@tabler/icons/outline/point.svg";
-import MapPin from "@tabler/icons/outline/map-pin.svg";
 import CalendarWeek from "@tabler/icons/outline/calendar-week.svg";
+import Download from "@tabler/icons/outline/download.svg";
+import MapPin from "@tabler/icons/outline/map-pin.svg";
+import Point from "@tabler/icons/outline/point.svg";
+import Badge from "@/components/astro/Badge.astro";
+import FormattedDate from "@/components/FormattedDate.astro";
+import PortableText from "@/components/PortableText.astro";
+import PageLayout from "@/layouts/PageLayout.astro";
+import { getMinutes, getMinutesDetails } from "@/sanity/lib/queries/minutes";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("minutes");
-  return posts.map((post) => ({
-    params: { slug: post.id },
-    props: post,
+  const minutes = await getMinutes();
+
+  return minutes.map((minute) => ({
+    params: {
+      slug: minute.slug,
+    },
   }));
 }
 
-type Props = CollectionEntry<"minutes">;
-const post = Astro.props;
-const { Content } = await render(post);
+const { slug } = Astro.params;
+
+const minute = await getMinutesDetails(slug!);
 const {
   title,
   pubDate,
@@ -29,7 +32,8 @@ const {
   secretary,
   attendees,
   downloadUrl,
-} = post.data;
+  body,
+} = minute;
 ---
 
 <PageLayout title={title} description={`Minutes for ${title}`}>
@@ -53,12 +57,12 @@ const {
             {type}
           </Badge>
           <span
-            data-pagefind-meta={`date:${pubDate.toISOString()}`}
+            data-pagefind-meta={`date:${new Date(pubDate).toISOString()}`}
             data-pagefind-ignore
             class="flex flex-row gap-1.5 items-center font-mono text-xs text-muted-foreground uppercase tracking-wider"
           >
             <CalendarWeek class={"size-4"} />
-            <FormattedDate date={pubDate} />
+            <FormattedDate date={new Date(pubDate)} />
           </span>
           <span
             class="flex flex-row gap-1.5 items-center font-mono text-xs text-muted-foreground uppercase tracking-wider"
@@ -132,7 +136,7 @@ const {
     </header>
 
     <div class="prose max-w-7xl mx-auto dark:prose-invert">
-      <Content />
+      <PortableText portableText={body} />
     </div>
   </article>
 </PageLayout>

@@ -1,24 +1,43 @@
 ---
-import PageLayout from "@/layouts/PageLayout.astro";
+import { Image } from "astro:assets";
+import BuildingBank from "@tabler/icons/outline/building-bank.svg";
+import Copy from "@tabler/icons/outline/copy.svg";
+import Heart from "@tabler/icons/outline/heart.svg";
+import Microscope from "@tabler/icons/outline/microscope.svg";
+import School from "@tabler/icons/outline/school.svg";
+import Users from "@tabler/icons/outline/users.svg";
+import DonateHeroImage from "@/assets/donate/donate-hero.avif";
 import Badge from "@/components/astro/Badge.astro";
 import Button from "@/components/astro/Button/Button.astro";
-import { Image } from "astro:assets";
-import { getEntry } from "astro:content";
+import PageLayout from "@/layouts/PageLayout.astro";
+import { getDonateDetails } from "@/sanity/lib/queries/donate";
 
-import Heart from "@tabler/icons/outline/heart.svg";
-import School from "@tabler/icons/outline/school.svg";
-import Microscope from "@tabler/icons/outline/microscope.svg";
-import Users from "@tabler/icons/outline/users.svg";
-import Copy from "@tabler/icons/outline/copy.svg";
-import BuildingBank from "@tabler/icons/outline/building-bank.svg";
+const impactAreas = [
+  {
+    title: "Engineering Professional Development",
+    icon: "School",
+    description:
+      "Conducting various activities for professional development of agricultural engineers.",
+  },
+  {
+    title: "Research and Development",
+    icon: "Microscope",
+    description:
+      "Conducting research for the development of agriculture and engineering to solve the problems of society.",
+  },
+  {
+    title: "Community Outreach",
+    icon: "Users",
+    description:
+      "Organizing workshops and technical training for farmers in rural areas.",
+  },
+];
 
-const donatePage = await getEntry("donate", "main");
+const data = await getDonateDetails();
 
-if (!donatePage) {
+if (!data) {
   throw new Error("Donate page data not found in src/content/donate.json");
 }
-
-const { data } = donatePage;
 
 const iconMap: Record<string, any> = {
   School: School,
@@ -79,10 +98,11 @@ const iconMap: Record<string, any> = {
       >
       </div>
       <div class="absolute inset-0 z-10 bg-black/20"></div>
-      <img
+      <Image
         class="anim-hero-image absolute inset-0 h-full w-full object-cover scale-110"
         alt="Giving back to the community"
-        src={data.heroImage}
+        src={DonateHeroImage}
+        loading="eager"
       />
     </div>
   </section>
@@ -121,7 +141,7 @@ const iconMap: Record<string, any> = {
 
         <div class="lg:w-2/3 grid gap-6">
           {
-            data.impactAreas.map((area) => {
+            impactAreas.map((area) => {
               const IconComponent = iconMap[area.icon] || Heart;
 
               return (
@@ -191,7 +211,7 @@ const iconMap: Record<string, any> = {
                   Direct Bank Transfer
                 </p>
                 <h3 class="font-sans text-2xl font-medium">
-                  {data.bankDetails.bankName}
+                  {data.bankDetails?.bankName}
                 </h3>
               </div>
               <BuildingBank class="size-8 opacity-80" />
@@ -209,7 +229,7 @@ const iconMap: Record<string, any> = {
                     class="font-mono text-2xl md:text-3xl tracking-widest font-medium"
                     id="account-number"
                   >
-                    {data.bankDetails.accountNumber}
+                    {data.bankDetails?.accountNumber}
                   </p>
                   <button
                     id="copy-btn"
@@ -229,7 +249,7 @@ const iconMap: Record<string, any> = {
                     Account Name
                   </p>
                   <p class="font-sans text-sm opacity-90">
-                    {data.bankDetails.accountName}
+                    {data.bankDetails?.accountName}
                   </p>
                 </div>
                 <div>
@@ -239,7 +259,7 @@ const iconMap: Record<string, any> = {
                     Branch
                   </p>
                   <p class="font-sans text-sm opacity-90">
-                    {data.bankDetails.branch}
+                    {data.bankDetails?.branch}
                   </p>
                 </div>
               </div>
@@ -262,9 +282,10 @@ const iconMap: Record<string, any> = {
             class="bg-white p-4 rounded-xl border border-border shadow-sm max-w-[250px] w-full aspect-square flex items-center justify-center"
           >
             <Image
-              src={data.bankDetails.accountQRCode}
+              src={data.bankDetails?.accountQRCode}
               alt="Donation QR Code"
               class="w-full h-full object-contain"
+              inferSize
             />
           </div>
 

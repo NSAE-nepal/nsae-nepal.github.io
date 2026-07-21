@@ -1,23 +1,17 @@
 ---
-import { getCollection } from "astro:content";
-import ClickableCard from "../astro/Card/ClickableCard.astro";
-import BlogFeaturedCard from "../astro/Card/BlogFeaturedCard.astro";
-import BlogCard from "../astro/Card/BlogCard.astro";
 import { Image } from "astro:assets";
-import Badge from "../astro/Badge.astro";
 import ArrowRight from "@tabler/icons/outline/arrow-right.svg";
+import { getPosts } from "@/sanity/lib/queries/posts";
+import Badge from "../astro/Badge.astro";
+import BlogCard from "../astro/Card/BlogCard.astro";
+import BlogFeaturedCard from "../astro/Card/BlogFeaturedCard.astro";
+import ClickableCard from "../astro/Card/ClickableCard.astro";
 
-const allPublishedPosts = (
-  await getCollection("posts", ({ data }) => {
-    return (
-      (import.meta.env.MODE !== "production" || data.draft === false) &&
-      data.type === "blog"
-    );
-  })
-).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const allPublishedPosts = (await getPosts("blog")) || [];
 
-const featuredPosts = allPublishedPosts.filter(({ data }) => data.featured);
-const nonFeaturedPosts = allPublishedPosts.filter(({ data }) => !data.featured);
+const featuredPosts = allPublishedPosts.filter((post) => post.featured);
+
+const nonFeaturedPosts = allPublishedPosts.filter((post) => !post.featured);
 
 let mainFeature = null;
 let sideListPosts = [];
@@ -61,8 +55,8 @@ if (featuredPosts.length > 0) {
       <div class="grid grid-cols-2 gap-4">
         {mainFeature && (
           <div class="anim-blog-card col-span-2 lg:col-span-1 bg-secondary p-4 rounded-2xl border border-border/50 opacity-0 translate-y-12">
-            <ClickableCard href={`/${mainFeature.id}/`}>
-              <BlogFeaturedCard class="md:grid-cols-1" {...mainFeature} />
+            <ClickableCard href={`/blog/${mainFeature.slug}/`}>
+              <BlogFeaturedCard class="md:grid-cols-1" data={mainFeature} />
             </ClickableCard>
           </div>
         )}
@@ -77,17 +71,17 @@ if (featuredPosts.length > 0) {
           {sideListPosts.map((post) => (
             <ClickableCard
               class="group relative border-b border-border last:border-b-0 hover:bg-secondary transition-colors duration-300 overflow-hidden"
-              href={`/${post.id}/`}
+              href={`/blog/${post.slug}/`}
             >
-              <BlogCard {...post} />
-              {post.data.heroImage && (
+              <BlogCard data={post} />
+              {post.heroImage && (
                 <Image
                   inferSize
                   class={
                     "absolute top-0 right-0 h-full w-1/4 object-cover z-0 hidden group-hover:block opacity-40 grayscale group-hover:grayscale-0 transition-opacity duration-500"
                   }
-                  src={post.data.heroImage}
-                  alt={post.data.heroImageAlt ?? ""}
+                  src={post.heroImage}
+                  alt={post.heroImageAlt ?? ""}
                 />
               )}
             </ClickableCard>

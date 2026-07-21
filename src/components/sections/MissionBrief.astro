@@ -1,23 +1,17 @@
 ---
-import ArrowRight from "@tabler/icons/outline/arrow-right.svg";
-import PlayerPlay from "@tabler/icons/outline/player-play.svg";
-import PlayerPause from "@tabler/icons/outline/player-pause.svg";
-import Plus from "@tabler/icons/outline/plus.svg";
-import Badge from "@/components/astro/Badge.astro";
-
 import { Image } from "astro:assets";
-import MissionPlaceholder1 from "src/assets/pages/mission-placeholder-1.jpeg";
-import MissionPlaceholder2 from "src/assets/pages/mission-placeholder-2.jpeg";
+import ArrowRight from "@tabler/icons/outline/arrow-right.svg";
+import PlayerPause from "@tabler/icons/outline/player-pause.svg";
+import PlayerPlay from "@tabler/icons/outline/player-play.svg";
+import Plus from "@tabler/icons/outline/plus.svg";
 import MissionPlaceholder3 from "src/assets/pages/mission-placeholder-3.avif";
-// import MissionPlaceholder4 from "src/assets/pages/mission-placeholder-4.mp4";
+import Badge from "@/components/astro/Badge.astro";
+import type { Home } from "@/sanity/lib/queries/home";
 
-import { getCldVideoUrl } from "astro-cloudinary/helpers";
-
-const videoUrl = getCldVideoUrl({
-  src: "mission-placeholder-4_ryflkl",
-  format: "mp4",
-  rawTransformations: ["f_auto:video,q_auto"],
-});
+const { objective, bylaws } = Astro.props as {
+  objective: Home["objective"];
+  bylaws: Home["bylaws"];
+};
 ---
 
 <section
@@ -51,17 +45,7 @@ const videoUrl = getCldVideoUrl({
         <span class="font-mono text-xs text-primary block mb-2"
           >[ SUMMARIZED OBJECTIVE ]</span
         >
-        The Nepal Society of Agricultural engineers (NSAE) aims to advance agricultural
-        engineering knowledge and technology, foster the growth and professionalism
-        of agricultural engineers, and promote cooperation, goodwill, and knowledge
-        exchange among professionals in the field. The Society works to raise public
-        awareness about the importance and contribution of agricultural engineering,
-        support national development through collaboration with government and non-government
-        institutions, and strengthen relationships with other professional and scientific
-        bodies. NSAE is committed to protecting the professional rights of agricultural
-        engineers, uplifting their capacities, promoting ethical professional conduct,
-        and providing research, advisory services, and technical support to relevant
-        organizations.
+        {objective.summaryText}
       </p>
     </div>
   </div>
@@ -73,9 +57,9 @@ const videoUrl = getCldVideoUrl({
       class="mission-card group relative rounded-2xl overflow-hidden bg-secondary min-h-[400px] lg:min-h-[600px] border border-border/50 opacity-0 translate-y-12 scale-95"
     >
       <Image
-        alt=""
-        src={MissionPlaceholder1}
-        width="800"
+        alt={objective.imagePrimary.alt || ""}
+        src={objective.imagePrimary.url}
+        inferSize
         class="absolute w-full h-full top-0 left-0 object-cover transition-all duration-700 grayscale group-hover:grayscale-0 group-hover:scale-105"
       />
       <div
@@ -111,20 +95,19 @@ const videoUrl = getCldVideoUrl({
         <div class="flex justify-between items-start">
           <Plus class="w-5 h-5 text-muted-foreground" />
           <span class="font-mono text-xs text-muted-foreground"
-            >( Registered Agricultural Engineers )</span
+            >( {objective.metric1.name} )</span
           >
         </div>
         <div>
           <h3
             class="font-sans text-5xl md:text-6xl font-medium tracking-tight mb-2"
           >
-            575
+            {objective.metric1.value}
           </h3>
           <p
             class="font-mono text-xs uppercase tracking-wider text-muted-foreground"
           >
-            Total Registerd Agricultural Engineers in Nepal Engineering Council
-            till April 2025
+            {objective.metric1.subtitle}
           </p>
         </div>
       </div>
@@ -133,9 +116,9 @@ const videoUrl = getCldVideoUrl({
         class="mission-card group relative rounded-2xl overflow-hidden bg-secondary min-h-[200px] border border-border/50 opacity-0 translate-y-12 scale-95"
       >
         <Image
-          alt=""
-          src={MissionPlaceholder2}
-          width="400"
+          alt={objective.imageSecondary.alt || ""}
+          src={objective.imageSecondary.url}
+          inferSize
           class="absolute w-full h-full top-0 left-0 object-cover transition-transform duration-700 group-hover:scale-110"
         />
         <div
@@ -150,19 +133,19 @@ const videoUrl = getCldVideoUrl({
         <div class="flex justify-between items-start">
           <Plus class="w-5 h-5 text-muted-foreground" />
           <span class="font-mono text-xs text-muted-foreground"
-            >( NSAE Member )</span
+            >( {objective.metric2.name} )</span
           >
         </div>
         <div>
           <h3
             class="font-sans text-5xl md:text-6xl font-medium tracking-tight mb-2"
           >
-            294
+            {objective.metric2.value}
           </h3>
           <p
             class="font-mono text-xs uppercase tracking-wider text-muted-foreground"
           >
-            Joined with NSAE as Life member
+            {objective.metric2.subtitle}
           </p>
         </div>
       </div>
@@ -177,7 +160,7 @@ const videoUrl = getCldVideoUrl({
           muted
           playsinline
         >
-          <source src={videoUrl} type="video/mp4" />
+          <source src={objective.videoPrimary} type="video/mp4" />
         </video>
         <div class="absolute bottom-4 right-4 z-20">
           <button
@@ -221,11 +204,11 @@ const videoUrl = getCldVideoUrl({
         <p
           class="font-sans text-lg text-gray-300 mb-8 leading-relaxed max-w-lg"
         >
-          By laws of NSAE was prepared in 1990.
+          {bylaws.description}
         </p>
 
         <a
-          href="https://drive.google.com/file/d/1wt-GYBDpEfSGJRL669MxXlCwrSSE548C/view"
+          href={bylaws.file}
           target="_blank"
           class="group/btn flex items-center gap-4 font-mono text-xs uppercase tracking-widest hover:text-primary transition-colors"
         >

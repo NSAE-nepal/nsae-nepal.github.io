@@ -1,16 +1,17 @@
 ---
 import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
-import Badge from "@/components/astro/Badge.astro";
-import Button from "@/components/astro/Button/Button.astro";
+import ArrowUpRight from "@tabler/icons/outline/arrow-up-right.svg";
 import CalendarWeek from "@tabler/icons/outline/calendar-week.svg";
 import MapPin from "@tabler/icons/outline/map-pin.svg";
 import World from "@tabler/icons/outline/world.svg";
-import ArrowUpRight from "@tabler/icons/outline/arrow-up-right.svg";
+import Badge from "@/components/astro/Badge.astro";
+import Button from "@/components/astro/Button/Button.astro";
+import type { EventDetails } from "@/sanity/lib/queries/events";
 import { formatDate, formatTime } from "@/utils/datetime";
 
 interface Props {
-  data: CollectionEntry<"events">["data"];
+  data: EventDetails;
 }
 
 const { data } = Astro.props;
@@ -21,16 +22,17 @@ let startTimeDisplay = "N/A";
 let endTimeDisplay = "N/A";
 
 if (data.eventStart) {
-  const startStr = formatDate(data.eventStart);
-  const endStr = data.eventEnd ? formatDate(data.eventEnd) : startStr;
+  const startStr = formatDate(new Date(data.eventStart));
+  const endStr = data.eventEnd ? formatDate(new Date(data.eventEnd)) : startStr;
   dateDisplay = startStr === endStr ? startStr : `${startStr} – ${endStr}`;
 
-  startTimeDisplay = formatTime(data.eventStart);
-  endTimeDisplay = data.eventEnd ? formatTime(data.eventEnd) : "N/A";
+  startTimeDisplay = formatTime(new Date(data.eventStart));
+  endTimeDisplay = data.eventEnd ? formatTime(new Date(data.eventEnd)) : "N/A";
 }
 
 if (data.eventStart && data.eventEnd) {
-  const diffMs = data.eventEnd.getTime() - data.eventStart.getTime();
+  const diffMs =
+    new Date(data.eventEnd).getTime() - new Date(data.eventStart).getTime();
   if (diffMs > 86400000) {
     const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24)) + 1;
     durationDisplay = `${diffDays} days`;
@@ -87,14 +89,18 @@ if (data.location) {
       </div>
 
       <div class="flex flex-col gap-2">
-        <h1 
+        <h1
           data-pagefind-meta="title"
-          class="font-sans text-3xl md:text-4xl font-medium tracking-tighter">
+          class="font-sans text-3xl md:text-4xl font-medium tracking-tighter"
+        >
           {data.title}
         </h1>
         {
           data.subtitle && (
-            <p data-pagefind-meta="sub_title"  class="font-sans text-lg text-muted-foreground">
+            <p
+              data-pagefind-meta="sub_title"
+              class="font-sans text-lg text-muted-foreground"
+            >
               {data.subtitle}
             </p>
           )
@@ -113,7 +119,11 @@ if (data.location) {
             class="font-mono text-xs text-muted-foreground uppercase tracking-wider block mb-0.5"
             >Start</span
           >
-          <p data-pagefind-meta={`date:${data.eventStart.toISOString()}`} data-pagefind-ignore class="font-sans font-medium whitespace-nowrap">
+          <p
+            data-pagefind-meta={`date:${new Date(data.eventStart).toISOString()}`}
+            data-pagefind-ignore
+            class="font-sans font-medium whitespace-nowrap"
+          >
             {startTimeDisplay}
           </p>
         </div>
@@ -155,7 +165,9 @@ if (data.location) {
             {data.registrationDeadline && (
               <div class="flex items-center justify-center md:justify-end gap-2 font-mono text-xs text-muted-foreground uppercase tracking-wider">
                 <CalendarWeek class="h-4 w-4 shrink-0" />
-                <span>Deadline: {formatDate(data.registrationDeadline)}</span>
+                <span>
+                  Deadline: {formatDate(new Date(data.registrationDeadline))}
+                </span>
               </div>
             )}
           </div>
@@ -168,6 +180,7 @@ if (data.location) {
     data.coverImage && (
       <div class="relative w-full aspect-video lg:aspect-[4/3] overflow-hidden rounded-lg shadow-md">
         <Image
+          inferSize
           src={data.coverImage}
           alt={data.title}
           class="object-cover w-full h-full"

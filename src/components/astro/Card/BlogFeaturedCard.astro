@@ -1,30 +1,28 @@
 ---
+import { getEntries } from "astro:content";
+import ArrowNarrowRight from "@tabler/icons/outline/arrow-narrow-right.svg";
+import Image from "astro/components/Image.astro";
 import Categories from "@/components/Categories.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
-import { getEntries } from "astro:content";
-import type { CollectionEntry } from "astro:content";
-import ArrowNarrowRight from "@tabler/icons/outline/arrow-narrow-right.svg";
+import { cn } from "@/lib/utils";
+import type { Post } from "@/sanity/lib/queries/posts";
 import AvatarGroup from "../AvatarGroup.astro";
 import Separator from "../Separator";
-import Image from "astro/components/Image.astro";
-import { cn } from "@/lib/utils";
 
-type Props = CollectionEntry<"posts"> & {
+type Props = {
+  data: Post;
   class?: string;
 };
-const { id, data, class: className } = Astro.props;
+const { data, class: className } = Astro.props;
 const {
   title,
   subtitle,
-  pubDate,
+  publishedAt,
   categories,
   authors,
   heroImage,
   heroImageAlt,
 } = data;
-
-const authorsData = authors ? await getEntries(authors) : null;
-const categoriesData = categories ? await getEntries(categories) : null;
 ---
 
 <article
@@ -38,23 +36,25 @@ const categoriesData = categories ? await getEntries(categories) : null;
   >
     <div class="flex flex-row flex-wrap gap-2 justify-between items-center">
       {
-        categoriesData ? (
-          <Categories badgeVariant={"outline"} categories={categoriesData} />
+        categories?.length > 0 ? (
+          <Categories badgeVariant={"outline"} categories={categories} />
         ) : (
           <div />
         )
       }
 
-      <p
-        class="font-mono text-xs uppercase tracking-wider text-muted-foreground"
-      >
-        <FormattedDate date={pubDate} />
-      </p>
+      {
+        publishedAt && (
+          <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+            <FormattedDate date={new Date(publishedAt)} />
+          </p>
+        )
+      }
     </div>
     <div class="flex flex-col gap-2 grow">
       <a
         class="split-target font-sans text-2xl md:text-3xl font-medium first-letter:capitalize leading-snug pb-1"
-        href={`/${id}`}
+        href={`/blog/${data.slug}`}
       >
         {title}
       </a>
@@ -70,11 +70,11 @@ const categoriesData = categories ? await getEntries(categories) : null;
     <div class="flex flex-row justify-between items-center">
       <a
         class="font-mono text-xs uppercase tracking-widest flex flex-row gap-2 items-center hover:text-primary transition-colors"
-        href={`/${id}`}
+        href={`/blog/${data.slug}`}
       >
         Read more <ArrowNarrowRight class="w-4 h-4" />
       </a>
-      {authorsData && <AvatarGroup data={authorsData} />}
+      {authors?.length > 0 && <AvatarGroup data={authors} />}
     </div>
   </div>
   {

@@ -1,22 +1,18 @@
 ---
-import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
-import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
-import PageLayout from "@/layouts/PageLayout.astro";
-import Badge from "@/components/astro/Badge.astro";
+import { getCollection } from "astro:content";
 import type { GetStaticPaths, Page } from "astro";
-import { PAGE_SIZE } from "@/consts";
-import Pagination from "@/components/astro/Pagination.astro";
+import Badge from "@/components/astro/Badge.astro";
 import CareersCard from "@/components/astro/Card/CareersCard.astro";
+import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
 import Empty from "@/components/astro/Empty.astro";
+import Pagination from "@/components/astro/Pagination.astro";
+import { PAGE_SIZE } from "@/consts";
+import PageLayout from "@/layouts/PageLayout.astro";
+import { getVacancies, type Vacancy } from "@/sanity/lib/queries/careers";
 
 export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
-  const allVacancies = (
-    await getCollection("careers", ({ data }) => {
-      // In production, filter out drafts.
-      return import.meta.env.MODE !== "production" || data.draft === false;
-    })
-  ).sort((a, b) => b.data.postedDate.valueOf() - a.data.postedDate.valueOf());
+  const allVacancies = (await getVacancies()) || [];
 
   return paginate(allVacancies, {
     pageSize: PAGE_SIZE,
@@ -24,7 +20,7 @@ export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
 };
 
 interface Props {
-  page: Page<CollectionEntry<"careers">>;
+  page: Page;
 }
 
 const { page } = Astro.props;
@@ -32,7 +28,11 @@ const pageTitle = "Our latest careers";
 const pageDescription = "Your Next Chapter Starts Here";
 ---
 
-<PageLayout title={pageTitle} description={pageDescription} dataPagefindIgnore="all">
+<PageLayout
+  title={pageTitle}
+  description={pageDescription}
+  dataPagefindIgnore="all"
+>
   <section
     class="min-h-40 flex flex-col items-center justify-center gap-4 py-16 md:py-24 px-6"
   >
@@ -59,12 +59,12 @@ const pageDescription = "Your Next Chapter Starts Here";
           Open Positions
         </h1>
         <div class="space-y-4">
-          {page.data.map((vacancy) => (
+          {page.data.map((vacancy: Vacancy) => (
             <ClickableCard
               class="group relative block w-full rounded-xl  bg-secondary p-6 text-secondary-foreground shadow-sm"
-              href={`/careers/${vacancy.id}/`}
+              href={`/careers/${vacancy.slug}/`}
             >
-              <CareersCard {...vacancy} />
+              <CareersCard data={vacancy} />
             </ClickableCard>
           ))}
         </div>
@@ -90,7 +90,6 @@ const pageDescription = "Your Next Chapter Starts Here";
   import { gsap, SplitText } from "@/utils/gsap-init";
 
   {
-
     const headerTitleEl = document.querySelector(".anim-header-title");
     const headerDescEl = document.querySelector(".anim-header-desc");
     const sectionTitleEl = document.querySelector(".anim-section-title");

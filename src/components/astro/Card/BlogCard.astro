@@ -1,35 +1,32 @@
 ---
+import ArrowNarrowRight from "@tabler/icons/outline/arrow-narrow-right.svg";
 import Categories from "@/components/Categories.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
-import { getEntries } from "astro:content";
-import type { CollectionEntry } from "astro:content";
-import ArrowNarrowRight from "@tabler/icons/outline/arrow-narrow-right.svg";
 import AvatarGroup from "../AvatarGroup.astro";
 
-type Props = CollectionEntry<"posts">;
-
-const { id, data } = Astro.props;
-const { title, subtitle, pubDate, categories, authors } = data;
-
-const authorsData = authors ? await getEntries(authors) : null;
-const categoriesData = categories ? await getEntries(categories) : null;
+const { data, href } = Astro.props;
+const { title, subtitle, publishedAt, categories, authors, slug } = data;
 ---
 
 <article
   class="split-card space-y-2 cursor-pointer flex flex-col relative z-10 p-4"
 >
   <div class="flex flex-row justify-between items-center">
-    {categoriesData ? <Categories categories={categoriesData} /> : <div />}
+    {categories?.length > 0 ? <Categories categories={categories} /> : <div />}
 
-    <p class="font-mono text-xs text-muted-foreground uppercase tracking-wider">
-      <FormattedDate date={pubDate} />
-    </p>
+    {
+      publishedAt && (
+        <p class="font-mono text-xs text-muted-foreground uppercase tracking-wider">
+          <FormattedDate date={new Date(publishedAt)} />
+        </p>
+      )
+    }
   </div>
 
   <div class="flex flex-col gap-2 grow">
     <a
       class="split-target font-sans text-xl md:text-2xl font-medium first-letter:capitalize leading-snug"
-      href={`/${id}`}
+      href={href ? href : `/blog/${slug}`}
     >
       {title}
     </a>
@@ -43,11 +40,11 @@ const categoriesData = categories ? await getEntries(categories) : null;
     <div class="flex flex-row items-center justify-between pt-4 pb-0 mt-auto">
       <a
         class="font-mono text-xs uppercase tracking-widest flex flex-row gap-2 items-center hover:text-primary transition-colors"
-        href={`/${id}`}
+        href={href ? href : `/blog/${slug}`}
       >
         Read more <ArrowNarrowRight class="w-4 h-4" />
       </a>
-      {authorsData && <AvatarGroup data={authorsData} />}
+      {authors?.length > 0 && <AvatarGroup data={authors} />}
     </div>
   </div>
 </article>

@@ -1,21 +1,16 @@
 ---
-import Badge from "@/components/astro/Badge.astro";
 import MoodEmpty from "@tabler/icons/outline/mood-empty.svg";
-import PageLayout from "@/layouts/PageLayout.astro";
-import { getCollection } from "astro:content";
-import type { CollectionEntry } from "astro:content";
-import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
 import type { GetStaticPaths, Page } from "astro";
-import { PAGE_SIZE } from "@/consts";
-import Pagination from "@/components/astro/Pagination.astro";
+import Badge from "@/components/astro/Badge.astro";
+import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
 import MinutesCard from "@/components/astro/Card/MinutesCard.astro";
+import Pagination from "@/components/astro/Pagination.astro";
+import { PAGE_SIZE } from "@/consts";
+import PageLayout from "@/layouts/PageLayout.astro";
+import { getMinutes, type Minutes } from "@/sanity/lib/queries/minutes";
 
 export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
-  const allPublishedMinutes = (
-    await getCollection("minutes", ({ data }) => {
-      return import.meta.env.MODE !== "production" || data.draft === false;
-    })
-  ).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  const allPublishedMinutes = await getMinutes();
 
   return paginate(allPublishedMinutes, {
     pageSize: PAGE_SIZE,
@@ -23,7 +18,7 @@ export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
 };
 
 interface Props {
-  page: Page<CollectionEntry<"minutes">>;
+  page: Page;
 }
 
 const { page } = Astro.props;
@@ -33,7 +28,11 @@ const pageDescription =
   "Browse the minutes from our General, Executive, and Committee meetings.";
 ---
 
-<PageLayout title={pageTitle} description={pageDescription} dataPagefindIgnore="all">
+<PageLayout
+  title={pageTitle}
+  description={pageDescription}
+  dataPagefindIgnore="all"
+>
   <main class="py-16 md:py-24 space-y-12">
     <header class="flex flex-col items-center justify-center gap-4 text-center">
       <div class="anim-header-badge opacity-0 scale-50">
@@ -58,21 +57,21 @@ const pageDescription =
     </header>
 
     <section class="mb-24" data-manual-card-anim>
-       <h2
-      class="anim-all-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
-    >
-      All Minutes
-    </h2>
+      <h2
+        class="anim-all-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
+      >
+        All Minutes
+      </h2>
       {
         page.data.length > 0 ? (
           <>
             <div class="space-y-4">
-              {page.data.map((minute) => (
+              {page.data.map((minute: Minutes) => (
                 <ClickableCard
                   class="anim-minutes-card group relative block w-full rounded-xl bg-secondary p-6 text-secondary-foreground shadow-sm opacity-0 translate-y-4"
-                  href={`/minutes/${minute.id}/`}
+                  href={`/minutes/${minute.slug}/`}
                 >
-                  <MinutesCard {...minute} />
+                  <MinutesCard data={minute} />
                 </ClickableCard>
               ))}
             </div>
@@ -133,51 +132,71 @@ const pageDescription =
           stagger: 0.04,
           ease: "power4.out",
         },
-        "<"
+        "<",
       );
 
     if (document.querySelector(".anim-header-desc")) {
-      mainTl.to(".anim-header-desc", {
-        y: 0,
-        opacity: 1,
-        duration: 0.5,
-      }, "-=0.6");
-    }
-
-    mainTl.to(".anim-all-title", {
-      y: 0,
-      opacity: 1,
-      duration: 0.5,
-    }, "-=0.5");
-
-    if (document.querySelector(".anim-minutes-card")) {
-      mainTl
-        .to(".anim-minutes-card", {
+      mainTl.to(
+        ".anim-header-desc",
+        {
           y: 0,
           opacity: 1,
           duration: 0.5,
-          stagger: 0.06,
-          ease: "power2.out",
-        }, "-=0.3")
+        },
+        "-=0.6",
+      );
+    }
+
+    mainTl.to(
+      ".anim-all-title",
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.5,
+      },
+      "-=0.5",
+    );
+
+    if (document.querySelector(".anim-minutes-card")) {
+      mainTl
+        .to(
+          ".anim-minutes-card",
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.5,
+            stagger: 0.06,
+            ease: "power2.out",
+          },
+          "-=0.3",
+        )
         .add(() => {
           initCardSplitTextAnimation({ cardSelector: ".anim-minutes-card" });
         }, "<");
     }
 
     if (document.querySelector(".anim-pagination")) {
-      mainTl.to(".anim-pagination", {
-        opacity: 1,
-        duration: 0.5,
-      }, "-=0.2");
+      mainTl.to(
+        ".anim-pagination",
+        {
+          opacity: 1,
+          duration: 0.5,
+        },
+        "-=0.2",
+      );
     }
 
     if (document.querySelector(".anim-empty-state")) {
-      mainTl.to(".anim-empty-state", {
-        scale: 1,
-        opacity: 1,
-        duration: 0.6,
-        ease: "back.out(1.2)",
-      }, "-=0.3");
+      mainTl.to(
+        ".anim-empty-state",
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 0.6,
+          ease: "back.out(1.2)",
+        },
+        "-=0.3",
+      );
     }
   }
 </script>

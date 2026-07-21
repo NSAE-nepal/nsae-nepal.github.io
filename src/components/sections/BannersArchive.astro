@@ -1,14 +1,9 @@
 ---
 import { getCollection } from "astro:content";
 import Banner from "@/components/astro/Banner.astro";
+import { getBanners } from "@/sanity/lib/queries/banner";
 
-const allBanners = await getCollection("banners", ({ data }) => {
-  return (
-    import.meta.env.MODE !== "production" ||
-    data.draft === false ||
-    data.showBanner === false
-  );
-});
+const allBanners = (await getBanners()) || [];
 ---
 
 <section class="space-y-4">

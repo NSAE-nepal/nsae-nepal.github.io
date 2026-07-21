@@ -1,30 +1,29 @@
 ---
-import { type CollectionEntry, getCollection, render } from "astro:content";
-
-import PageLayout from "@/layouts/PageLayout.astro";
-import FormattedDate from "@/components/FormattedDate.astro";
-import Badge from "@/components/astro/Badge.astro";
+import ArrowLeft from "@tabler/icons/outline/arrow-left.svg";
+import Building from "@tabler/icons/outline/building.svg";
+import CalendarWeek from "@tabler/icons/outline/calendar-week.svg";
 
 import MapPin from "@tabler/icons/outline/map-pin.svg";
-import CalendarWeek from "@tabler/icons/outline/calendar-week.svg";
-import Building from "@tabler/icons/outline/building.svg";
-import ArrowLeft from "@tabler/icons/outline/arrow-left.svg";
 import Point from "@tabler/icons/outline/point.svg";
+import Badge from "@/components/astro/Badge.astro";
+import FormattedDate from "@/components/FormattedDate.astro";
+import PortableText from "@/components/PortableText.astro";
+import PageLayout from "@/layouts/PageLayout.astro";
+import { getVacancies, getVacancyDetails } from "@/sanity/lib/queries/careers";
 
 export async function getStaticPaths() {
-  const allVacancies = await getCollection("careers", ({ data }) => {
-    return import.meta.env.MODE !== "production" || data.draft === false;
-  });
+  const allVacancies = await getVacancies();
 
   return allVacancies.map((vacancy) => ({
-    params: { slug: vacancy.id },
-    props: vacancy,
+    params: {
+      slug: vacancy.slug,
+    },
   }));
 }
 
-type Props = CollectionEntry<"careers">;
-const vacancy = Astro.props;
-const { Content } = await render(vacancy);
+const { slug } = Astro.params;
+
+const vacancy = await getVacancyDetails(slug!);
 
 const {
   title,
@@ -35,7 +34,7 @@ const {
   location,
   postedDate,
   closingDate,
-} = vacancy.data;
+} = vacancy;
 
 const isClosed = status === "closed";
 ---
@@ -101,10 +100,10 @@ const isClosed = status === "closed";
         <div class="flex items-center gap-1.5">
           <CalendarWeek class="size-4" />
           <span
-            data-pagefind-meta={`date:${postedDate.toISOString()}`}
+            data-pagefind-meta={`date:${new Date(postedDate).toISOString()}`}
             data-pagefind-ignore
           >
-            Posted: <FormattedDate date={postedDate} />
+            Posted: <FormattedDate date={new Date(postedDate)} />
           </span>
         </div>
 
@@ -115,7 +114,7 @@ const isClosed = status === "closed";
               class="flex items-center gap-1 text-foreground font-medium italic hover:underline hover:underline-offset-1"
             >
               <Point class="fill-destructive text-destructive w-3 h-3" />
-              Closes: <FormattedDate date={closingDate} />
+              Closes: <FormattedDate date={new Date(closingDate)} />
             </span>
           )
         }
@@ -123,7 +122,7 @@ const isClosed = status === "closed";
     </header>
 
     <div class="prose max-w-6xl mx-auto dark:prose-invert">
-      <Content />
+      <PortableText portableText={vacancy.body} />
     </div>
 
     <div class="border-t pt-8 space-y-4" data-pagefind-ignore>

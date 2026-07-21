@@ -1,31 +1,23 @@
 ---
 import { Image } from "astro:assets";
-import type { CollectionEntry } from "astro:content";
 import ArrowLeft from "@tabler/icons/outline/arrow-left.svg";
-
+import Categories from "@/components/Categories.astro";
+import type { PostDetails } from "@/sanity/lib/queries/posts";
 import FormattedDate from "../components/FormattedDate.astro";
 import PageLayout from "./PageLayout.astro";
-import { getEntries } from "astro:content";
-import Categories from "@/components/Categories.astro";
 
-type Props = CollectionEntry<"posts">["data"];
+type Props = PostDetails;
 
 const {
   title,
   subtitle,
   categories,
-  authors,
   description,
-  pubDate,
-  updatedDate,
+  publishedAt,
   heroImage,
   heroImageAlt,
-  relatedPosts,
   type,
 } = Astro.props;
-
-const authorsData = authors ? await getEntries(authors) : null;
-const categoriesData = categories ? await getEntries(categories) : null;
 
 const backLinkConfig: Record<string, { href: string; label: string }> = {
   blog: { href: "/blog/page/1", label: "Back to All Blogs" },
@@ -57,7 +49,10 @@ const { href: backHref, label: backLabel } =
         </h1>
         {
           subtitle && (
-            <p data-pagefind-meta="sub_title"  class="font-sans text-lg text-muted-foreground leading-relaxed first-letter:capitalize max-w-3xl mx-auto">
+            <p
+              data-pagefind-meta="sub_title"
+              class="font-sans text-lg text-muted-foreground leading-relaxed first-letter:capitalize max-w-3xl mx-auto"
+            >
               {subtitle}
             </p>
           )
@@ -65,15 +60,25 @@ const { href: backHref, label: backLabel } =
       </div>
 
       <div class="flex flex-row justify-around items-center text-xs">
-        {categoriesData ? <Categories categories={categoriesData} /> : <div />}
+        {
+          categories?.length > 0 ? (
+            <Categories categories={categories} />
+          ) : (
+            <div />
+          )
+        }
 
-        <span
-          class="font-mono text-xs text-muted-foreground uppercase tracking-wider border-l border-border/50 pl-6"
-          data-pagefind-meta={`date:${pubDate.toISOString()}`}
-          data-pagefind-ignore
-        >
-          <FormattedDate date={pubDate} />
-        </span>
+        {
+          publishedAt && (
+            <span
+              class="font-mono text-xs text-muted-foreground uppercase tracking-wider border-l border-border/50 pl-6"
+              data-pagefind-meta={`date:${publishedAt}`}
+              data-pagefind-ignore
+            >
+              <FormattedDate date={new Date(publishedAt)} />
+            </span>
+          )
+        }
       </div>
     </header>
 
@@ -81,7 +86,7 @@ const { href: backHref, label: backLabel } =
       heroImage && (
         <div class="flex items-center justify-center overflow-hidden">
           <Image
-          data-pagefind-meta="image[src], image_alt[alt]"
+            data-pagefind-meta="image[src], image_alt[alt]"
             inferSize
             class="object-cover rounded-xl max-h-1/2"
             src={heroImage}
@@ -91,7 +96,7 @@ const { href: backHref, label: backLabel } =
       )
     }
 
-    <div class="prose max-w-7xl mx-auto dark:prose-invert"  >
+    <div class="prose max-w-7xl mx-auto dark:prose-invert">
       <slot />
     </div>
 

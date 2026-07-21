@@ -1,28 +1,20 @@
 ---
-import User from "@tabler/icons/outline/user.svg";
-import Building from "@tabler/icons/outline/building.svg";
-import World from "@tabler/icons/outline/world.svg";
 import { Image } from "astro:assets";
-import { getEntries, type CollectionEntry } from "astro:content";
+import Building from "@tabler/icons/outline/building.svg";
+import User from "@tabler/icons/outline/user.svg";
+import World from "@tabler/icons/outline/world.svg";
+import type {
+  EventDetails,
+  Instructor,
+  Representative,
+} from "@/sanity/lib/queries/events";
 
 interface Props {
-  instructors: CollectionEntry<"events">["data"]["instructors"];
+  instructors: EventDetails["instructors"];
 }
-
-type InstructorItem = NonNullable<
-  CollectionEntry<"events">["data"]["instructors"]
->[number];
 
 const { instructors: rawInstructors } = Astro.props;
-
-const instructors: InstructorItem[] = rawInstructors ?? [];
-
-interface Representative {
-  name: string;
-  position?: string;
-  email?: string;
-  eventRole: "speaker" | "panelist" | "moderator" | "guest" | "instructor";
-}
+const instructors: Instructor[] = rawInstructors ?? [];
 
 interface DisplayProfile {
   id: string;
@@ -31,81 +23,47 @@ interface DisplayProfile {
   position?: string;
   company?: string;
   website?: string;
-  image?: ImageMetadata;
+  image?: string;
   isOrg: boolean;
   representatives?: Representative[];
 }
 
-const nsaeMemberRefs = instructors
-  .filter((inst) => inst.instructorType === "nsae_member")
-  .map((inst) => inst.nsaeMember);
-
-const authorEntries =
-  nsaeMemberRefs.length > 0 ? await getEntries(nsaeMemberRefs) : [];
-
 const displayProfiles: DisplayProfile[] = instructors.map((inst, index) => {
   const uniqueId = `inst-${index}`;
 
-  if (inst.instructorType === "nsae_member") {
-    const memberInst = inst as Extract<
-      InstructorItem,
-      { instructorType: "nsae_member" }
-    >;
-    const author = authorEntries.find((a) => a.id === memberInst.nsaeMember.id);
-
-    if (author) {
-      return {
-        id: uniqueId,
-        name: author.data.name,
-        role: memberInst.eventRole || "Instructor",
-        position: author.data.position || "NSAE Member",
-        company: author.data.company,
-        image:
-          typeof author.data.profileImage === "string"
-            ? undefined
-            : author.data.profileImage,
-        isOrg: false,
-      };
-    }
+  if (inst._type === "instructorNsaeMember") {
     return {
       id: uniqueId,
-      name: "Unknown Member",
-      role: "Unknown",
+      name: inst.nsaeMember?.name || "Unknown Member",
+      role: inst.eventRole || "Instructor",
+      position: inst.nsaeMember?.position || "NSAE Member",
+      company: inst.nsaeMember?.company,
+      image: inst.nsaeMember?.profileImage,
       isOrg: false,
     };
   }
 
-  if (inst.instructorType === "organization") {
-    const orgInst = inst as Extract<
-      InstructorItem,
-      { instructorType: "organization" }
-    >;
-
+  if (inst._type === "instructorOrganization") {
     return {
       id: uniqueId,
-      name: orgInst.organizationName,
+      name: inst.organizationName,
       role: "Partner Organization",
-      position: orgInst.description,
-      website: orgInst.website,
+      position: inst.description,
+      website: inst.website,
       company: undefined,
-      image: orgInst.logo,
+      image: inst.logo,
       isOrg: true,
-      representatives: orgInst.representatives as Representative[] | undefined,
+      representatives: inst.representatives,
     };
   }
 
-  const externalInst = inst as Extract<
-    InstructorItem,
-    { instructorType: "external_person" }
-  >;
-
   return {
     id: uniqueId,
-    name: externalInst.name,
-    role: externalInst.eventRole || "Instructor",
-    position: externalInst.position,
-    company: externalInst.company,
-    image: externalInst.profileImage,
+    name: inst.name,
+    role: inst.eventRole || "Instructor",
+    position: inst.position,
+    company: inst.company,
+    image: inst.profileImage,
     isOrg: false,
   };
 });
@@ -130,6 +88,7 @@ const displayProfiles: DisplayProfile[] = instructors.map((inst, index) => {
                         <Image
                           src={profile.image}
                           alt={profile.name}
+                          inferSize
                           class="h-full w-full object-contain p-1.5 transition-transform duration-300 group-hover:scale-110"
                         />
                       ) : (
@@ -174,7 +133,16 @@ const displayProfiles: DisplayProfile[] = instructors.map((inst, index) => {
                         {profile.representatives.map((rep) => (
                           <div class="flex items-start gap-3 group/rep">
                             <div class="relative h-8 w-8 shrink-0 overflow-hidden rounded-full flex items-center justify-center border border-border/50 bg-background">
-                              <User class="size-4 text-muted-foreground/50" />
+                              {rep.profileImage ? (
+                                <Image
+                                  src={rep.profileImage}
+                                  alt={rep.name}
+                                  inferSize
+                                  class="h-full w-full object-cover transition-transform duration-300 group-hover/rep:scale-110"
+                                />
+                              ) : (
+                                <User class="size-4 text-muted-foreground/50" />
+                              )}
                             </div>
 
                             <div class="flex-1 min-w-0 pt-0.5">
@@ -183,7 +151,7 @@ const displayProfiles: DisplayProfile[] = instructors.map((inst, index) => {
                                   {rep.name}
                                 </p>
                                 <span class="font-mono uppercase tracking-wider text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-medium">
-                                  {rep.eventRole}
+                                  {rep.eventRole || "Representative"}
                                 </span>
                               </div>
                               {rep.position && (
@@ -207,6 +175,7 @@ const displayProfiles: DisplayProfile[] = instructors.map((inst, index) => {
                     <Image
                       src={profile.image}
                       alt={profile.name}
+                      inferSize
                       class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                     />
                   ) : (

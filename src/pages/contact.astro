@@ -1,21 +1,21 @@
 ---
-import Badge from "@/components/astro/Badge.astro";
-import PageLayout from "@/layouts/PageLayout.astro";
 import { getCollection } from "astro:content";
-import Mail from "@tabler/icons/outline/mail.svg";
-import Phone from "@tabler/icons/outline/phone.svg";
-import { default as MapIcon } from "@tabler/icons/outline/map.svg";
+import ArrowUpRight from "@tabler/icons/outline/arrow-up-right.svg";
+import BrandBluesky from "@tabler/icons/outline/brand-bluesky.svg";
+import BrandFacebook from "@tabler/icons/outline/brand-facebook.svg";
+import BrandGithub from "@tabler/icons/outline/brand-github.svg";
 import BrandLinkedin from "@tabler/icons/outline/brand-linkedin.svg";
 import BrandX from "@tabler/icons/outline/brand-x.svg";
-import BrandFacebook from "@tabler/icons/outline/brand-facebook.svg";
 import BrandYoutube from "@tabler/icons/outline/brand-youtube.svg";
-import BrandBluesky from "@tabler/icons/outline/brand-bluesky.svg";
-import BrandGithub from "@tabler/icons/outline/brand-github.svg";
-import ArrowUpRight from "@tabler/icons/outline/arrow-up-right.svg";
+import Mail from "@tabler/icons/outline/mail.svg";
+import { default as MapIcon } from "@tabler/icons/outline/map.svg";
+import Phone from "@tabler/icons/outline/phone.svg";
+import Badge from "@/components/astro/Badge.astro";
+import PageLayout from "@/layouts/PageLayout.astro";
+import { getContactsDetails } from "@/sanity/lib/queries/contacts";
 
-const contactInfo = (await getCollection("contacts"))[0];
-const { data } = contactInfo;
-const { socials } = data;
+const data = await getContactsDetails();
+const socials = data?.socials;
 const socialIcons: Record<string, any> = {
   linkedin: BrandLinkedin,
   twitter: BrandX,
@@ -25,6 +25,7 @@ const socialIcons: Record<string, any> = {
   bluesky: BrandBluesky,
   github: BrandGithub,
 };
+console.log(data);
 ---
 
 <PageLayout
@@ -186,7 +187,6 @@ const socialIcons: Record<string, any> = {
   import { gsap, SplitText } from "@/utils/gsap-init";
 
   {
-
     const headerTl = gsap.timeline({
       defaults: { ease: "power3.out" },
     });
@@ -213,7 +213,7 @@ const socialIcons: Record<string, any> = {
           stagger: 0.05,
           ease: "power4.out",
         },
-        "<"
+        "<",
       )
       .to(
         ".anim-header-desc",
@@ -222,7 +222,7 @@ const socialIcons: Record<string, any> = {
           opacity: 1,
           duration: 0.8,
         },
-        "-=0.6"
+        "-=0.6",
       );
 
     gsap.to(".anim-contact-card", {
@@ -260,7 +260,7 @@ const socialIcons: Record<string, any> = {
           stagger: 0.05,
           ease: "back.out(2)",
         },
-        "-=0.4"
+        "-=0.4",
       );
   }
 </script>

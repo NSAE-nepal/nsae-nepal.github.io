@@ -1,44 +1,40 @@
 ---
-import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
-import PageLayout from "@/layouts/PageLayout.astro";
-
-import Faq from "@/components/sections/Faq.astro";
-import BlogsArchive from "@/components/sections/BlogsArchive.astro";
-import BannersArchive from "@/components/sections/BannersArchive.astro";
-import MissionBrief from "@/components/sections/MissionBrief.astro";
-import Memberships from "@/components/sections/Memberships.astro";
-
 import AnnouncementRibbon from "@/components/astro/AnnouncementRibbon.astro";
-import { getCollection } from "astro:content";
+import BannersArchive from "@/components/sections/BannersArchive.astro";
+import BlogsArchive from "@/components/sections/BlogsArchive.astro";
+import Faq from "@/components/sections/Faq.astro";
 import { HeroCarousel } from "@/components/sections/HeroCarousel";
+import Memberships from "@/components/sections/Memberships.astro";
+import MissionBrief from "@/components/sections/MissionBrief.astro";
+import PageLayout from "@/layouts/PageLayout.astro";
+import { getHomePage } from "@/sanity/lib/queries/home";
+import { getPosts } from "@/sanity/lib/queries/posts";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 
-const allNotices = await getCollection("posts", ({ data }) => {
-  return (
-    (import.meta.env.MODE !== "production" || data.draft === false) &&
-    data.type === "notice"
-  );
-});
-
-const latestNotice = allNotices.sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-)[0];
+const allNotices = (await getPosts("notice")) || [];
+const latestNotice = allNotices?.[0];
+const homePage = await getHomePage();
 ---
 
-<PageLayout title={SITE_TITLE} description={SITE_DESCRIPTION} dataPagefindIgnore="all">
+<PageLayout
+  title={SITE_TITLE}
+  description={SITE_DESCRIPTION}
+  dataPagefindIgnore="all"
+>
   {
     latestNotice && (
       <AnnouncementRibbon
-        id={latestNotice.id}
+        id={latestNotice.slug}
         label="Latest Update"
-        message={latestNotice.data.title}
-        href={`/${latestNotice.id}/`}
+        message={latestNotice.title}
+        href={`/notices/${latestNotice.slug}/`}
       />
     )
   }
-  <HeroCarousel client:load />
+  <HeroCarousel client:load slides={homePage.carousel} />
 
-  <MissionBrief />
-  <Memberships />
+  <MissionBrief objective={homePage.objective} bylaws={homePage.bylaws} />
+  <Memberships membership={homePage.membership} />
   <BannersArchive />
   <BlogsArchive />
   <Faq />

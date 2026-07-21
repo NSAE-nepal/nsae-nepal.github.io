@@ -1,10 +1,11 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import Phone from "@tabler/icons/outline/phone.svg";
 import Mail from "@tabler/icons/outline/mail.svg";
+import Phone from "@tabler/icons/outline/phone.svg";
+import type { EventDetails } from "@/sanity/lib/queries/events";
 
 interface Props {
-  contactPersons: CollectionEntry<"events">["data"]["contactPersons"];
+  contactPersons: EventDetails["contactPersons"];
 }
 
 const { contactPersons } = Astro.props;

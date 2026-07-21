@@ -1,14 +1,14 @@
 ---
-import type { CollectionEntry } from "astro:content";
 import Point from "@tabler/icons/outline/point.svg";
-import Badge, { badgeVariants } from "./astro/Badge.astro";
+import type { Category } from "@/sanity/lib/queries/posts";
 import type { BadgeVariantProps } from "./astro/Badge.astro";
+import Badge from "./astro/Badge.astro";
 
 type BadgeVariant = BadgeVariantProps["variant"];
 type BadgeSize = BadgeVariantProps["size"];
 
 type Props = {
-  categories: CollectionEntry<"categories">[];
+  categories: Category[];
   visibleCategoriesCount?: number;
   showAll?: boolean;
   badgeVariant?: BadgeVariant;
@@ -38,7 +38,7 @@ const remainingCount = totalCount - visibleCategoriesCount;
       return (
         <Badge variant={badgeVariant} size={badgeSize} class="capitalize">
           <Point class="fill-destructive text-destructive w-4 h-4" />
-          {item.data.title}
+          {item.title}
         </Badge>
       );
     })

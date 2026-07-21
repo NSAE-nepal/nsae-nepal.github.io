@@ -1,0 +1,280 @@
+{
+  "id": "agricultural-engineering-basics",
+  "title": "Agricultural Engineering Fundamentals",
+  "settings": {
+    "shuffleQuestions": true,
+    "shuffleOptions": true,
+    "showExplanations": true,
+    "passingScore": 24,
+    "negativeMarkingPercentage": 20
+  },
+  "questions": [
+    {
+      "id": "q-001",
+      "type": "single-select",
+      "question": "Which irrigation method generally has the highest water use efficiency?",
+      "points": 2,
+      "required": false,
+      "options": [
+        { "id": "surface", "text": "Surface Irrigation" },
+        { "id": "sprinkler", "text": "Sprinkler Irrigation" },
+        { "id": "drip", "text": "Drip Irrigation" },
+        { "id": "furrow", "text": "Furrow Irrigation" }
+      ],
+      "correctOptionIds": ["drip"],
+      "hint": "It delivers water directly to the root zone.",
+      "explanation": "Drip irrigation minimizes evaporation and deep percolation losses, making it the most water-efficient irrigation method."
+    },
+    {
+      "id": "q-002",
+      "type": "single-select",
+      "question": "Which soil texture generally has the highest water holding capacity?",
+      "points": 2,
+      "options": [
+        { "id": "sand", "text": "Sandy Soil" },
+        { "id": "silt", "text": "Silty Soil" },
+        { "id": "clay", "text": "Clay Soil" },
+        { "id": "loam", "text": "Loamy Soil" }
+      ],
+      "correctOptionIds": ["clay"],
+      "hint": "It has the smallest soil particles."
+    },
+    {
+      "id": "q-003",
+      "type": "single-select",
+      "question": "The primary function of a mouldboard plough is to:",
+      "points": 2,
+      "options": [
+        { "id": "seed", "text": "Sow Seeds" },
+        { "id": "invert", "text": "Invert and Turn the Soil" },
+        { "id": "harvest", "text": "Harvest Crops" },
+        { "id": "level", "text": "Level the Land" }
+      ],
+      "correctOptionIds": ["invert"]
+    },
+    {
+      "id": "q-004",
+      "type": "multi-select",
+      "question": "Which of the following are examples of renewable energy used in agriculture?",
+      "points": 2,
+      "options": [
+        { "id": "solar", "text": "Solar Energy" },
+        { "id": "biogas", "text": "Biogas" },
+        { "id": "diesel", "text": "Diesel Fuel" },
+        { "id": "wind", "text": "Wind Energy" }
+      ],
+      "correctOptionIds": ["solar", "biogas", "wind"],
+      "hint": "Think of naturally replenished energy sources."
+    },
+    {
+      "id": "q-005",
+      "type": "single-select",
+      "question": "Which implement is commonly used for secondary tillage?",
+      "points": 2,
+      "options": [
+        { "id": "disc-harrow", "text": "Disc Harrow" },
+        { "id": "mouldboard", "text": "Mouldboard Plough" },
+        { "id": "subsoiler", "text": "Subsoiler" },
+        { "id": "ripper", "text": "Ripper" }
+      ],
+      "correctOptionIds": ["disc-harrow"]
+    },
+    {
+      "id": "q-006",
+      "type": "single-select",
+      "question": "Field capacity of a tractor refers to:",
+      "points": 2,
+      "options": [
+        { "id": "fuel", "text": "Fuel Tank Capacity" },
+        { "id": "speed", "text": "Maximum Speed" },
+        { "id": "area", "text": "Area Covered Per Unit Time" },
+        { "id": "weight", "text": "Weight Carrying Capacity" }
+      ],
+      "correctOptionIds": ["area"]
+    },
+    {
+      "id": "q-007",
+      "type": "single-select",
+      "question": "Which pump is most commonly used for lifting groundwater in tube wells?",
+      "points": 2,
+      "options": [
+        { "id": "centrifugal", "text": "Centrifugal Pump" },
+        { "id": "gear", "text": "Gear Pump" },
+        { "id": "diaphragm", "text": "Diaphragm Pump" },
+        { "id": "piston", "text": "Piston Pump" }
+      ],
+      "correctOptionIds": ["centrifugal"]
+    },
+    {
+      "id": "q-008",
+      "type": "multi-select",
+      "question": "Which factors affect evapotranspiration?",
+      "points": 2,
+      "options": [
+        { "id": "temperature", "text": "Temperature" },
+        { "id": "humidity", "text": "Humidity" },
+        { "id": "wind", "text": "Wind Speed" },
+        { "id": "soil-color", "text": "Soil Color" }
+      ],
+      "correctOptionIds": ["temperature", "humidity", "wind"]
+    },
+    {
+      "id": "q-009",
+      "type": "single-select",
+      "question": "The SI unit of pressure is:",
+      "points": 2,
+      "options": [
+        { "id": "joule", "text": "Joule" },
+        { "id": "pascal", "text": "Pascal" },
+        { "id": "watt", "text": "Watt" },
+        { "id": "newton", "text": "Newton" }
+      ],
+      "correctOptionIds": ["pascal"]
+    },
+    {
+      "id": "q-010",
+      "type": "single-select",
+      "question": "The main purpose of land leveling is to:",
+      "points": 2,
+      "options": [
+        { "id": "fertility", "text": "Increase Soil Fertility" },
+        { "id": "uniform", "text": "Improve Uniform Water Distribution" },
+        { "id": "harvest", "text": "Increase Harvest Speed" },
+        { "id": "reduce-weeds", "text": "Reduce Weeds" }
+      ],
+      "correctOptionIds": ["uniform"]
+    },
+    {
+      "id": "q-011",
+      "type": "single-select",
+      "question": "Which instrument is commonly used to measure rainfall?",
+      "points": 2,
+      "options": [
+        { "id": "barometer", "text": "Barometer" },
+        { "id": "rain-gauge", "text": "Rain Gauge" },
+        { "id": "anemometer", "text": "Anemometer" },
+        { "id": "thermometer", "text": "Thermometer" }
+      ],
+      "correctOptionIds": ["rain-gauge"]
+    },
+    {
+      "id": "q-012",
+      "type": "multi-select",
+      "question": "Which are common methods of soil conservation?",
+      "points": 2,
+      "options": [
+        { "id": "terracing", "text": "Terracing" },
+        { "id": "contour", "text": "Contour Farming" },
+        { "id": "strip", "text": "Strip Cropping" },
+        { "id": "burning", "text": "Crop Residue Burning" }
+      ],
+      "correctOptionIds": ["terracing", "contour", "strip"]
+    },
+    {
+      "id": "q-013",
+      "type": "single-select",
+      "question": "The PTO of a tractor stands for:",
+      "points": 2,
+      "options": [
+        { "id": "power", "text": "Power Take-Off" },
+        { "id": "pressure", "text": "Pressure Transfer Output" },
+        { "id": "pump", "text": "Pump Transmission Outlet" },
+        { "id": "powertrain", "text": "Power Train Operation" }
+      ],
+      "correctOptionIds": ["power"]
+    },
+    {
+      "id": "q-014",
+      "type": "single-select",
+      "question": "Which drying method generally preserves crop quality better?",
+      "points": 2,
+      "options": [
+        { "id": "open", "text": "Open Sun Drying" },
+        { "id": "mechanical", "text": "Mechanical Drying" },
+        { "id": "heap", "text": "Heap Drying" },
+        { "id": "field", "text": "Field Drying Only" }
+      ],
+      "correctOptionIds": ["mechanical"]
+    },
+    {
+      "id": "q-015",
+      "type": "single-select",
+      "question": "The main objective of farm drainage is to:",
+      "points": 2,
+      "options": [
+        { "id": "retain", "text": "Retain Excess Water" },
+        { "id": "remove", "text": "Remove Excess Water" },
+        { "id": "fertilize", "text": "Increase Fertility" },
+        { "id": "compact", "text": "Increase Soil Compaction" }
+      ],
+      "correctOptionIds": ["remove"]
+    },
+    {
+      "id": "q-016",
+      "type": "multi-select",
+      "question": "Which of the following are common greenhouse covering materials?",
+      "points": 2,
+      "options": [
+        { "id": "glass", "text": "Glass" },
+        { "id": "poly", "text": "Polyethylene Film" },
+        { "id": "polycarbonate", "text": "Polycarbonate Sheet" },
+        { "id": "brick", "text": "Brick Wall" }
+      ],
+      "correctOptionIds": ["glass", "poly", "polycarbonate"]
+    },
+    {
+      "id": "q-017",
+      "type": "single-select",
+      "question": "Which machine is primarily used for sowing seeds uniformly?",
+      "points": 2,
+      "options": [
+        { "id": "seed-drill", "text": "Seed Drill" },
+        { "id": "cultivator", "text": "Cultivator" },
+        { "id": "rotavator", "text": "Rotavator" },
+        { "id": "plough", "text": "Plough" }
+      ],
+      "correctOptionIds": ["seed-drill"]
+    },
+    {
+      "id": "q-018",
+      "type": "single-select",
+      "question": "Which engineering property is most important when designing grain storage bins?",
+      "points": 2,
+      "options": [
+        { "id": "angle", "text": "Angle of Repose" },
+        { "id": "taste", "text": "Taste" },
+        { "id": "color", "text": "Color" },
+        { "id": "shape", "text": "Leaf Shape" }
+      ],
+      "correctOptionIds": ["angle"]
+    },
+    {
+      "id": "q-019",
+      "type": "multi-select",
+      "question": "Which are examples of precision agriculture technologies?",
+      "points": 2,
+      "options": [
+        { "id": "gps", "text": "GPS Guidance" },
+        { "id": "drone", "text": "Drones" },
+        { "id": "gis", "text": "GIS Mapping" },
+        { "id": "hoe", "text": "Hand Hoe" }
+      ],
+      "correctOptionIds": ["gps", "drone", "gis"]
+    },
+    {
+      "id": "q-020",
+      "type": "single-select",
+      "question": "Which factor primarily determines the power requirement of a tillage implement?",
+      "points": 2,
+      "options": [
+        { "id": "soil", "text": "Soil Resistance" },
+        { "id": "paint", "text": "Implement Color" },
+        { "id": "operator", "text": "Operator Age" },
+        { "id": "fuel", "text": "Fuel Brand" }
+      ],
+      "correctOptionIds": ["soil"],
+      "hint": "Think about what opposes the movement of the implement.",
+      "explanation": "Draft force, mainly determined by soil resistance, working depth, and implement width, governs the power requirement."
+    }
+  ]
+}

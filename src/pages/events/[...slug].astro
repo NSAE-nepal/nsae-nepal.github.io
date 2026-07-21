@@ -1,33 +1,35 @@
 ---
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import ArrowLeft from "@tabler/icons/outline/arrow-left.svg";
+import PortableText from "@/components/PortableText.astro";
+import EventContact from "@/components/pages/events/EventContact.astro";
+import EventHeader from "@/components/pages/events/EventHeader.astro";
+import EventInstructors from "@/components/pages/events/EventInstructors.astro";
+import EventLocation from "@/components/pages/events/EventLocation.astro";
+import EventSchedule from "@/components/pages/events/EventSchedule.astro";
 import { SITE_DESCRIPTION } from "@/consts";
 import PageLayout from "@/layouts/PageLayout.astro";
-import { getCollection, render, type CollectionEntry } from "astro:content";
-import ArrowLeft from "@tabler/icons/outline/arrow-left.svg";
-
-import EventContact from "@/components/pages/events/EventContact.astro";
-import EventLocation from "@/components/pages/events/EventLocation.astro";
-import EventHeader from "@/components/pages/events/EventHeader.astro";
-import EventSchedule from "@/components/pages/events/EventSchedule.astro";
-import EventInstructors from "@/components/pages/events/EventInstructors.astro";
+import { getEventDetails, getEvents } from "@/sanity/lib/queries/events";
 
 export async function getStaticPaths() {
-  const events = await getCollection("events", ({ data }) => {
-    return import.meta.env.MODE !== "production" || data.draft === false;
-  });
+  const events = await getEvents();
 
   return events.map((event) => ({
-    params: { slug: event.id },
-    props: event,
+    params: {
+      slug: event.slug,
+    },
   }));
 }
 
-type Props = CollectionEntry<"events">;
-const event = Astro.props;
-const { data } = event;
-const { Content } = await render(event);
+const { slug } = Astro.params;
+
+const event = await getEventDetails(slug!);
 ---
 
-<PageLayout title={data.title} description={data.subtitle || SITE_DESCRIPTION}>
+<PageLayout
+  title={event.title}
+  description={event.subtitle || SITE_DESCRIPTION}
+>
   <article class="py-8 space-y-10" data-pagefind-body>
     <a
       data-pagefind-ignore
@@ -37,7 +39,7 @@ const { Content } = await render(event);
       <ArrowLeft class="size-4" /> Back to All Events
     </a>
 
-    <EventHeader data={data} />
+    <EventHeader data={event} />
 
     <hr class="my-8 border-muted" />
 
@@ -50,20 +52,20 @@ const { Content } = await render(event);
           <div
             class="prose prose-lg prose-headings:font-sans prose-p:font-sans dark:prose-invert max-w-none"
           >
-            <Content />
+            <PortableText portableText={event.body} />
           </div>
         </section>
 
-        <EventSchedule schedule={data.eventSchedule} />
+        <EventSchedule schedule={event.eventSchedule} />
       </div>
 
       <aside
         data-pagefind-ignore
         class="flex flex-col gap-6 lg:sticky lg:top-24 h-fit"
       >
-        <EventLocation location={data.location} />
-        <EventInstructors instructors={data.instructors} />
-        <EventContact contactPersons={data.contactPersons} />
+        <EventLocation location={event.location} />
+        <EventInstructors instructors={event.instructors} />
+        <EventContact contactPersons={event.contactPersons} />
       </aside>
     </div>
   </article>

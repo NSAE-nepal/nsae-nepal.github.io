@@ -1,29 +1,32 @@
 ---
 import { getImage } from "astro:assets";
-import type { CollectionEntry } from "astro:content";
-import Button from "./Button/Button.astro";
 import ArrowUpRight from "@tabler/icons/outline/arrow-up-right.svg";
+import type { Banner } from "@/sanity/lib/queries/banner";
+import Button from "./Button/Button.astro";
 
 type Props = {
-  banner: CollectionEntry<"banners">;
+  banner: Banner;
 };
 const { banner } = Astro.props;
 
-const optimizedImage = await getImage({ src: banner.data.backgroundImage });
+const optimizedImage = await getImage({
+  src: banner.backgroundImage,
+  inferSize: true,
+});
 
 const contentBoxClasses = [
   "flex",
   "flex-col",
   "max-w-4xl",
   "p-8 md:p-12",
-  banner.data.contentPosition === "left"
+  banner.contentPosition === "left"
     ? "mr-auto items-start text-left"
     : "ml-auto items-end text-right",
 ];
 const baseOverlayColor = "15, 23, 42";
 
 const gradientDirection =
-  banner.data.contentPosition === "left" ? "to right" : "to left";
+  banner.contentPosition === "left" ? "to right" : "to left";
 
 const directionalScrim = `linear-gradient(
   ${gradientDirection},
@@ -49,17 +52,17 @@ const subtleVignette = `radial-gradient(
   >
     <div class:list={contentBoxClasses}>
       {
-        banner.data.variant === "countdown" && banner.data.countdownTarget && (
+        banner.countdownTarget && (
           <div
             class="countdown flex items-start gap-x-4 md:gap-x-6 font-mono text-3xl md:text-5xl font-medium tracking-tighter my-4 border-b border-white/20 pb-4"
-            data-target-date={banner.data.countdownTarget}
+            data-target-date={banner.countdownTarget}
           />
         )
       }
       {
-        banner.data.subtitle && (
+        banner.subtitle && (
           <p class="font-mono text-xs uppercase tracking-widest text-white/80 mb-3">
-            {banner.data.subtitle}
+            {banner.subtitle}
           </p>
         )
       }
@@ -67,20 +70,20 @@ const subtleVignette = `radial-gradient(
       <h2
         class="font-sans text-4xl md:text-6xl lg:text-7xl font-medium uppercase tracking-tighter leading-[0.9] my-2"
       >
-        {banner.data.title}
+        {banner.title}
       </h2>
       {
-        banner.data.description && (
+        banner.description && (
           <p class="font-sans text-lg text-white/90 mb-8 max-w-prose leading-relaxed">
-            {banner.data.description}
+            {banner.description}
           </p>
         )
       }
       <Button
-        href={banner.data.buttonLink}
-        class="rounded-full font-sans font-medium h-12 text-base shadow-sm hover:shadow-md transition-all"
+        href={banner.buttonLink}
+        class="rounded-full font-sans font-medium h-12 text-base shadow-sm hover:shadow-md transition-all px-5!"
       >
-        {banner.data.buttonText}
+        {banner.buttonText}
         <ArrowUpRight class={"ml-2 size-5"} />
       </Button>
     </div>

@@ -1,11 +1,17 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import Badge from "../Badge.astro";
-import MapPin from "@tabler/icons/outline/map-pin.svg";
 import ArrowNarrowRight from "@tabler/icons/outline/arrow-narrow-right.svg";
 import CalendarWeek from "@tabler/icons/outline/calendar-week.svg";
-type Props = CollectionEntry<"careers">;
-const { data, id } = Astro.props;
+import MapPin from "@tabler/icons/outline/map-pin.svg";
+import type { Vacancy } from "@/sanity/lib/queries/careers";
+import Badge from "../Badge.astro";
+
+type Props = {
+  data: Vacancy;
+  class?: string;
+};
+
+const { data, class: className } = Astro.props;
 ---
 
 <article class="split-card flex flex-col gap-2">
@@ -37,7 +43,7 @@ const { data, id } = Astro.props;
           <CalendarWeek class={"size-4 shrink-0 text-primary/70"} />
           <span>
             Closes:{" "}
-            {data.closingDate.toLocaleDateString(undefined, {
+            {new Date(data.closingDate).toLocaleDateString(undefined, {
               year: "numeric",
               month: "short",
               day: "numeric",
@@ -58,7 +64,7 @@ const { data, id } = Astro.props;
     </span>
     <a
       class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest hover:text-primary transition-colors leading-none"
-      href={`/careers/${id}/`}
+      href={`/careers/${data.slug}/`}
     >
       <span class="translate-y-[1px]">Learn more</span>
       <ArrowNarrowRight class="w-4 h-4 shrink-0" />

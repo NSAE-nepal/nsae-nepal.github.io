@@ -1,47 +1,45 @@
 ---
-import { getCollection } from "astro:content";
-import BlogCard from "@/components/astro/Card/BlogCard.astro";
-import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
-import BlogFeaturedCard from "@/components/astro/Card/BlogFeaturedCard.astro";
-import PageLayout from "@/layouts/PageLayout.astro";
 import { Image } from "astro:assets";
-import Badge from "@/components/astro/Badge.astro";
-import type { GetStaticPaths, Page } from "astro";
-import { PAGE_SIZE } from "@/consts";
-import Pagination from "@/components/astro/Pagination.astro";
-import type { CollectionEntry } from "astro:content";
 import MoodEmpty from "@tabler/icons/outline/mood-empty.svg";
+import type { GetStaticPaths, Page } from "astro";
+import Badge from "@/components/astro/Badge.astro";
+import BlogCard from "@/components/astro/Card/BlogCard.astro";
+import BlogFeaturedCard from "@/components/astro/Card/BlogFeaturedCard.astro";
+import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
+import Pagination from "@/components/astro/Pagination.astro";
+import { PAGE_SIZE } from "@/consts";
+import PageLayout from "@/layouts/PageLayout.astro";
+import type { Post } from "@/sanity/lib/queries/posts";
+import { getPosts } from "@/sanity/lib/queries/posts";
 
 export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
-  const allPublishedPosts = (
-    await getCollection("posts", ({ data }) => {
-      return (
-        (import.meta.env.MODE !== "production" || data.draft === false) &&
-        data.type === "blog"
-      );
-    })
-  ).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  const allPublishedPosts = (await getPosts("blog")) || [];
 
-  const featuredPosts = allPublishedPosts.filter(({ data }) => data.featured);
-  const nonFeaturedPosts = allPublishedPosts.filter(
-    ({ data }) => !data.featured
-  );
+  const featuredPosts = allPublishedPosts.filter((post) => post.featured);
+
+  const nonFeaturedPosts = allPublishedPosts.filter((post) => !post.featured);
 
   return paginate(nonFeaturedPosts, {
     pageSize: PAGE_SIZE,
     props: { featuredPosts },
   });
 };
+
 interface Props {
-  page: Page<CollectionEntry<"posts">>;
-  featuredPosts: CollectionEntry<"posts">[];
+  page: Page;
+  featuredPosts: Post[] & { id: string };
 }
 const { page, featuredPosts } = Astro.props;
 const pageTitle = "Our latest blog posts";
 const pageDescription =
   "Read the latest articles and insights from our community.";
 ---
-<PageLayout title={pageTitle} description={pageDescription} dataPagefindIgnore="all">
+
+<PageLayout
+  title={pageTitle}
+  description={pageDescription}
+  dataPagefindIgnore="all"
+>
   <header class="flex flex-col items-center justify-center py-16 md:py-24">
     <div class="anim-header-badge opacity-0 scale-50">
       <Badge
@@ -67,8 +65,11 @@ const pageDescription =
         </h2>
         <div class="grid gap-8 lg:gap-10 xl:gap-18">
           {featuredPosts.map((post) => (
-            <ClickableCard class="anim-featured-card opacity-0 translate-y-4" href={`/${post.id}/`}>
-              <BlogFeaturedCard {...post} />
+            <ClickableCard
+              class="anim-featured-card opacity-0 translate-y-4"
+              href={`/blog/${post.slug}/`}
+            >
+              <BlogFeaturedCard data={post} />
             </ClickableCard>
           ))}
         </div>
@@ -89,17 +90,17 @@ const pageDescription =
             {page.data.map((post) => (
               <ClickableCard
                 class="anim-regular-card group relative col-span-2 lg:col-span-1 border-b border-border last:border-b-0 lg:[&:nth-last-child(2)]:border-b-0 hover:bg-secondary/20 transition-colors opacity-0 translate-y-4"
-                href={`/${post.id}/`}
+                href={`/blog/${post.slug}/`}
               >
-                <BlogCard {...post} />
-                {post.data.heroImage && (
+                <BlogCard data={post} />
+                {post.heroImage && (
                   <Image
                     inferSize
                     class={
                       "absolute top-0 right-0 h-full w-1/4 object-cover z-0 hidden group-hover:block opacity-40 grayscale group-hover:grayscale-0 transition-all duration-500"
                     }
-                    src={post.data.heroImage}
-                    alt={post.data.heroImageAlt ?? ""}
+                    src={post.heroImage}
+                    alt={post.heroImageAlt ?? ""}
                   />
                 )}
               </ClickableCard>
@@ -159,63 +160,89 @@ const pageDescription =
           stagger: 0.04,
           ease: "power4.out",
         },
-        "<"
+        "<",
       );
 
     if (document.querySelector(".anim-featured-title")) {
       mainTl
-        .to(".anim-featured-title", {
-          y: 0,
-          opacity: 1,
-          duration: 0.5,
-        }, "-=0.6")
-        .to(".anim-featured-card", {
-          y: 0,
-          opacity: 1,
-          duration: 0.6,
-          stagger: 0.1,
-        }, "-=0.3")
+        .to(
+          ".anim-featured-title",
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.5,
+          },
+          "-=0.6",
+        )
+        .to(
+          ".anim-featured-card",
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.6,
+            stagger: 0.1,
+          },
+          "-=0.3",
+        )
         .add(() => {
           initCardSplitTextAnimation({ cardSelector: ".anim-featured-card" });
         }, "<");
     }
 
-    const regularPostOffset = document.querySelector(".anim-featured-title") ? "-=0.3" : "-=0.6";
+    const regularPostOffset = document.querySelector(".anim-featured-title")
+      ? "-=0.3"
+      : "-=0.6";
 
-    mainTl.to(".anim-all-title", {
-      y: 0,
-      opacity: 1,
-      duration: 0.5,
-    }, regularPostOffset);
+    mainTl.to(
+      ".anim-all-title",
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.5,
+      },
+      regularPostOffset,
+    );
 
     if (document.querySelector(".anim-regular-card")) {
       mainTl
-        .to(".anim-regular-card", {
-          y: 0,
-          opacity: 1,
-          duration: 0.5,
-          stagger: 0.08,
-          ease: "power2.out",
-        }, "-=0.3")
+        .to(
+          ".anim-regular-card",
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.5,
+            stagger: 0.08,
+            ease: "power2.out",
+          },
+          "-=0.3",
+        )
         .add(() => {
           initCardSplitTextAnimation({ cardSelector: ".anim-regular-card" });
         }, "<");
     }
 
     if (document.querySelector(".anim-pagination")) {
-      mainTl.to(".anim-pagination", {
-        opacity: 1,
-        duration: 0.5,
-      }, "-=0.2");
+      mainTl.to(
+        ".anim-pagination",
+        {
+          opacity: 1,
+          duration: 0.5,
+        },
+        "-=0.2",
+      );
     }
 
     if (document.querySelector(".anim-empty-state")) {
-      mainTl.to(".anim-empty-state", {
-        scale: 1,
-        opacity: 1,
-        duration: 0.6,
-        ease: "back.out(1.2)",
-      }, "-=0.3");
+      mainTl.to(
+        ".anim-empty-state",
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 0.6,
+          ease: "back.out(1.2)",
+        },
+        "-=0.3",
+      );
     }
   }
 </script>

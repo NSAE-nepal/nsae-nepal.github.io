@@ -1,19 +1,34 @@
 // @ts-check
 
 import mdx from "@astrojs/mdx";
+import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
+import sanity from "@sanity/astro";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 
-import react from "@astrojs/react";
-
 // https://astro.build/config
 export default defineConfig({
-	site: "https://nsae.org.np",
+	site: "https://www.nsae.org.np",
 	image: {
-		domains: ["res.cloudinary.com", "cdn.prod.website-files.com"],
+		domains: [
+			"res.cloudinary.com",
+			"cdn.prod.website-files.com",
+			"cdn.sanity.io",
+		],
 	},
-	integrations: [mdx(), sitemap(), react()],
+	integrations: [
+		mdx(),
+		sitemap(),
+		react(),
+		sanity({
+			projectId: "zv3un63s",
+			dataset: "production",
+			useCdn: false,
+			apiVersion: "2026-06-24",
+			studioBasePath: "/studio",
+		}),
+	],
 	vite: {
 		plugins: [tailwindcss()],
 		build: {

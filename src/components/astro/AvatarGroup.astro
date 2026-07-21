@@ -1,14 +1,12 @@
 ---
-import type { CollectionEntry } from "astro:content";
-import Avatar from "./Avatar/Avatar.astro";
-import AvatarImage from "./Avatar/AvatarImage.astro";
-import AvatarFallback from "./Avatar/AvatarFallback.astro";
 import { cn } from "@/lib/utils";
-
-type Authors = CollectionEntry<"authors">;
+import type { Authors } from "@/sanity/lib/queries/posts";
+import Avatar from "./Avatar/Avatar.astro";
+import AvatarFallback from "./Avatar/AvatarFallback.astro";
+import AvatarImage from "./Avatar/AvatarImage.astro";
 
 type Props = {
-  data: CollectionEntry<"authors">[];
+  data: Authors[];
   visibleAvatarCount?: number;
   showNames?: boolean;
   class?: string;
@@ -32,7 +30,7 @@ const getInitials = (name: string = "") => {
 };
 const formatUserNames = (users: Authors[], nameLimit: number) => {
   const userNames = users
-    .map((user) => (typeof user === "object" ? user.data.name : null))
+    .map((user) => (typeof user === "object" ? user.name : null))
     .filter(Boolean) as string[];
 
   const count = userNames.length;
@@ -60,7 +58,7 @@ const totalCount = data.length;
     {
       data.slice(0, visibleAvatarCount).map((user, index) => {
         if (typeof user !== "object") return null;
-        const profileImage = user.data.profileImage;
+        const profileImage = user.profileImage;
         const isStringUrl = typeof profileImage === "string";
 
         const isImageObject =
@@ -68,17 +66,14 @@ const totalCount = data.length;
         return (
           <Avatar size={"sm"}>
             {isStringUrl && (
-              <AvatarImage src={profileImage} alt={user.data.name || "User"} />
+              <AvatarImage src={profileImage} alt={user.name || "User"} />
             )}
 
             {isImageObject && (
-              <AvatarImage
-                image={profileImage}
-                alt={user.data.name || "User"}
-              />
+              <AvatarImage image={profileImage} alt={user.name || "User"} />
             )}
             <AvatarFallback class="text-xs">
-              {getInitials(user.data.name ?? "User")}
+              {getInitials(user.name ?? "User")}
             </AvatarFallback>
           </Avatar>
         );

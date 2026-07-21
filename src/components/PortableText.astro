@@ -1,0 +1,15 @@
+---
+import { PortableText as PortableTextInternal } from "astro-portabletext";
+import Quiz from "./mdx/Quiz.astro";
+import PortableTextImage from "./PortableTextImage.astro";
+
+const { portableText } = Astro.props;
+const components = {
+  type: {
+    image: PortableTextImage,
+    quizReference: Quiz,
+  },
+};
+---
+
+<PortableTextInternal value={portableText} components={components} />

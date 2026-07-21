@@ -1,16 +1,19 @@
 ---
-import Badge from "@/components/astro/Badge.astro";
-import Button from "@/components/astro/Button/Button.astro";
-import FormattedDate from "@/components/FormattedDate.astro";
 import { Image } from "astro:assets";
 import ArrowNarrowRight from "@tabler/icons/outline/arrow-narrow-right.svg";
+import ArrowUpRight from "@tabler/icons/outline/arrow-up-right.svg";
 import CalendarEvent from "@tabler/icons/outline/calendar-event.svg";
 import MapPin from "@tabler/icons/outline/map-pin.svg";
 import Video from "@tabler/icons/outline/video.svg";
-import ArrowUpRight from "@tabler/icons/outline/arrow-up-right.svg";
-import type { CollectionEntry } from "astro:content";
+import Badge from "@/components/astro/Badge.astro";
+import Button from "@/components/astro/Button/Button.astro";
+import FormattedDate from "@/components/FormattedDate.astro";
+import type { Event } from "@/sanity/lib/queries/events";
 
-type Props = CollectionEntry<"events">;
+type Props = {
+  data: Event;
+  class?: string;
+};
 
 const { data } = Astro.props;
 const formatEventType = (type: string) => {
@@ -35,7 +38,7 @@ const isOnline =
         {formatEventType(data.eventType)}
       </Badge>
       <span class="md:hidden font-mono text-xs text-muted-foreground uppercase">
-        <FormattedDate date={data.eventStart} />
+        <FormattedDate date={new Date(data.eventStart)} />
       </span>
     </div>
 
@@ -76,12 +79,12 @@ const isOnline =
       <div>
         <p class="font-sans font-medium text-sm">Date</p>
         <p class="font-mono text-sm text-foreground">
-          <FormattedDate date={data.eventStart} />
+          <FormattedDate date={new Date(data.eventStart)} />
           {
-            data.eventEnd > data.eventStart && (
+            new Date(data.eventEnd) > new Date(data.eventStart) && (
               <>
                 {" "}
-                - <FormattedDate date={data.eventEnd} />
+                - <FormattedDate date={new Date(data.eventEnd)} />
               </>
             )
           }
