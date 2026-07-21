@@ -48,7 +48,7 @@ export const quizType = defineType({
 				}),
 				defineField({
 					name: "passingScore",
-					title: "Passing Score (%)",
+					title: "Passing Score",
 					type: "number",
 					validation: (Rule) => Rule.required().min(0).max(100),
 				}),
@@ -186,7 +186,50 @@ export const quizType = defineType({
 							of: [{ type: "string" }],
 							description:
 								"List of Option IDs that correspond to the correct answer(s)",
-							validation: (Rule) => Rule.required().min(1),
+							validation: (Rule) =>
+								Rule.required()
+									.min(1)
+									.custom((correctOptionIds, context) => {
+										if (!correctOptionIds || !Array.isArray(correctOptionIds)) {
+											return true;
+										}
+
+										// context.parent gives access to the parent "questionItem" object
+										const parent = context.parent as
+											| {
+													type?: string;
+													options?: Array<{ id?: string }>;
+											  }
+											| undefined;
+
+										const questionType = parent?.type;
+										const options = parent?.options || [];
+
+										// 1. Enforce single-select constraint
+										if (
+											questionType === "single-select" &&
+											correctOptionIds.length > 1
+										) {
+											return "Single-select questions can only have exactly 1 correct option.";
+										}
+
+										// 2. Ensure all correctOptionIds exist in the options array
+										const validOptionIds = new Set(
+											options
+												.map((opt) => opt?.id)
+												.filter((id): id is string => Boolean(id)),
+										);
+
+										const invalidIds = correctOptionIds.filter(
+											(id) => !validOptionIds.has(id),
+										);
+
+										if (invalidIds.length > 0) {
+											return `The following ID(s) do not match any option: ${invalidIds.join(", ")}`;
+										}
+
+										return true;
+									}),
 						}),
 						defineField({
 							name: "hint",
