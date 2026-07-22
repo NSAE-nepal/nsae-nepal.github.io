@@ -1,7 +1,5 @@
 import { defineField, defineType } from "sanity";
 
-// --- REUSABLE SUB-SCHEMAS ---
-
 export const scheduleItemType = defineType({
 	name: "scheduleItem",
 	title: "Schedule Item",
@@ -88,6 +86,20 @@ export const locationDetailsType = defineType({
 	name: "locationDetails",
 	title: "Location Details",
 	type: "object",
+	fieldsets: [
+		{
+			name: "venueAndMap",
+			options: { columns: 2 },
+		},
+		{
+			name: "cityAndState",
+			options: { columns: 2 },
+		},
+		{
+			name: "meetingCredentials",
+			options: { columns: 2 },
+		},
+	],
 	fields: [
 		defineField({
 			name: "type",
@@ -103,10 +115,13 @@ export const locationDetailsType = defineType({
 			},
 			initialValue: "in_person",
 		}),
+
 		defineField({
 			name: "venueName",
 			title: "Venue Name",
 			type: "string",
+			fieldset: "venueAndMap",
+			hidden: ({ parent }) => parent?.type === "online",
 			validation: (Rule) =>
 				Rule.custom((venueName, context) => {
 					const doc = context.parent as { type?: string };
@@ -120,30 +135,39 @@ export const locationDetailsType = defineType({
 				}),
 		}),
 		defineField({
+			name: "mapsLink",
+			title: "Google Maps Link",
+			type: "url",
+			fieldset: "venueAndMap",
+			hidden: ({ parent }) => parent?.type === "online",
+			validation: (Rule) => Rule.uri({ scheme: ["http", "https"] }),
+		}),
+		defineField({
 			name: "address",
-			title: "Address",
+			title: "Street Address",
 			type: "string",
+			hidden: ({ parent }) => parent?.type === "online",
 		}),
 		defineField({
 			name: "city",
 			title: "City",
 			type: "string",
+			fieldset: "cityAndState",
+			hidden: ({ parent }) => parent?.type === "online",
 		}),
 		defineField({
 			name: "state",
 			title: "State / Province",
 			type: "string",
+			fieldset: "cityAndState",
+			hidden: ({ parent }) => parent?.type === "online",
 		}),
-		defineField({
-			name: "mapsLink",
-			title: "Google Maps Link",
-			type: "url",
-			validation: (Rule) => Rule.uri({ scheme: ["http", "https"] }),
-		}),
+
 		defineField({
 			name: "meetingUrl",
 			title: "Meeting URL",
 			type: "url",
+			hidden: ({ parent }) => parent?.type === "in_person",
 			validation: (Rule) =>
 				Rule.uri({ scheme: ["http", "https"] }).custom(
 					(meetingUrl, context) => {
@@ -162,11 +186,15 @@ export const locationDetailsType = defineType({
 			name: "meetingId",
 			title: "Meeting ID",
 			type: "string",
+			fieldset: "meetingCredentials",
+			hidden: ({ parent }) => parent?.type === "in_person",
 		}),
 		defineField({
 			name: "meetingPassword",
 			title: "Meeting Password",
 			type: "string",
+			fieldset: "meetingCredentials",
+			hidden: ({ parent }) => parent?.type === "in_person",
 		}),
 	],
 });
@@ -220,9 +248,6 @@ export const contactPersonType = defineType({
 	},
 });
 
-// --- INSTRUCTOR DISC-UNION MAPPING ---
-// In Sanity, discriminated unions in arrays are modeled by creating distinct object types in the array's `of` property.
-
 const EVENT_ROLES = [
 	{ title: "Speaker", value: "speaker" },
 	{ title: "Panelist", value: "panelist" },
@@ -237,18 +262,18 @@ export const instructorNsaeMemberType = defineType({
 	type: "object",
 	fields: [
 		defineField({
-			name: "nsaeMember",
-			title: "NSAE Member",
-			type: "reference",
-			to: [{ type: "author" }], // Matches reference("authors")
-			validation: (Rule) => Rule.required(),
-		}),
-		defineField({
 			name: "eventRole",
 			title: "Event Role",
 			type: "string",
 			options: { list: EVENT_ROLES },
 			initialValue: "instructor",
+		}),
+		defineField({
+			name: "nsaeMember",
+			title: "NSAE Member",
+			type: "reference",
+			to: [{ type: "author" }],
+			validation: (Rule) => Rule.required(),
 		}),
 	],
 	preview: {
@@ -273,6 +298,13 @@ export const instructorExternalType = defineType({
 	type: "object",
 	fields: [
 		defineField({
+			name: "eventRole",
+			title: "Event Role",
+			type: "string",
+			options: { list: EVENT_ROLES },
+			initialValue: "instructor",
+		}),
+		defineField({
 			name: "name",
 			title: "Name",
 			type: "string",
@@ -289,59 +321,10 @@ export const instructorExternalType = defineType({
 			type: "string",
 		}),
 		defineField({
-			name: "bio",
-			title: "Bio",
-			type: "text",
-			rows: 3,
-		}),
-		defineField({
 			name: "profileImage",
 			title: "Profile Image",
 			type: "image",
 			options: { hotspot: true },
-		}),
-		defineField({
-			name: "email",
-			title: "Email",
-			type: "string",
-		}),
-		defineField({
-			name: "socials",
-			title: "Social Links",
-			type: "object",
-			fields: [
-				defineField({
-					name: "linkedin",
-					title: "LinkedIn",
-					type: "url",
-					validation: (Rule) => Rule.uri({ scheme: ["http", "https"] }),
-				}),
-				defineField({
-					name: "x",
-					title: "X (Twitter)",
-					type: "url",
-					validation: (Rule) => Rule.uri({ scheme: ["http", "https"] }),
-				}),
-				defineField({
-					name: "facebook",
-					title: "Facebook",
-					type: "url",
-					validation: (Rule) => Rule.uri({ scheme: ["http", "https"] }),
-				}),
-				defineField({
-					name: "website",
-					title: "Website",
-					type: "url",
-					validation: (Rule) => Rule.uri({ scheme: ["http", "https"] }),
-				}),
-			],
-		}),
-		defineField({
-			name: "eventRole",
-			title: "Event Role",
-			type: "string",
-			options: { list: EVENT_ROLES },
-			initialValue: "instructor",
 		}),
 	],
 	preview: {
@@ -385,12 +368,6 @@ export const instructorOrganizationType = defineType({
 			options: { hotspot: true },
 		}),
 		defineField({
-			name: "description",
-			title: "Description",
-			type: "text",
-			rows: 3,
-		}),
-		defineField({
 			name: "representatives",
 			title: "Representatives",
 			type: "array",
@@ -399,6 +376,13 @@ export const instructorOrganizationType = defineType({
 					type: "object",
 					name: "representative",
 					fields: [
+						defineField({
+							name: "eventRole",
+							title: "Event Role",
+							type: "string",
+							options: { list: EVENT_ROLES },
+							initialValue: "instructor",
+						}),
 						defineField({
 							name: "name",
 							title: "Name",
@@ -411,59 +395,10 @@ export const instructorOrganizationType = defineType({
 							type: "string",
 						}),
 						defineField({
-							name: "bio",
-							title: "Bio",
-							type: "text",
-							rows: 3,
-						}),
-						defineField({
-							name: "email",
-							title: "Email",
-							type: "string",
-						}),
-						defineField({
 							name: "profileImage",
 							title: "Profile Image",
 							type: "image",
 							options: { hotspot: true },
-						}),
-						defineField({
-							name: "socials",
-							title: "Social Links",
-							type: "object",
-							fields: [
-								defineField({
-									name: "linkedin",
-									title: "LinkedIn",
-									type: "url",
-									validation: (Rule) => Rule.uri({ scheme: ["http", "https"] }),
-								}),
-								defineField({
-									name: "x",
-									title: "X (Twitter)",
-									type: "url",
-									validation: (Rule) => Rule.uri({ scheme: ["http", "https"] }),
-								}),
-								defineField({
-									name: "facebook",
-									title: "Facebook",
-									type: "url",
-									validation: (Rule) => Rule.uri({ scheme: ["http", "https"] }),
-								}),
-								defineField({
-									name: "website",
-									title: "Website",
-									type: "url",
-									validation: (Rule) => Rule.uri({ scheme: ["http", "https"] }),
-								}),
-							],
-						}),
-						defineField({
-							name: "eventRole",
-							title: "Event Role",
-							type: "string",
-							options: { list: EVENT_ROLES },
-							initialValue: "instructor",
 						}),
 					],
 				},
@@ -485,23 +420,37 @@ export const instructorOrganizationType = defineType({
 	},
 });
 
-// --- MAIN EVENTS DOCUMENT SCHEMA ---
-
 export const eventType = defineType({
 	name: "events",
 	title: "Events",
 	type: "document",
+	groups: [
+		{ name: "general", title: "General Info", default: true },
+		{ name: "datetime", title: "Dates & Location" },
+		{ name: "program", title: "Schedule & Speakers" },
+		{ name: "registration", title: "Registration & Contact" },
+		{ name: "content", title: "Description" },
+	],
+	fieldsets: [
+		{
+			name: "eventTimes",
+			title: "Event Timing",
+			options: { columns: 2 },
+		},
+	],
 	fields: [
 		defineField({
 			name: "title",
 			title: "Title",
 			type: "string",
+			group: "general",
 			validation: (Rule) => Rule.required().max(150),
 		}),
 		defineField({
 			name: "slug",
 			title: "Slug",
 			type: "slug",
+			group: "general",
 			options: {
 				source: "title",
 				maxLength: 96,
@@ -513,11 +462,13 @@ export const eventType = defineType({
 			name: "subtitle",
 			title: "Subtitle",
 			type: "string",
+			group: "general",
 		}),
 		defineField({
 			name: "eventType",
 			title: "Event Type",
 			type: "string",
+			group: "general",
 			options: {
 				list: [
 					{ title: "Training", value: "training" },
@@ -536,6 +487,7 @@ export const eventType = defineType({
 			name: "coverImage",
 			title: "Cover Image",
 			type: "image",
+			group: "general",
 			options: { hotspot: true },
 			validation: (Rule) => Rule.required(),
 			fields: [
@@ -547,15 +499,26 @@ export const eventType = defineType({
 			],
 		}),
 		defineField({
+			name: "publishedAt",
+			title: "Published at Date",
+			type: "datetime",
+			group: "general",
+		}),
+
+		defineField({
 			name: "eventStart",
 			title: "Event Start Date & Time",
 			type: "datetime",
+			group: "datetime",
+			fieldset: "eventTimes",
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: "eventEnd",
 			title: "Event End Date & Time",
 			type: "datetime",
+			fieldset: "eventTimes",
+			group: "datetime",
 			validation: (Rule) =>
 				Rule.required().custom((eventEnd, context) => {
 					const doc = context.document as { eventStart?: string };
@@ -570,18 +533,22 @@ export const eventType = defineType({
 		defineField({
 			name: "location",
 			title: "Location Details",
-			type: "locationDetails", // References reusable schema above
+			type: "locationDetails",
+			group: "datetime",
 		}),
+
 		defineField({
 			name: "eventSchedule",
 			title: "Event Schedule",
 			type: "array",
-			of: [{ type: "scheduleItem" }], // References reusable schema above
+			group: "program",
+			of: [{ type: "scheduleItem" }],
 		}),
 		defineField({
 			name: "instructors",
 			title: "Instructors & Guests",
 			type: "array",
+			group: "program",
 			description:
 				"Add NSAE Members, External People, or Partner Organizations",
 			of: [
@@ -590,22 +557,26 @@ export const eventType = defineType({
 				{ type: "instructorOrganization" },
 			],
 		}),
+
 		defineField({
 			name: "contactPersons",
 			title: "Contact Persons",
 			type: "array",
+			group: "registration",
 			of: [{ type: "contactPerson" }],
 		}),
 		defineField({
 			name: "registrationLink",
 			title: "Registration URL",
 			type: "url",
+			group: "registration",
 			validation: (Rule) => Rule.uri({ scheme: ["http", "https"] }),
 		}),
 		defineField({
 			name: "registrationDeadline",
 			title: "Registration Deadline",
 			type: "datetime",
+			group: "registration",
 			validation: (Rule) =>
 				Rule.custom((deadline, context) => {
 					const doc = context.document as { eventStart?: string };
@@ -617,16 +588,12 @@ export const eventType = defineType({
 					return true;
 				}),
 		}),
-		defineField({
-			name: "publishedAt",
-			title: "Published at Date",
-			type: "datetime",
-		}),
 
 		defineField({
 			name: "body",
 			title: "Event Description & Content",
 			type: "array",
+			group: "content",
 			of: [{ type: "block" }, { type: "image", options: { hotspot: true } }],
 		}),
 	],

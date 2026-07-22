@@ -61,16 +61,8 @@ export type InstructorExternal = {
 	_key: string;
 	name: string;
 	position?: string;
-	email?: string;
 	company?: string;
-	bio?: string;
 	profileImage?: string;
-	socials?: {
-		linkedin?: string;
-		x?: string;
-		facebook?: string;
-		website?: string;
-	};
 	eventRole?: EventRole;
 };
 
@@ -78,15 +70,7 @@ export type Representative = {
 	_key: string;
 	name: string;
 	position?: string;
-	email?: string;
-	bio?: string;
 	profileImage?: string;
-	socials?: {
-		linkedin?: string;
-		x?: string;
-		facebook?: string;
-		website?: string;
-	};
 	eventRole?: EventRole;
 };
 
@@ -204,10 +188,7 @@ export async function getEventDetails(slug: string): Promise<EventDetails> {
       name,
       position,
       company,
-      bio,
-	  email,
       "profileImage": profileImage.asset->url,
-      socials,
       eventRole
     },
     _type == "instructorOrganization" => {
@@ -219,10 +200,7 @@ export async function getEventDetails(slug: string): Promise<EventDetails> {
         _key,
         name,
         position,
-        bio,
-        email,
         "profileImage": profileImage.asset->url,
-        socials,
         eventRole
       }
     }

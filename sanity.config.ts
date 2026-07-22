@@ -37,8 +37,36 @@ export default defineConfig({
 
 						S.divider(),
 
+						S.listItem()
+							.title("Posts")
+							.child(
+								S.list()
+									.title("Posts")
+									.items([
+										S.listItem()
+											.title("Blogs")
+											.child(
+												S.documentList()
+													.title("Blog Posts")
+													.filter('_type == "posts" && type == "blog"'),
+											),
+										S.listItem()
+											.title("Notices")
+											.child(
+												S.documentList()
+													.title("Notices")
+													.filter('_type == "posts" && type == "notice"'),
+											),
+										S.listItem()
+											.title("All Posts")
+											.child(S.documentTypeList("posts").title("All Posts")),
+									]),
+							),
+
 						...S.documentTypeListItems().filter(
-							(listItem) => !SINGLETON_TYPES.includes(listItem.getId() || ""),
+							(listItem) =>
+								!SINGLETON_TYPES.includes(listItem.getId() || "") &&
+								listItem.getId() !== "posts",
 						),
 					]),
 		}),
