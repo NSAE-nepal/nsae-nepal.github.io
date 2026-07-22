@@ -36,7 +36,15 @@ const {
   closingDate,
 } = vacancy;
 
-const isClosed = status === "closed";
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+const vacancyClosingDate = closingDate ? new Date(closingDate) : null;
+vacancyClosingDate?.setHours(0, 0, 0, 0);
+
+const hasExpired = vacancyClosingDate ? vacancyClosingDate < today : false;
+
+const isClosed = status === "closed" || hasExpired;
 ---
 
 <PageLayout title={title} description={description ?? title}>
@@ -50,9 +58,8 @@ const isClosed = status === "closed";
     </a>
     <header class="space-y-6 text-center border-b pb-8">
       <div class="flex flex-wrap justify-center gap-2">
-        <Badge variant={isClosed ? "destructive" : "secondary"}>
-          {isClosed ? "Position Closed" : type}
-        </Badge>
+        {isClosed && <Badge variant={"destructive"}>Position Closed</Badge>}
+        <Badge variant={"secondary"}> {type} </Badge>
         {
           company?.name && (
             <Badge variant="outline" data-pagefind-meta="sub_title">

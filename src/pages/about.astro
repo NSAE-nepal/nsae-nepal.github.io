@@ -59,8 +59,7 @@ const focusAreas = [
   },
 ];
 
-const AboutHeroImg =
-  "https://plus.unsplash.com/premium_photo-1661962692059-55d5a4319814?q=80&w=1074&auto=format&fit=crop";
+const AboutHeroImg = "/about-hero.avif";
 
 function formatPosition(position: string) {
   return position
@@ -132,11 +131,11 @@ function formatPosition(position: string) {
   </section>
 
   <div class="space-y-12 pt-24 md:pt-32 mb-0">
-    <section class="mission-section">
+    <section class="mission-section border-b border-border/50 pb-12">
       <div
-        class="flex flex-col lg:flex-row justify-between items-start gap-12 lg:gap-24 border-b border-border/50 pb-12"
+        class="flex flex-col lg:flex-row justify-between items-start gap-6 lg:gap-24"
       >
-        <div class="flex flex-col gap-8 lg:w-1/2 lg:sticky lg:top-32">
+        <div class="flex flex-col gap-4 lg:w-1/2 lg:sticky lg:top-32">
           <div class="anim-mission-header flex items-center gap-4 opacity-0">
             <Badge
               class="font-mono text-xs uppercase tracking-widest"
@@ -206,9 +205,9 @@ function formatPosition(position: string) {
       </div>
     </section>
 
-    <section class="focus-section pt-24 md:pt-32 mb-0">
+    <section class="focus-section border-b border-border/50 pb-12">
       <div
-        class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6"
+        class="flex flex-col md:flex-row justify-between items-start gap-12 lg:gap-24 pb-12"
       >
         <div class="space-y-4">
           <div class="anim-focus-header flex items-center gap-4 mb-4 opacity-0">
@@ -251,9 +250,9 @@ function formatPosition(position: string) {
       </div>
     </section>
 
-    <section class="team-section pt-24 md:pt-32 mb-0">
+    <section class="team-section mb-0">
       <div
-        class="flex flex-col md:flex-row justify-between items-end pb-12 gap-6"
+        class="flex flex-col md:flex-row justify-between items-start pb-12 gap-6"
       >
         <div class="space-y-4">
           <div class="anim-team-header flex items-center gap-4 mb-4 opacity-0">
@@ -360,7 +359,7 @@ function formatPosition(position: string) {
             variant="outline"
             class="rounded-full px-8 py-6 font-sans font-medium text-lg"
           >
-            Join the Collective
+            Join us
           </Button>
         </div>
 

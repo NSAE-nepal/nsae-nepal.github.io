@@ -1,6 +1,4 @@
 ---
-import type { CollectionEntry } from "astro:content";
-import { getCollection } from "astro:content";
 import type { GetStaticPaths, Page } from "astro";
 import Badge from "@/components/astro/Badge.astro";
 import CareersCard from "@/components/astro/Card/CareersCard.astro";
@@ -33,9 +31,7 @@ const pageDescription = "Your Next Chapter Starts Here";
   description={pageDescription}
   dataPagefindIgnore="all"
 >
-  <section
-    class="min-h-40 flex flex-col items-center justify-center gap-4 py-16 md:py-24 px-6"
-  >
+  <header class="flex flex-col items-center justify-center py-16 md:py-24">
     <div class="anim-header-badge opacity-0 scale-50">
       <Badge
         variant={"secondary"}
@@ -46,129 +42,138 @@ const pageDescription = "Your Next Chapter Starts Here";
       </Badge>
     </div>
     <h1
-      class="anim-header-title invisible font-sans text-5xl md:text-7xl font-medium text-center tracking-tighter leading-tight max-w-4xl"
+      class="anim-header-title invisible font-sans text-5xl md:text-7xl font-medium tracking-tighter pt-4 text-center max-w-4xl leading-tight"
     >
       Your Next Chapter Starts Here
     </h1>
-  </section>
-
-  {
-    page.data.length > 0 ? (
-      <section class="space-y-6 mb-24">
-        <h1 class="anim-section-title font-sans text-xl md:text-2xl font-medium mb-6 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4">
-          Open Positions
-        </h1>
-        <div class="space-y-4">
-          {page.data.map((vacancy: Vacancy) => (
-            <ClickableCard
-              class="group relative block w-full rounded-xl  bg-secondary p-6 text-secondary-foreground shadow-sm"
-              href={`/careers/${vacancy.slug}/`}
-            >
-              <CareersCard data={vacancy} />
-            </ClickableCard>
-          ))}
-        </div>
-        <div class="anim-pagination flex justify-center mt-16 opacity-0">
-          <Pagination
-            url={page.url}
-            class="font-mono text-sm uppercase tracking-widest"
+  </header>
+  <section class="mb-12" data-manual-card-anim>
+    <h2
+      class="anim-section-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
+    >
+      Open Positions
+    </h2>
+    {
+      page.data.length > 0 ? (
+        <>
+          <div class="grid grid-cols-2">
+            {page.data.map((vacancy: Vacancy, index) => (
+              <>
+                <ClickableCard
+                  class="anim-card group relative col-span-2 hover:bg-secondary/20 transition-colors opacity-0 translate-y-4"
+                  href={`/careers/${vacancy.slug}/`}
+                >
+                  <CareersCard data={vacancy} />
+                </ClickableCard>
+                {index < page.data.length - 1 && (
+                  <div class="anim-divider col-span-2 my-6 border-b-2 border-dashed border-secondary-foreground opacity-0 translate-y-4" />
+                )}
+              </>
+            ))}
+          </div>
+          <div class="anim-pagination flex justify-center mt-16 opacity-0">
+            <Pagination
+              url={page.url}
+              class="font-mono text-sm uppercase tracking-widest"
+            />
+          </div>
+        </>
+      ) : (
+        <div class="anim-empty-state opacity-0 scale-95">
+          <Empty
+            title="No open positions"
+            description="We don't have any vacancies right now. Please check back later for new opportunities."
           />
         </div>
-      </section>
-    ) : (
-      <div class="anim-empty-state opacity-0 scale-95">
-        <Empty
-          title="No open positions"
-          description="We don't have any vacancies right now. Please check back later for new opportunities."
-        />
-      </div>
-    )
-  }
+      )
+    }
+  </section>
 </PageLayout>
-
 <script>
   import { gsap, SplitText } from "@/utils/gsap-init";
+  import { initCardSplitTextAnimation } from "@/utils/animations/cards-split-text-animation";
 
   {
-    const headerTitleEl = document.querySelector(".anim-header-title");
-    const headerDescEl = document.querySelector(".anim-header-desc");
-    const sectionTitleEl = document.querySelector(".anim-section-title");
-
-    const headerTl = gsap.timeline({
+    const mainTl = gsap.timeline({
       defaults: { ease: "power3.out" },
     });
 
-    headerTl.to(".anim-header-badge", {
-      scale: 1,
-      opacity: 1,
-      duration: 0.8,
-      ease: "back.out(1.7)",
+    const titleSplit = SplitText.create(".anim-header-title", {
+      type: "lines, words",
+      linesClass: "overflow-hidden",
     });
 
-    if (headerTitleEl) {
-      const titleSplit = SplitText.create(headerTitleEl, {
-        type: "lines, words",
-        linesClass: "overflow-hidden",
-      });
-
-      headerTl.set(headerTitleEl, { autoAlpha: 1 }, "-=0.4").from(
+    mainTl
+      .to(".anim-header-badge", {
+        scale: 1,
+        opacity: 1,
+        duration: 0.6,
+        ease: "back.out(1.5)",
+      })
+      .set(".anim-header-title", { autoAlpha: 1 }, "-=0.3")
+      .from(
         titleSplit.words,
         {
           yPercent: 100,
           opacity: 0,
-          duration: 1,
-          stagger: 0.05,
+          duration: 0.8,
+          stagger: 0.04,
           ease: "power4.out",
         },
         "<",
-      );
-    }
+      )
 
-    if (headerDescEl) {
-      headerTl.to(
-        headerDescEl,
+      .to(
+        ".anim-section-title",
         {
           y: 0,
           opacity: 1,
-          duration: 0.8,
+          duration: 0.5,
+          ease: "power2.out",
         },
-        "-=0.5",
+        "-=0.7",
       );
+
+    if (document.querySelector(".anim-card")) {
+      mainTl
+        .to(
+          ".anim-card, .anim-divider",
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.5,
+            stagger: 0.08,
+            ease: "power2.out",
+          },
+          "-=0.4",
+        )
+        .add(() => {
+          initCardSplitTextAnimation();
+        }, "<");
     }
 
-    if (sectionTitleEl) {
-      headerTl.to(
-        sectionTitleEl,
+    if (document.querySelector(".anim-pagination")) {
+      mainTl.to(
+        ".anim-pagination",
         {
-          y: 0,
           opacity: 1,
-          duration: 0.8,
+          duration: 0.5,
         },
-        "-=0.5",
+        "-=0.2",
       );
     }
 
-    const paginationEl = document.querySelector(".anim-pagination");
-    if (paginationEl) {
-      gsap.to(paginationEl, {
-        opacity: 1,
-        duration: 1,
-        scrollTrigger: {
-          trigger: paginationEl,
-          start: "top 95%",
+    if (document.querySelector(".anim-empty-state")) {
+      mainTl.to(
+        ".anim-empty-state",
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 0.6,
+          ease: "back.out(1.2)",
         },
-      });
-    }
-
-    const emptyStateEl = document.querySelector(".anim-empty-state");
-    if (emptyStateEl) {
-      gsap.to(emptyStateEl, {
-        scale: 1,
-        opacity: 1,
-        duration: 0.8,
-        ease: "back.out(1.5)",
-        delay: 0.5,
-      });
+        "-=0.3",
+      );
     }
   }
 </script>

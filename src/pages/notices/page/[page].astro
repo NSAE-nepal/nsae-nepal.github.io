@@ -80,7 +80,7 @@ const pageDescription = "Updates, announcements, and official notices.";
                   )}
                 </ClickableCard>
                 {index < page.data.length - 1 && (
-                  <div class="col-span-2 my-6 border-b-2 border-dashed border-secondary-foreground" />
+                  <div class="anim-divider col-span-2 my-6 border-b-2 border-dashed border-secondary-foreground opacity-0 translate-y-4" />
                 )}
               </>
             ))}
@@ -151,7 +151,7 @@ const pageDescription = "Updates, announcements, and official notices.";
     if (document.querySelector(".anim-card")) {
       mainTl
         .to(
-          ".anim-card",
+          ".anim-card, .anim-divider",
           {
             y: 0,
             opacity: 1,

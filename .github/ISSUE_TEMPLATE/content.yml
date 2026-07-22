@@ -37,7 +37,6 @@ body:
         - categories
         - minutes
         - notices
-        - news
         - events
         - banners
         - careers
