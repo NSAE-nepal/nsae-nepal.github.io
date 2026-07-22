@@ -1,0 +1,34 @@
+---
+import { IconArrowNarrowRight } from "@tabler/icons-astro";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "./ui/button";
+
+interface CTANode {
+  text: string;
+  url: string;
+  style?: "primary" | "secondary" | "ghost";
+}
+
+const { node } = Astro.props as { node: CTANode };
+
+const { text, url, style = "primary" } = node;
+
+const variantMap = {
+  primary: "default",
+  secondary: "outline",
+  ghost: "ghost",
+} as const;
+---
+
+<a
+  href={url}
+  target="_blank"
+  rel="noopener noreferrer"
+  class={cn(
+    buttonVariants({ variant: variantMap[style], size: "lg" }),
+    "no-underline",
+  )}
+>
+  {text}
+  <IconArrowNarrowRight class="size-4" client:only="react" />
+</a>

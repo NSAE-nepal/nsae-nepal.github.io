@@ -8,6 +8,6 @@ const text = node.children?.map((child: any) => child.text).join("") ?? "";
 const id = slugify(text) || node._key; // fallback for empty headings
 ---
 
-<Tag id={id}>
+<Tag id={id} class="scroll-mt-24">
   <slot />
 </Tag>

@@ -1,0 +1,39 @@
+---
+import { PortableText } from "astro-portabletext";
+import PortableHeading from "./PortableHeading.astro";
+
+interface CollapsibleNode {
+  title: string;
+  content: any;
+  defaultOpen?: boolean;
+}
+
+const { node } = Astro.props as {
+  node: CollapsibleNode;
+};
+
+const { title, content, defaultOpen = false } = node;
+
+const components = {
+  block: {
+    h2: PortableHeading,
+    h3: PortableHeading,
+    h4: PortableHeading,
+  },
+};
+---
+
+<details
+  class="my-6 overflow-hidden rounded-xl bg-secondary"
+  open={defaultOpen}
+>
+  <summary
+    class="cursor-pointer select-none bg-secondary px-5 py-4 font-semibold"
+  >
+    {title}
+  </summary>
+
+  <div class="prose dark:prose-invert max-w-none px-5 py-4">
+    <PortableText value={content} components={components} />
+  </div>
+</details>

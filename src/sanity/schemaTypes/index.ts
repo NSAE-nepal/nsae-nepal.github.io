@@ -1,7 +1,8 @@
 import type { SchemaTypeDefinition } from "sanity";
 import { authorType } from "./authors";
 import { bannerType } from "./banner";
-import { blockContentType } from "./blockContent";
+import { blockContentType, tableType } from "./blockContent";
+import { blockContentSimpleType } from "./blockContentSimple";
 import { careerType } from "./careers";
 import { categoryType } from "./category";
 import { committeeType } from "./committee";
@@ -25,6 +26,7 @@ import { quizType } from "./quiz";
 export const schema: { types: SchemaTypeDefinition[] } = {
 	types: [
 		authorType,
+		tableType,
 		blockContentType,
 		categoryType,
 		postType,
@@ -44,5 +46,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
 		scheduleItemType,
 		eventType,
 		homeType,
+		blockContentSimpleType,
 	],
 };

@@ -1,4 +1,5 @@
 ---
+import { IconCheck, IconCopy } from "@tabler/icons-astro";
 import { codeToHtml } from "shiki";
 
 const { node } = Astro.props;
@@ -6,6 +7,7 @@ const { node } = Astro.props;
 const html = await codeToHtml(node.code, {
   lang: node.language ?? "text",
   theme: "github-dark",
+  structure: "classic",
   transformers: [
     {
       pre(node) {
@@ -14,16 +16,45 @@ const html = await codeToHtml(node.code, {
     },
   ],
 });
+
+const code = node.code;
 ---
 
 <div class="overflow-hidden rounded-lg border">
-  {
-    node.filename && (
-      <div class="border-b bg-secondary px-4 py-2 text-sm text-secondary-foreground">
-        {node.filename}
-      </div>
-    )
-  }
+  <div
+    class="flex items-center justify-between border-b bg-secondary px-4 py-2"
+  >
+    <span class="text-sm text-secondary-foreground">
+      {node.filename ?? node.language ?? "Code"}
+    </span>
+
+    <button
+      class="copy-btn inline-flex h-8 w-8 items-center justify-center rounded-md transition hover:bg-muted"
+      data-code={code}
+      aria-label="Copy code"
+    >
+      <IconCopy class="copy-icon h-4 w-4" />
+      <IconCheck class="check-icon hidden h-4 w-4 text-green-500" />
+    </button>
+  </div>
 
   <Fragment set:html={html} />
 </div>
+<script>
+  document.querySelectorAll(".copy-btn").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const wrapper = button.closest(".overflow-hidden");
+      const code = wrapper?.querySelector("pre code")?.textContent ?? "";
+
+      await navigator.clipboard.writeText(code);
+
+      button.querySelector(".copy-icon")?.classList.add("hidden");
+      button.querySelector(".check-icon")?.classList.remove("hidden");
+
+      setTimeout(() => {
+        button.querySelector(".copy-icon")?.classList.remove("hidden");
+        button.querySelector(".check-icon")?.classList.add("hidden");
+      }, 2000);
+    });
+  });
+</script>
