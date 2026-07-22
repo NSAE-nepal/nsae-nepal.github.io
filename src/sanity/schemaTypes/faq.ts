@@ -48,13 +48,12 @@ export const faqType = defineType({
 	],
 	preview: {
 		select: {
-			title: "title",
 			items: "items",
 		},
-		prepare({ title, items }) {
+		prepare({ items }) {
 			const count = Array.isArray(items) ? items.length : 0;
 			return {
-				title: title || "Untitled FAQ Section",
+				title: "FAQ Section",
 				subtitle: `${count} question${count === 1 ? "" : "s"}`,
 			};
 		},
