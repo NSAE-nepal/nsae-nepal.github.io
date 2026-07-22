@@ -17,6 +17,7 @@ const {
   heroImage,
   heroImageAlt,
   type,
+  showToc,
 } = Astro.props;
 
 const backLinkConfig: Record<string, { href: string; label: string }> = {
@@ -95,8 +96,18 @@ const { href: backHref, label: backLabel } =
       )
     }
 
-    <div class="prose max-w-7xl mx-auto dark:prose-invert">
-      <slot />
+    <div class={`mx-auto max-w-7xl ${showToc ? "xl:flex xl:gap-12" : ""}`}>
+      <div class="prose w-full min-w-0 max-w-none dark:prose-invert">
+        <slot />
+      </div>
+
+      {
+        showToc && (
+          <div class="hidden xl:block xl:w-64 xl:shrink-0">
+            <slot name="toc" />
+          </div>
+        )
+      }
     </div>
 
     {/* TODO:Content for related posts grid */}
