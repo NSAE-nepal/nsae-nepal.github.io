@@ -104,7 +104,9 @@ const { href: backHref, label: backLabel } =
       {
         showToc && (
           <div class="hidden xl:block xl:w-64 xl:shrink-0">
-            <slot name="toc" />
+            <div class="sticky top-24 max-h-[calc(100vh-6rem)] overflow-y-auto">
+              <slot name="toc" />
+            </div>
           </div>
         )
       }

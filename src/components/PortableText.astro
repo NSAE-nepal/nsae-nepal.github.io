@@ -2,7 +2,10 @@
 import { PortableText as PortableTextInternal } from "astro-portabletext";
 import Quiz from "./mdx/Quiz.astro";
 import PortableHeading from "./PortableHeading.astro";
+import PortableTable from "./PortableTable.astro";
 import PortableTextCode from "./PortableTextCode.astro";
+import PortableTextCollapsible from "./PortableTextCollapsible.astro";
+import PortableTextCTA from "./PortableTextCTA.astro";
 import PortableTextImage from "./PortableTextImage.astro";
 import PortableYoutubeVideo from "./PortableYoutubeVideo.astro";
 
@@ -21,6 +24,9 @@ const components = {
     quizReference: Quiz,
     code: PortableTextCode,
     videoEmbed: PortableYoutubeVideo,
+    cta: PortableTextCTA,
+    collapsible: PortableTextCollapsible,
+    table: PortableTable,
   },
 };
 ---

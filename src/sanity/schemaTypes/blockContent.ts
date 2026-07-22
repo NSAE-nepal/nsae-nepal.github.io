@@ -1,4 +1,43 @@
+import { ThListIcon } from "@sanity/icons/ThList";
 import { defineArrayMember, defineField, defineType } from "sanity";
+
+export const tableType = defineType({
+	name: "table",
+	type: "object",
+	title: "Table",
+	fields: [
+		defineField({
+			name: "csvData",
+			type: "text",
+			title: "Table Data (CSV)",
+			description:
+				"Paste CSV data here. Comma-separated values, one row per line.",
+		}),
+		defineField({
+			name: "hasHeader",
+			type: "boolean",
+			title: "First Row is Header",
+			description: "Enable if the first row should be treated as a header row",
+			initialValue: true,
+		}),
+	],
+	preview: {
+		select: {
+			csvData: "csvData",
+			hasHeader: "hasHeader",
+		},
+		prepare({ csvData, hasHeader }) {
+			const rowCount = csvData
+				? csvData.split("\n").filter((line: string) => line.trim() !== "")
+						.length
+				: 0;
+			const headerText = hasHeader && rowCount > 0 ? " (with header)" : "";
+			return {
+				title: `Table (${rowCount} rows${headerText})`,
+			};
+		},
+	},
+});
 
 export const blockContentType = defineType({
 	title: "Block Content",
@@ -67,6 +106,10 @@ export const blockContentType = defineType({
 				],
 			},
 		}),
+		defineArrayMember({
+			type: "table",
+			icon: ThListIcon,
+		}),
 
 		defineArrayMember({
 			type: "image",
@@ -97,12 +140,78 @@ export const blockContentType = defineType({
 				languageAlternatives: [
 					{ title: "TypeScript", value: "typescript" },
 					{ title: "JavaScript", value: "javascript" },
+					{ title: "Python", value: "python" },
 					{ title: "HTML", value: "html" },
 					{ title: "CSS", value: "css" },
 					{ title: "JSON", value: "json" },
 					{ title: "Bash", value: "bash" },
 					{ title: "Markdown", value: "markdown" },
 				],
+			},
+		}),
+
+		defineArrayMember({
+			title: "Call to Action",
+			name: "cta",
+			type: "object",
+			fields: [
+				{
+					title: "Text",
+					name: "text",
+					type: "string",
+				},
+				{
+					title: "URL",
+					name: "url",
+					type: "url",
+				},
+				{
+					title: "Style",
+					name: "style",
+					type: "string",
+					options: {
+						list: [
+							{ title: "Primary", value: "primary" },
+							{ title: "Secondary", value: "secondary" },
+							{ title: "Ghost", value: "ghost" },
+						],
+					},
+					initialValue: "primary",
+				},
+			],
+			preview: {
+				select: {
+					title: "text",
+					subtitle: "url",
+				},
+			},
+		}),
+		defineArrayMember({
+			title: "Collapsible Section",
+			name: "collapsible",
+			type: "object",
+			fields: [
+				{
+					title: "Title",
+					name: "title",
+					type: "string",
+				},
+				{
+					title: "Content",
+					name: "content",
+					type: "blockContentSimple",
+				},
+				{
+					title: "Open by default",
+					name: "defaultOpen",
+					type: "boolean",
+					initialValue: false,
+				},
+			],
+			preview: {
+				select: {
+					title: "title",
+				},
 			},
 		}),
 
