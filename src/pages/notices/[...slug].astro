@@ -19,8 +19,12 @@ const post = await getPostsDetails(slug!);
 ---
 
 <PostLayout {...post}>
-  <Fragment slot="toc">
-    <TableOfContents blocks={post.body} />
-  </Fragment>
+  {
+    post.body && (
+      <Fragment slot="toc">
+        <TableOfContents blocks={post.body} />
+      </Fragment>
+    )
+  }
   <PortableText portableText={post.body} />
 </PostLayout>
