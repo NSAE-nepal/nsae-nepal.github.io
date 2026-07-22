@@ -28,10 +28,9 @@ export const committeeType = defineType({
 				Rule.required()
 					.integer()
 					.min(1)
-					.max(40)
-					.error("Committee iteration must be an integer between 1 and 40."),
+					.max(100)
+					.error("Committee iteration must be an integer between 1 and 100."),
 		}),
-
 		defineField({
 			name: "committeeMembers",
 			title: "Committee Members",

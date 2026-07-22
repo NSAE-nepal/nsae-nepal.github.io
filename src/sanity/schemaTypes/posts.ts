@@ -38,7 +38,7 @@ export const postType = defineType({
 		}),
 		defineField({
 			name: "description",
-			title: "Description",
+			title: "Description (Meta)",
 			type: "text",
 			rows: 3,
 		}),
@@ -61,15 +61,6 @@ export const postType = defineType({
 					title: "Alternative Text",
 				},
 			],
-		}),
-		defineField({
-			name: "tags",
-			title: "Tags",
-			type: "array",
-			of: [{ type: "string" }],
-			options: {
-				layout: "tags",
-			},
 		}),
 		defineField({
 			name: "categories",
@@ -100,17 +91,14 @@ export const postType = defineType({
 	preview: {
 		select: {
 			title: "title",
-			// CHANGED: Select up to 4 author names using array dot-notation
 			author0: "authors.0.name",
 			author1: "authors.1.name",
 			author2: "authors.2.name",
 			author3: "authors.3.name",
-			// FIXED: Was referencing "mainImage", but your image field is named "heroImage"
 			media: "heroImage",
 		},
 		prepare(selection) {
 			const { title, author0, author1, author2, author3, media } = selection;
-			// Filter out undefined author slots and join the remaining names
 			const authors = [author0, author1, author2, author3].filter(Boolean);
 			const subtitle = authors.length > 0 ? `by ${authors.join(", ")}` : "";
 
