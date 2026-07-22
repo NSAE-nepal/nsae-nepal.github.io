@@ -1,0 +1,87 @@
+---
+import { slugify } from "@/sanity/lib/slugify";
+
+type PortableTextBlock = {
+  _key: string;
+  _type: string;
+  style?: string;
+  children?: {
+    text: string;
+  }[];
+};
+
+const { blocks } = Astro.props;
+
+const headings = (blocks as PortableTextBlock[])
+  .filter(
+    (block) =>
+      block._type === "block" &&
+      ["h1", "h2", "h3", "h4", "h5", "h6"].includes(block.style ?? ""),
+  )
+  .map((block) => {
+    const text = block.children?.map((child) => child.text).join("") ?? "";
+
+    return {
+      id: slugify(text) || block._key,
+      level: Number(block.style!.replace("h", "")),
+      text,
+    };
+  });
+---
+
+{
+  headings.length > 0 && (
+    <aside>
+      <div class="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar]:w-[6px] dark:[&::-webkit-scrollbar-thumb]:bg-neutral-600">
+        <h2 class="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
+          On this page
+        </h2>
+
+        <nav aria-label="Table of contents">
+          <ul class="m-0 list-none border-l border-neutral-200 p-0 dark:border-neutral-800">
+            {headings.map((heading) => (
+              <li class="p-0">
+                <a
+                  href={`#${heading.id}`}
+                  class="toc-link relative block -ml-px py-1.5 text-sm leading-[1.35] text-neutral-500 no-underline transition-all duration-150 ease-in-out before:absolute before:-left-px before:inset-y-0 before:w-[2px] before:bg-transparent before:transition-colors before:duration-150 before:ease-in-out hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white [&.active]:font-semibold [&.active]:text-primary [&.active]:before:bg-primary dark:[&.active]:text-primary"
+                  style={`padding-left:${0.75 + (heading.level - 1) * 0.9}rem`}
+                >
+                  {heading.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    </aside>
+  )
+}
+
+<script>
+  const links = [...document.querySelectorAll(".toc-link")];
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const link = document.querySelector(
+          `.toc-link[href="#${entry.target.id}"]`,
+        );
+
+        if (!link || !entry.isIntersecting) return;
+
+        links.forEach((l) => l.classList.remove("active"));
+        link.classList.add("active");
+      });
+    },
+    {
+      rootMargin: "-15% 0px -70% 0px",
+      threshold: 0,
+    },
+  );
+
+  document
+    .querySelectorAll(
+      "article h1, article h2, article h3, article h4, article h5, article h6",
+    )
+    .forEach((heading) => observer.observe(heading));
+</script>

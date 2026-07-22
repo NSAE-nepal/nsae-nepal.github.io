@@ -89,52 +89,20 @@ export const blockContentType = defineType({
 		}),
 
 		defineArrayMember({
-			name: "codeSnippet",
+			type: "code",
 			title: "Code Snippet",
-			type: "object",
-			fields: [
-				defineField({
-					name: "language",
-					title: "Language",
-					type: "string",
-					options: {
-						list: [
-							{ title: "JavaScript / TypeScript", value: "typescript" },
-							{ title: "HTML / XML", value: "html" },
-							{ title: "CSS / SCSS", value: "css" },
-							{ title: "JSON", value: "json" },
-							{ title: "Terminal / Bash", value: "bash" },
-							{ title: "Markdown", value: "markdown" },
-						],
-					},
-					initialValue: "typescript",
-				}),
-				defineField({
-					name: "filename",
-					title: "Filename (Optional)",
-					type: "string",
-					description: "e.g., 'utils/formatDate.ts'",
-				}),
-				defineField({
-					name: "code",
-					title: "Code",
-					type: "text",
-					rows: 8,
-					validation: (Rule) => Rule.required(),
-				}),
-			],
-			preview: {
-				select: {
-					title: "filename",
-					lang: "language",
-					code: "code",
-				},
-				prepare({ title, lang, code }) {
-					return {
-						title: title || "Code Block",
-						subtitle: `Language: ${lang || "text"} • ${code?.slice(0, 30) || ""}...`,
-					};
-				},
+			options: {
+				language: "typescript",
+				withFilename: true,
+				languageAlternatives: [
+					{ title: "TypeScript", value: "typescript" },
+					{ title: "JavaScript", value: "javascript" },
+					{ title: "HTML", value: "html" },
+					{ title: "CSS", value: "css" },
+					{ title: "JSON", value: "json" },
+					{ title: "Bash", value: "bash" },
+					{ title: "Markdown", value: "markdown" },
+				],
 			},
 		}),
 
