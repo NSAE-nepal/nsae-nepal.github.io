@@ -27,6 +27,7 @@ export type Post = {
 	heroImageAlt?: string;
 	authors: Authors[];
 	categories: Category[];
+	showToc: boolean;
 };
 
 export type PostDetails = {
@@ -38,6 +39,7 @@ export type PostDetails = {
 	description?: string;
 	publishedAt: string;
 	featured: boolean;
+	showToc: boolean;
 	heroImage?: string;
 	heroImageAlt?: string;
 	body: PortableTextBlock[];
@@ -59,6 +61,7 @@ export async function getPosts(type?: PostType): Promise<Post[]> {
     description,
     publishedAt,
     featured,
+	showToc,
     "heroImage": heroImage.asset->url,
     "heroImageAlt": heroImage.alt,
 	"authors": authors[]->{
@@ -95,6 +98,7 @@ export async function getPostsDetails(slug: string): Promise<PostDetails> {
   description,
   publishedAt,
   featured,
+  showToc,
   body[] {
     ...,
     _type == "quizReference" => {

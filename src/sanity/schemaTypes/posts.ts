@@ -78,6 +78,12 @@ export const postType = defineType({
 			initialValue: false,
 		}),
 		defineField({
+			name: "showToc",
+			title: "Show Table of Contents",
+			type: "boolean",
+			initialValue: false,
+		}),
+		defineField({
 			name: "pagefind",
 			title: "Include in Pagefind Search",
 			type: "boolean",

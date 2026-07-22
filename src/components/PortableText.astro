@@ -1,13 +1,26 @@
 ---
 import { PortableText as PortableTextInternal } from "astro-portabletext";
 import Quiz from "./mdx/Quiz.astro";
+import PortableHeading from "./PortableHeading.astro";
+import PortableTextCode from "./PortableTextCode.astro";
 import PortableTextImage from "./PortableTextImage.astro";
+import PortableYoutubeVideo from "./PortableYoutubeVideo.astro";
 
 const { portableText } = Astro.props;
 const components = {
+  block: {
+    h1: PortableHeading,
+    h2: PortableHeading,
+    h3: PortableHeading,
+    h4: PortableHeading,
+    h5: PortableHeading,
+    h6: PortableHeading,
+  },
   type: {
     image: PortableTextImage,
     quizReference: Quiz,
+    code: PortableTextCode,
+    videoEmbed: PortableYoutubeVideo,
   },
 };
 ---

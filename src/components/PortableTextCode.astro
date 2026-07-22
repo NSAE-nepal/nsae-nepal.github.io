@@ -1,0 +1,29 @@
+---
+import { codeToHtml } from "shiki";
+
+const { node } = Astro.props;
+
+const html = await codeToHtml(node.code, {
+  lang: node.language ?? "text",
+  theme: "github-dark",
+  transformers: [
+    {
+      pre(node) {
+        node.properties.style += ";padding:1rem;margin:0;border-radius:0;";
+      },
+    },
+  ],
+});
+---
+
+<div class="overflow-hidden rounded-lg border">
+  {
+    node.filename && (
+      <div class="border-b bg-secondary px-4 py-2 text-sm text-secondary-foreground">
+        {node.filename}
+      </div>
+    )
+  }
+
+  <Fragment set:html={html} />
+</div>

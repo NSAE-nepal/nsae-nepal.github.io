@@ -17,6 +17,14 @@ export default defineConfig({
 			"cdn.sanity.io",
 		],
 	},
+	markdown: {
+		shikiConfig: {
+			themes: {
+				light: "github-light",
+				dark: "github-dark",
+			},
+		},
+	},
 	integrations: [
 		mdx(),
 		sitemap(),
