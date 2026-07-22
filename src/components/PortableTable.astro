@@ -1,0 +1,69 @@
+---
+import Papa from "papaparse";
+
+interface Props {
+  node: {
+    csvData?: string;
+    hasHeader?: boolean;
+  };
+}
+
+const { node } = Astro.props;
+const { csvData, hasHeader = true } = node;
+
+if (!csvData?.trim()) {
+  return null;
+}
+
+const { data } = Papa.parse<string[]>(csvData, {
+  skipEmptyLines: true,
+});
+
+const rows = data.map((row) => row.map((cell) => (cell ?? "").trim()));
+
+if (rows.length === 0) {
+  return null;
+}
+
+const header = hasHeader ? rows[0] : null;
+const body = hasHeader ? rows.slice(1) : rows;
+---
+
+<div
+  class="not-prose my-6 overflow-hidden rounded-lg border border-border shadow-sm"
+>
+  <div class="overflow-x-auto">
+    <table class="w-full border-collapse text-sm">
+      {
+        header && (
+          <thead class="bg-secondary">
+            <tr>
+              {header.map((cell) => (
+                <th class="whitespace-nowrap px-4 py-3 text-left font-semibold text-secondary-foreground">
+                  {cell}
+                </th>
+              ))}
+            </tr>
+          </thead>
+        )
+      }
+
+      <tbody class="divide-y divide-border">
+        {
+          body.map((row, rowIndex) => (
+            <tr
+              class:list={[
+                "transition-colors hover:bg-muted/50",
+                { "bg-muted/30": rowIndex % 2 === 1 },
+              ]}
+            >
+              {row.map((cell) => (
+                <td class="px-4 py-3 align-top text-foreground">{cell}</td>
+              ))}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

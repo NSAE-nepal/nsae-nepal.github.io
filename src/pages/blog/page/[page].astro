@@ -60,13 +60,34 @@ const pageDescription =
   {
     featuredPosts.length > 0 && page.currentPage === 1 && (
       <section class="mb-12">
-        <h2 class="anim-featured-title font-sans text-xl md:text-2xl font-medium mb-6 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4">
-          Featured Posts
-        </h2>
-        <div class="grid gap-8 lg:gap-10 xl:gap-18">
+        <div class="flex items-center justify-between mb-6 border-b border-border/50 pb-2">
+          <h2 class="anim-featured-title font-sans text-xl md:text-2xl font-medium uppercase tracking-wider opacity-0 translate-y-4">
+            Featured Posts
+          </h2>
+          {featuredPosts.length > 1 && (
+            <div class="anim-featured-title flex gap-2 opacity-0 translate-y-4">
+              <button
+                type="button"
+                class="featured-prev size-8 bg-secondary text-secondary-foreground cursor-pointer flex items-center justify-center rounded-full border border-border/60 hover:bg-secondary/40 transition-colors disabled:opacity-30 disabled:pointer-events-none"
+                aria-label="Previous featured post"
+              >
+                ‹
+              </button>
+              <button
+                type="button"
+                class="featured-next size-8 bg-secondary text-secondary-foreground cursor-pointer flex items-center justify-center rounded-full border border-border/60 hover:bg-secondary/40 transition-colors disabled:opacity-30 disabled:pointer-events-none"
+                aria-label="Next featured post"
+              >
+                ›
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div class="anim-featured-carousel flex gap-8 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {featuredPosts.map((post) => (
             <ClickableCard
-              class="anim-featured-card opacity-0 translate-y-4"
+              class="anim-featured-card shrink-0 basis-full lg:basis-[85%] snap-start opacity-0 translate-y-4"
               href={`/blog/${post.slug}/`}
             >
               <BlogFeaturedCard data={post} />
@@ -187,6 +208,44 @@ const pageDescription =
         .add(() => {
           initCardSplitTextAnimation({ cardSelector: ".anim-featured-card" });
         }, "<");
+    }
+
+    const featuredCarousel = document.querySelector(".anim-featured-carousel");
+    const prevBtn = document.querySelector(".featured-prev");
+    const nextBtn = document.querySelector(".featured-next");
+
+    if (featuredCarousel && prevBtn && nextBtn) {
+      const cards = featuredCarousel.querySelectorAll(".anim-featured-card");
+
+      const scrollByCard = (direction: 1 | -1) => {
+        const card = cards[0] as HTMLElement;
+        const gap = parseFloat(
+          getComputedStyle(featuredCarousel).columnGap || "0",
+        );
+        const amount =
+          (card?.offsetWidth ?? featuredCarousel.clientWidth) + gap;
+        featuredCarousel.scrollBy({
+          left: amount * direction,
+          behavior: "smooth",
+        });
+      };
+
+      const updateButtons = () => {
+        const maxScroll =
+          featuredCarousel.scrollWidth - featuredCarousel.clientWidth;
+        prevBtn.toggleAttribute("disabled", featuredCarousel.scrollLeft <= 4);
+        nextBtn.toggleAttribute(
+          "disabled",
+          featuredCarousel.scrollLeft >= maxScroll - 4,
+        );
+      };
+
+      prevBtn.addEventListener("click", () => scrollByCard(-1));
+      nextBtn.addEventListener("click", () => scrollByCard(1));
+      featuredCarousel.addEventListener("scroll", updateButtons, {
+        passive: true,
+      });
+      updateButtons();
     }
 
     const regularPostOffset = document.querySelector(".anim-featured-title")
