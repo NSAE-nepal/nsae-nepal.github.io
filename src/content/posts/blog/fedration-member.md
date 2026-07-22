@@ -9,7 +9,7 @@ authors:
 categories: ["bioenergy", "post-harvest", "renewable-resources"]
 featured: false
 draft: true
-type: "news"
+type: "notice"
 ---
 
 <!--

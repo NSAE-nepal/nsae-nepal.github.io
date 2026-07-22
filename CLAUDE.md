@@ -27,7 +27,7 @@ NSAE (Nepalese Society of Agricultural Engineers) is a professional website buil
 ### Content Management
 The site uses Astro's content collections for structured data management:
 
-- **Posts** (`src/content/posts/`) - Blog posts, news, and notices
+- **Posts** (`src/content/posts/`) - Blog posts, and notices
 - **Resources** (`src/content/resources/`) - Downloads, reports, press releases
 - **Events** (`src/content/events/`) - Upcoming and past events
 - **Careers** (`src/content/careers/`) - Job opportunities
@@ -37,7 +37,7 @@ The site uses Astro's content collections for structured data management:
 - **Banners** (`src/content/banners/`) - Event banners
 - **FAQ** (`src/content/faq.json`) - Frequently asked question about NSAE
 - **Contacts** (`src/content/contacts.json`) - NSAE contact details for contacts page
-- **Categories** (`src/content/categories.json`) - for categorizing different contents like Post, Event, Notices,Minutes, News, Resources
+- **Categories** (`src/content/categories.json`) - for categorizing different contents like Post, Event, Notices,Minutes, Resources
 
 Content schemas are defined in `src/content.config.ts` using Zod validation.
 

@@ -1,9 +1,9 @@
 ---
-import MoodEmpty from "@tabler/icons/outline/mood-empty.svg";
 import type { GetStaticPaths, Page } from "astro";
 import Badge from "@/components/astro/Badge.astro";
 import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
 import MinutesCard from "@/components/astro/Card/MinutesCard.astro";
+import Empty from "@/components/astro/Empty.astro";
 import Pagination from "@/components/astro/Pagination.astro";
 import { PAGE_SIZE } from "@/consts";
 import PageLayout from "@/layouts/PageLayout.astro";
@@ -33,72 +33,70 @@ const pageDescription =
   description={pageDescription}
   dataPagefindIgnore="all"
 >
-  <main class="py-16 md:py-24 space-y-12">
-    <header class="flex flex-col items-center justify-center gap-4 text-center">
-      <div class="anim-header-badge opacity-0 scale-50">
-        <Badge
-          variant={"secondary"}
-          size={"sm"}
-          class="font-mono uppercase tracking-widest text-xs mb-3 border border-border/50"
-        >
-          Transparency
-        </Badge>
-      </div>
-      <h1
-        class="anim-header-title invisible font-sans text-5xl md:text-7xl font-medium tracking-tighter leading-tight max-w-4xl text-balance"
+  <header class="flex flex-col items-center justify-center py-16 md:py-24">
+    <div class="anim-header-badge opacity-0 scale-50">
+      <Badge
+        variant={"secondary"}
+        size={"sm"}
+        class="font-mono uppercase tracking-widest text-xs mb-3 border border-border/50"
       >
-        Official Meeting Records
-      </h1>
-      <p
-        class="anim-header-desc font-sans text-lg text-muted-foreground max-w-2xl text-balance pt-2 opacity-0 translate-y-4"
-      >
-        Browse the minutes from our General, Executive, and Committee meetings.
-      </p>
-    </header>
+        Transparency
+      </Badge>
+    </div>
+    <h1
+      class="anim-header-title invisible font-sans text-5xl md:text-7xl font-medium tracking-tighter leading-tight max-w-4xl text-balance"
+    >
+      Official Meeting Records
+    </h1>
+    <p
+      class="anim-header-desc font-sans text-lg text-muted-foreground max-w-2xl text-balance pt-2 opacity-0 translate-y-4"
+    >
+      Browse the minutes from our General, Executive, and Committee meetings.
+    </p>
+  </header>
 
-    <section class="mb-24" data-manual-card-anim>
-      <h2
-        class="anim-all-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
-      >
-        All Minutes
-      </h2>
-      {
-        page.data.length > 0 ? (
-          <>
-            <div class="space-y-4">
-              {page.data.map((minute: Minutes) => (
+  <section class="mb-12" data-manual-card-anim>
+    <h2
+      class="anim-section-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
+    >
+      All Minutes
+    </h2>
+    {
+      page.data.length > 0 ? (
+        <>
+          <div class="grid grid-cols-2">
+            {page.data.map((minute: Minutes, index) => (
+              <>
                 <ClickableCard
-                  class="anim-minutes-card group relative block w-full rounded-xl bg-secondary p-6 text-secondary-foreground shadow-sm opacity-0 translate-y-4"
+                  class="anim-minutes-card group relative col-span-2 hover:bg-secondary/20 transition-colors opacity-0 translate-y-4"
                   href={`/minutes/${minute.slug}/`}
                 >
                   <MinutesCard data={minute} />
                 </ClickableCard>
-              ))}
-            </div>
-            <div class="anim-pagination flex justify-center mt-16 opacity-0">
-              <Pagination
-                url={page.url}
-                class="font-mono text-sm uppercase tracking-widest"
-              />
-            </div>
-          </>
-        ) : (
-          <div class="anim-empty-state flex flex-col items-center justify-center py-8 text-center border border-dashed border-border/60 rounded-xl bg-secondary/5 opacity-0 scale-95">
-            <div class="p-4 bg-secondary rounded-full mb-4">
-              <MoodEmpty class="size-8 text-muted-foreground" />
-            </div>
-            <h3 class="font-sans text-xl font-medium mb-2">
-              No minutes available
-            </h3>
-            <p class="text-muted-foreground max-w-xs mx-auto">
-              There are no minutes available at the moment. Check back later for
-              updates.
-            </p>
+                {index < page.data.length - 1 && (
+                  <div class="anim-divider col-span-2 my-6 border-b-2 border-dashed border-secondary-foreground opacity-0 translate-y-4" />
+                )}
+              </>
+            ))}
           </div>
-        )
-      }
-    </section>
-  </main>
+          <div class="anim-pagination flex justify-center mt-16 opacity-0">
+            <Pagination
+              url={page.url}
+              class="font-mono text-sm uppercase tracking-widest"
+            />
+          </div>
+        </>
+      ) : (
+        <div class="anim-empty-state opacity-0 scale-95">
+          <Empty
+            title="No minutes available"
+            description="There are no minutes available at the moment. Check back later for
+            updates."
+          />
+        </div>
+      )
+    }
+  </section>
 </PageLayout>
 
 <script>
@@ -148,7 +146,7 @@ const pageDescription =
     }
 
     mainTl.to(
-      ".anim-all-title",
+      ".anim-section-title",
       {
         y: 0,
         opacity: 1,
@@ -160,7 +158,7 @@ const pageDescription =
     if (document.querySelector(".anim-minutes-card")) {
       mainTl
         .to(
-          ".anim-minutes-card",
+          ".anim-minutes-card, .anim-divider",
           {
             y: 0,
             opacity: 1,

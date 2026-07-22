@@ -25,7 +25,7 @@ export type Vacancy = {
 	postedDate: string;
 	closingDate?: string;
 	description?: string;
-	company?: Company;
+	company: Company;
 };
 
 export type VacancyDetails = {
@@ -38,7 +38,7 @@ export type VacancyDetails = {
 	postedDate: string;
 	closingDate?: string;
 	description?: string;
-	company?: Company;
+	company: Company;
 	body?: PortableTextBlock[];
 };
 

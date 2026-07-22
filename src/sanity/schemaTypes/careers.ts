@@ -91,6 +91,7 @@ export const careerType = defineType({
 			name: "company",
 			title: "Company Information",
 			type: "object",
+			validation: (Rule) => Rule.required(),
 			fields: [
 				defineField({
 					name: "name",

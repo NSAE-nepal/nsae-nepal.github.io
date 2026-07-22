@@ -1,9 +1,8 @@
 ---
-import type { CollectionEntry } from "astro:content";
 import ArrowNarrowRight from "@tabler/icons/outline/arrow-narrow-right.svg";
-import ArrowRight from "@tabler/icons/outline/arrow-right.svg";
-import CalendarWeek from "@tabler/icons/outline/calendar-week.svg";
 import MapPin from "@tabler/icons/outline/map-pin.svg";
+import Point from "@tabler/icons/outline/point.svg";
+import FormattedDate from "@/components/FormattedDate.astro";
 import type { Minutes } from "@/sanity/lib/queries/minutes";
 import Badge from "../Badge.astro";
 
@@ -19,29 +18,21 @@ const formatType = (type: string) => {
 };
 ---
 
-<article class="split-card space-y-4">
-  <div class="flex items-center justify-between">
-    <div
-      class="flex content-center gap-1.5 font-mono text-sm text-muted-foreground flex-row"
-    >
-      <CalendarWeek class="size-4 text-primary/70" />
-      <time datetime={new Date(data.pubDate).toISOString()}>
-        {
-          new Date(data.pubDate).toLocaleDateString(undefined, {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          })
-        }
-      </time>
-    </div>
+<article
+  class="split-card space-y-2 cursor-pointer flex flex-col relative z-10 p-4"
+>
+  <div class="flex flex-row justify-between items-center">
     <Badge
-      variant={data.type === "agm" ? "default" : "outline"}
-      size="xs"
-      class="font-mono text-xs uppercase tracking-widest"
+      variant={"secondary"}
+      size={"xs"}
+      class={"font-mono text-xs uppercase tracking-wider flex items-center gap-1.5"}
     >
+      <Point class="fill-destructive text-destructive w-2.5 h-2.5" />
       {formatType(data.type)}
     </Badge>
+    <span class="flex items-center gap-1 text-muted-foreground font-medium">
+      <FormattedDate date={new Date(data.pubDate)} />
+    </span>
   </div>
 
   <div class="space-y-3">
@@ -52,14 +43,12 @@ const formatType = (type: string) => {
     </h3>
 
     <div class="flex flex-row items-center justify-between mt-4">
-      <span
-        class="flex content-center gap-1.5 font-mono text-sm text-muted-foreground"
-      >
-        <MapPin class="size-4 text-primary/70" />
-        {data.location}
-      </span>
+      <div class="flex items-center gap-1.5 text-sm text-muted-foreground">
+        <MapPin class="size-4" />
+        <span>{data.location}</span>
+      </div>
       <a
-        class="font-mono text-xs uppercase tracking-widest flex flex-row gap-2 items-center hover:text-primary transition-colors"
+        class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest hover:text-primary transition-colors leading-none"
         href={`/minutes/${data.slug}/`}
       >
         Read minutes <ArrowNarrowRight class="w-4 h-4" />

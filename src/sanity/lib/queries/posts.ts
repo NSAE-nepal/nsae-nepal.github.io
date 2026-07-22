@@ -1,7 +1,7 @@
 import type { PortableTextBlock } from "sanity";
 import { loadQuery } from "../load-query";
 
-export type PostType = "blog" | "news" | "notice";
+export type PostType = "blog" | "notice";
 
 export type Category = {
 	_id: string;
@@ -19,7 +19,7 @@ export type Post = {
 	title: string;
 	subtitle?: string;
 	slug: string;
-	type: "blog" | "news" | "notice";
+	type: "blog" | "notice";
 	description?: string;
 	publishedAt: string;
 	featured: boolean;
@@ -34,7 +34,7 @@ export type PostDetails = {
 	title: string;
 	subtitle?: string;
 	slug: string;
-	type: "blog" | "news" | "notice";
+	type: "blog" | "notice";
 	description?: string;
 	publishedAt: string;
 	featured: boolean;
