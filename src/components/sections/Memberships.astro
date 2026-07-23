@@ -259,94 +259,111 @@ const { membership } = Astro.props as {
 <script>
   import { gsap } from "@/utils/gsap-init";
 
-  if (typeof window !== "undefined") {
-    const cursor = document.getElementById("cursor");
-    const section = document.getElementById("membership-container");
-    const triggers = document.querySelectorAll(".hover-trigger");
+  let ctx: gsap.Context | undefined;
+  function initMemberships() {
+    ctx = gsap.context(() => {
+      if (typeof window !== "undefined") {
+        const cursor = document.getElementById("cursor");
+        const section = document.getElementById("membership-container");
+        const triggers = document.querySelectorAll(".hover-trigger");
 
-    window.addEventListener("mousemove", (e) => {
-      if (cursor) {
-        gsap.to(cursor, {
-          x: e.clientX,
-          y: e.clientY,
-          duration: 0.1,
-          ease: "power2.out",
-          overwrite: "auto",
+        window.addEventListener("mousemove", (e) => {
+          if (cursor) {
+            gsap.to(cursor, {
+              x: e.clientX,
+              y: e.clientY,
+              duration: 0.1,
+              ease: "power2.out",
+              overwrite: "auto",
+            });
+          }
+        });
+
+        if (section && cursor) {
+          section.addEventListener("mouseenter", () => {
+            gsap.to(cursor, {
+              autoAlpha: 1,
+              duration: 0.2,
+              ease: "power2.out",
+            });
+          });
+
+          section.addEventListener("mouseleave", () => {
+            gsap.to(cursor, {
+              autoAlpha: 0,
+              duration: 0.2,
+              ease: "power2.out",
+            });
+          });
+        }
+
+        triggers.forEach((trigger) => {
+          trigger.addEventListener("mouseenter", () => {
+            if (cursor) gsap.to(cursor, { scale: 4, duration: 0.3 });
+          });
+          trigger.addEventListener("mouseleave", () => {
+            if (cursor) gsap.to(cursor, { scale: 1, duration: 0.3 });
+          });
+        });
+
+        gsap.set(cursor, { xPercent: -50, yPercent: -50 });
+
+        const headerTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: "#membership-container",
+            start: "top 50%",
+            toggleActions: "play none none reverse",
+          },
+        });
+
+        headerTl
+          .to(".reveal-text", {
+            y: 0,
+            opacity: 1,
+            duration: 1.2,
+            stagger: 0.1,
+            ease: "power4.out",
+          })
+          .to(
+            ".reveal-opacity",
+            {
+              opacity: 1,
+              duration: 1,
+              ease: "power2.out",
+            },
+            "-=0.8",
+          )
+          .to(
+            "#center-line",
+            {
+              scaleY: 1,
+              duration: 1.2,
+              ease: "power3.inOut",
+            },
+            "-=0.5",
+          );
+
+        const cardsTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: ".grid.grid-cols-1.lg\\:grid-cols-2",
+            start: "top 95%",
+            end: "top 70%",
+            toggleActions: "play none none reverse",
+          },
+        });
+
+        cardsTl.to(".hover-trigger", {
+          y: 0,
+          opacity: 1,
+          stagger: 0.2,
+          duration: 1,
+          ease: "power3.out",
         });
       }
     });
-
-    if (section && cursor) {
-      section.addEventListener("mouseenter", () => {
-        gsap.to(cursor, { autoAlpha: 1, duration: 0.2, ease: "power2.out" });
-      });
-
-      section.addEventListener("mouseleave", () => {
-        gsap.to(cursor, { autoAlpha: 0, duration: 0.2, ease: "power2.out" });
-      });
-    }
-
-    triggers.forEach((trigger) => {
-      trigger.addEventListener("mouseenter", () => {
-        if (cursor) gsap.to(cursor, { scale: 4, duration: 0.3 });
-      });
-      trigger.addEventListener("mouseleave", () => {
-        if (cursor) gsap.to(cursor, { scale: 1, duration: 0.3 });
-      });
-    });
-
-    gsap.set(cursor, { xPercent: -50, yPercent: -50 });
-
-    const headerTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: "#membership-container",
-        start: "top 50%",
-        toggleActions: "play none none reverse",
-      },
-    });
-
-    headerTl
-      .to(".reveal-text", {
-        y: 0,
-        opacity: 1,
-        duration: 1.2,
-        stagger: 0.1,
-        ease: "power4.out",
-      })
-      .to(
-        ".reveal-opacity",
-        {
-          opacity: 1,
-          duration: 1,
-          ease: "power2.out",
-        },
-        "-=0.8",
-      )
-      .to(
-        "#center-line",
-        {
-          scaleY: 1,
-          duration: 1.2,
-          ease: "power3.inOut",
-        },
-        "-=0.5",
-      );
-
-    const cardsTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".grid.grid-cols-1.lg\\:grid-cols-2",
-        start: "top 95%",
-        end: "top 70%",
-        toggleActions: "play none none reverse",
-      },
-    });
-
-    cardsTl.to(".hover-trigger", {
-      y: 0,
-      opacity: 1,
-      stagger: 0.2,
-      duration: 1,
-      ease: "power3.out",
-    });
   }
+  document.addEventListener("astro:page-load", initMemberships);
+  document.addEventListener("astro:before-swap", () => {
+    ctx?.revert();
+  });
 </script>

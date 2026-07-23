@@ -329,197 +329,201 @@ const iconMap: Record<string, any> = {
 <script>
   import { gsap, SplitText } from "@/utils/gsap-init";
 
-  const copyBtn = document.getElementById("copy-btn");
-  const accountNum = document.getElementById("account-number");
+  let ctx: gsap.Context | undefined;
+  function initDonatePage() {
+    const copyBtn = document.getElementById("copy-btn");
+    const accountNum = document.getElementById("account-number");
 
-  if (copyBtn && accountNum) {
-    copyBtn.addEventListener("click", () => {
-      const text = accountNum.innerText.replace(/\s/g, "");
-      navigator.clipboard.writeText(text).then(() => {
-        const originalIcon = copyBtn.innerHTML;
-        copyBtn.innerHTML =
-          '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>';
-        setTimeout(() => {
-          copyBtn.innerHTML = originalIcon;
-        }, 2000);
+    if (copyBtn && accountNum) {
+      copyBtn.addEventListener("click", () => {
+        const text = accountNum.innerText.replace(/\s/g, "");
+        navigator.clipboard.writeText(text).then(() => {
+          const originalIcon = copyBtn.innerHTML;
+          copyBtn.innerHTML =
+            '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>';
+          setTimeout(() => {
+            copyBtn.innerHTML = originalIcon;
+          }, 2000);
+        });
+      });
+    }
+    ctx = gsap.context(() => {
+      const heroTl = gsap.timeline({
+        defaults: { ease: "power3.out" },
+      });
+
+      const heroSplit = SplitText.create(".anim-split-text", {
+        type: "lines",
+        linesClass: "line-inner will-change-transform overflow-hidden",
+      });
+
+      heroTl.from(
+        ".anim-hero-image",
+        {
+          scale: 1.2,
+          duration: 2.5,
+          ease: "expo.out",
+        },
+        0,
+      );
+
+      heroTl.to(
+        ".anim-hero-vertical-text",
+        {
+          opacity: 1,
+          y: 0,
+          startAt: { y: -20 },
+          duration: 1.5,
+        },
+        0.2,
+      );
+
+      heroTl.to(
+        ".anim-hero-badge",
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+        },
+        0.3,
+      );
+
+      heroTl.set(".anim-split-text", { autoAlpha: 1 }, 0.4);
+      heroTl.from(
+        heroSplit.lines,
+        {
+          yPercent: 100,
+          opacity: 0,
+          duration: 1.2,
+          stagger: 0.1,
+          ease: "power4.out",
+        },
+        0.4,
+      );
+
+      heroTl.to(
+        ".anim-hero-desc",
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+        },
+        0.8,
+      );
+
+      gsap.to(".anim-hero-image", {
+        yPercent: 20,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".donate-hero-section",
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+
+      const impactSplit = SplitText.create(
+        ".impact-section .anim-split-heading",
+        {
+          type: "lines, words",
+          linesClass: "overflow-hidden",
+        },
+      );
+
+      const impactTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".impact-section",
+          start: "top 75%",
+        },
+      });
+
+      impactTl
+        .to(".anim-impact-header", { opacity: 1, duration: 0.5 })
+        .set(".impact-section .anim-split-heading", { autoAlpha: 1 }, "-=0.3")
+        .from(
+          impactSplit.words,
+          {
+            yPercent: 100,
+            duration: 0.8,
+            stagger: 0.02,
+            ease: "power4.out",
+          },
+          "<",
+        )
+        .to(
+          ".anim-impact-desc",
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+          },
+          "-=0.4",
+        )
+        .to(
+          ".anim-impact-card",
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: "power3.out",
+          },
+          "-=0.3",
+        );
+
+      const methodsSplit = SplitText.create(
+        ".methods-section .anim-split-heading",
+        {
+          type: "lines, chars",
+          linesClass: "overflow-hidden",
+        },
+      );
+
+      const methodsTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".methods-section",
+          start: "top 70%",
+        },
+      });
+
+      methodsTl
+        .to(".anim-methods-header", { opacity: 1, duration: 0.5 })
+        .set(".methods-section .anim-split-heading", { autoAlpha: 1 }, "-=0.3")
+        .from(
+          methodsSplit.chars,
+          {
+            opacity: 0,
+            y: 20,
+            duration: 0.5,
+            stagger: 0.02,
+            ease: "back.out",
+          },
+          "<",
+        )
+        .to(
+          ".anim-method-card",
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: "power3.out",
+          },
+          "-=0.3",
+        );
+
+      gsap.to(".anim-cta-box", {
+        opacity: 1,
+        scale: 1,
+        duration: 1,
+        ease: "elastic.out(1, 0.75)",
+        scrollTrigger: {
+          trigger: ".anim-cta-box",
+          start: "top 85%",
+        },
       });
     });
   }
-
-  {
-    const heroTl = gsap.timeline({
-      defaults: { ease: "power3.out" },
-    });
-
-    const heroSplit = SplitText.create(".anim-split-text", {
-      type: "lines",
-      linesClass: "line-inner will-change-transform overflow-hidden",
-    });
-
-    heroTl.from(
-      ".anim-hero-image",
-      {
-        scale: 1.2,
-        duration: 2.5,
-        ease: "expo.out",
-      },
-      0,
-    );
-
-    heroTl.to(
-      ".anim-hero-vertical-text",
-      {
-        opacity: 1,
-        y: 0,
-        startAt: { y: -20 },
-        duration: 1.5,
-      },
-      0.2,
-    );
-
-    heroTl.to(
-      ".anim-hero-badge",
-      {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-      },
-      0.3,
-    );
-
-    heroTl.set(".anim-split-text", { autoAlpha: 1 }, 0.4);
-    heroTl.from(
-      heroSplit.lines,
-      {
-        yPercent: 100,
-        opacity: 0,
-        duration: 1.2,
-        stagger: 0.1,
-        ease: "power4.out",
-      },
-      0.4,
-    );
-
-    heroTl.to(
-      ".anim-hero-desc",
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-      },
-      0.8,
-    );
-
-    gsap.to(".anim-hero-image", {
-      yPercent: 20,
-      ease: "none",
-      scrollTrigger: {
-        trigger: ".donate-hero-section",
-        start: "top top",
-        end: "bottom top",
-        scrub: true,
-      },
-    });
-
-    const impactSplit = SplitText.create(
-      ".impact-section .anim-split-heading",
-      {
-        type: "lines, words",
-        linesClass: "overflow-hidden",
-      },
-    );
-
-    const impactTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".impact-section",
-        start: "top 75%",
-      },
-    });
-
-    impactTl
-      .to(".anim-impact-header", { opacity: 1, duration: 0.5 })
-      .set(".impact-section .anim-split-heading", { autoAlpha: 1 }, "-=0.3")
-      .from(
-        impactSplit.words,
-        {
-          yPercent: 100,
-          duration: 0.8,
-          stagger: 0.02,
-          ease: "power4.out",
-        },
-        "<",
-      )
-      .to(
-        ".anim-impact-desc",
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.5,
-        },
-        "-=0.4",
-      )
-      .to(
-        ".anim-impact-card",
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: "power3.out",
-        },
-        "-=0.3",
-      );
-
-    const methodsSplit = SplitText.create(
-      ".methods-section .anim-split-heading",
-      {
-        type: "lines, chars",
-        linesClass: "overflow-hidden",
-      },
-    );
-
-    const methodsTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".methods-section",
-        start: "top 70%",
-      },
-    });
-
-    methodsTl
-      .to(".anim-methods-header", { opacity: 1, duration: 0.5 })
-      .set(".methods-section .anim-split-heading", { autoAlpha: 1 }, "-=0.3")
-      .from(
-        methodsSplit.chars,
-        {
-          opacity: 0,
-          y: 20,
-          duration: 0.5,
-          stagger: 0.02,
-          ease: "back.out",
-        },
-        "<",
-      )
-      .to(
-        ".anim-method-card",
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: "power3.out",
-        },
-        "-=0.3",
-      );
-
-    gsap.to(".anim-cta-box", {
-      opacity: 1,
-      scale: 1,
-      duration: 1,
-      ease: "elastic.out(1, 0.75)",
-      scrollTrigger: {
-        trigger: ".anim-cta-box",
-        start: "top 85%",
-      },
-    });
-  }
+  document.addEventListener("astro:page-load", initDonatePage);
+  document.addEventListener("astro:before-swap", () => ctx?.revert());
 </script>

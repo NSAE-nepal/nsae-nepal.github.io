@@ -1,5 +1,4 @@
 ---
-import { getCollection } from "astro:content";
 import ArrowUpRight from "@tabler/icons/outline/arrow-up-right.svg";
 import BrandBluesky from "@tabler/icons/outline/brand-bluesky.svg";
 import BrandFacebook from "@tabler/icons/outline/brand-facebook.svg";
@@ -185,81 +184,87 @@ const socialIcons: Record<string, any> = {
 <script>
   import { gsap, SplitText } from "@/utils/gsap-init";
 
-  {
-    const headerTl = gsap.timeline({
-      defaults: { ease: "power3.out" },
-    });
+  let ctx: gsap.Context | undefined;
+  function initContactPage() {
+    ctx = gsap.context(() => {
+      const headerTl = gsap.timeline({
+        defaults: { ease: "power3.out" },
+      });
 
-    const titleSplit = SplitText.create(".anim-header-title", {
-      type: "lines, words",
-      linesClass: "overflow-hidden",
-    });
+      const titleSplit = SplitText.create(".anim-header-title", {
+        type: "lines, words",
+        linesClass: "overflow-hidden",
+      });
 
-    headerTl
-      .to(".anim-header-badge", {
-        scale: 1,
-        opacity: 1,
-        duration: 0.8,
-        ease: "back.out(1.7)",
-      })
-      .set(".anim-header-title", { autoAlpha: 1 }, "-=0.4")
-      .from(
-        titleSplit.words,
-        {
-          yPercent: 100,
-          opacity: 0,
-          duration: 1,
-          stagger: 0.05,
-          ease: "power4.out",
-        },
-        "<",
-      )
-      .to(
-        ".anim-header-desc",
-        {
-          y: 0,
+      headerTl
+        .to(".anim-header-badge", {
+          scale: 1,
           opacity: 1,
           duration: 0.8,
-        },
-        "-=0.6",
-      );
+          ease: "back.out(1.7)",
+        })
+        .set(".anim-header-title", { autoAlpha: 1 }, "-=0.4")
+        .from(
+          titleSplit.words,
+          {
+            yPercent: 100,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.05,
+            ease: "power4.out",
+          },
+          "<",
+        )
+        .to(
+          ".anim-header-desc",
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+          },
+          "-=0.6",
+        );
 
-    gsap.to(".anim-contact-card", {
-      y: 0,
-      opacity: 1,
-      duration: 0.8,
-      stagger: 0.15,
-      ease: "power2.out",
-      scrollTrigger: {
-        trigger: ".anim-contact-card",
-        start: "top 85%",
-      },
-    });
-
-    const socialTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".anim-socials-wrapper",
-        start: "top 90%",
-      },
-    });
-
-    socialTl
-      .to(".anim-socials-wrapper", {
+      gsap.to(".anim-contact-card", {
         y: 0,
         opacity: 1,
         duration: 0.8,
+        stagger: 0.15,
         ease: "power2.out",
-      })
-      .to(
-        ".anim-social-icon",
-        {
-          scale: 1,
-          opacity: 1,
-          duration: 0.5,
-          stagger: 0.05,
-          ease: "back.out(2)",
+        scrollTrigger: {
+          trigger: ".anim-contact-card",
+          start: "top 85%",
         },
-        "-=0.4",
-      );
+      });
+
+      const socialTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".anim-socials-wrapper",
+          start: "top 90%",
+        },
+      });
+
+      socialTl
+        .to(".anim-socials-wrapper", {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power2.out",
+        })
+        .to(
+          ".anim-social-icon",
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 0.5,
+            stagger: 0.05,
+            ease: "back.out(2)",
+          },
+          "-=0.4",
+        );
+    });
   }
+  document.addEventListener("astro:page-load", initContactPage);
+
+  document.addEventListener("astro:before-swap", () => ctx?.revert());
 </script>
