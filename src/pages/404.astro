@@ -2,7 +2,11 @@
 import PageLayout from "@/layouts/PageLayout.astro";
 ---
 
-<PageLayout title="404: Not Found" description="Page Not Found" dataPagefindIgnore="all">
+<PageLayout
+  title="404: Not Found"
+  description="Page Not Found"
+  dataPagefindIgnore="all"
+>
   <main class="min-h-screen w-full flex flex-col justify-center items-center">
     <div class="text-center p-8">
       <h1
@@ -44,34 +48,39 @@ import PageLayout from "@/layouts/PageLayout.astro";
 <script>
   import { gsap } from "@/utils/gsap-init";
 
-  {
-    const tl = gsap.timeline();
+  let ctx: gsap.Context | undefined;
+  function init404Page() {
+    ctx = gsap.context(() => {
+      const tl = gsap.timeline();
 
-    gsap.set(".digit", { y: 50 });
-    gsap.set(".fade-in", { y: 20 });
+      gsap.set(".digit", { y: 50 });
+      gsap.set(".fade-in", { y: 20 });
 
-    tl.to(
-      ".digit",
-      {
-        y: 0,
-        autoAlpha: 1,
-        duration: 0.8,
-        ease: "back.out(1.7)",
-        stagger: 0.2,
-      },
-      "+=0.2"
-    );
+      tl.to(
+        ".digit",
+        {
+          y: 0,
+          autoAlpha: 1,
+          duration: 0.8,
+          ease: "back.out(1.7)",
+          stagger: 0.2,
+        },
+        "+=0.2",
+      );
 
-    tl.to(
-      ".fade-in",
-      {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.6,
-        ease: "power3.out",
-        stagger: 0.15,
-      },
-      "-=0.5"
-    );
+      tl.to(
+        ".fade-in",
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "power3.out",
+          stagger: 0.15,
+        },
+        "-=0.5",
+      );
+    });
   }
+  document.addEventListener("astro:page-load", init404Page);
+  document.addEventListener("astro:before-swap", () => ctx?.revert());
 </script>

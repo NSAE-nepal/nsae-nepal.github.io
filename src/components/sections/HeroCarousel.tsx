@@ -16,7 +16,6 @@ import {
 	CarouselNext,
 	CarouselPrevious,
 } from "@/components/ui/carousel";
-import homeImage from "../../assets/nsae-logo.png";
 
 gsap.registerPlugin(useGSAP, SplitText, ScrollTrigger);
 
@@ -28,12 +27,6 @@ type HeroSlideData = {
 interface HeroCarouselProps {
 	slides: HeroSlideData[];
 }
-
-const SLIDES = [
-	{ id: 1, image: homeImage },
-	//   { id: 2, image: blogPlaceholder1 },
-	//   { id: 3, image: blogPlaceholder2 },
-];
 
 const HeroSlide = ({ data }: { data: HeroSlideData }) => {
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -259,7 +252,7 @@ export function HeroCarousel({ slides }: HeroCarouselProps) {
 						</CarouselItem>
 					))}
 				</CarouselContent>
-				{SLIDES.length > 1 && (
+				{slides.length > 1 && (
 					<div className="absolute bottom-8 left-1/2 z-30 flex -translate-x-1/2 gap-4 md:bottom-12 md:left-auto md:right-12 md:translate-x-0">
 						<CarouselPrevious
 							className="static translate-y-0 border-white/20 bg-black/20 text-white cursor-pointer "

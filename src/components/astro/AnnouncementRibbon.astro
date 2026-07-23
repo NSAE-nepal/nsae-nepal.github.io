@@ -69,19 +69,31 @@ const storageKey = `announcement-dismissed-${id}`;
 </div>
 
 <script>
-  const ribbons = document.querySelectorAll<HTMLElement>(
-    ".announcement-ribbon",
-  );
+  document.addEventListener("click", (event) => {
+    const btn = (event.target as HTMLElement).closest(".close-ribbon-btn");
+    if (!btn) return;
 
-  ribbons.forEach((ribbon) => {
-    const btn = ribbon.querySelector(".close-ribbon-btn");
+    const ribbon = btn.closest(".announcement-ribbon") as HTMLElement | null;
+    if (!ribbon) return;
+
     const storageKey = ribbon.dataset.storageKey;
 
-    btn?.addEventListener("click", () => {
-      if (storageKey) {
-        localStorage.setItem(storageKey, "true");
-      }
-      ribbon.remove();
-    });
+    if (storageKey) {
+      localStorage.setItem(storageKey, "true");
+    }
+
+    ribbon.remove();
   });
+</script>
+<script is:inline define:vars={{ id, storageKey }}>
+  function updateRibbon() {
+    const ribbon = document.getElementById(id);
+
+    if (localStorage.getItem(storageKey) === "true") {
+      ribbon?.remove();
+    }
+  }
+
+  updateRibbon();
+  document.addEventListener("astro:page-load", updateRibbon);
 </script>

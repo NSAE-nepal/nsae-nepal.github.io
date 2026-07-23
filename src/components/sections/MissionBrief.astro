@@ -224,60 +224,69 @@ const { objective, bylaws } = Astro.props as {
 <script>
   import { gsap } from "@/utils/gsap-init";
 
-  if (typeof window !== "undefined") {
-    gsap
-      .timeline({
-        scrollTrigger: {
-          trigger: ".mission-text",
-          start: "top 80%",
-          end: "top 50%",
-          toggleActions: "play none none reverse",
-        },
-      })
-      .to(".mission-text h1, .mission-text p", {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        stagger: 0.1,
-        ease: "power3.out",
-      });
+  let ctx: gsap.Context | undefined;
+  function initMissionBrief() {
+    ctx = gsap.context(() => {
+      if (typeof window !== "undefined") {
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: ".mission-text",
+              start: "top 80%",
+              end: "top 50%",
+              toggleActions: "play none none reverse",
+            },
+          })
+          .to(".mission-text h1, .mission-text p", {
+            y: 0,
+            opacity: 1,
+            duration: 1,
+            stagger: 0.1,
+            ease: "power3.out",
+          });
 
-    gsap
-      .timeline({
-        scrollTrigger: {
-          trigger: ".mission-section .grid",
-          start: "top 85%",
-          end: "top 60%",
-          toggleActions: "play none none reverse",
-        },
-      })
-      .to(".mission-card", {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        stagger: 0.15,
-        duration: 0.8,
-        ease: "power2.out",
-      });
-    const videoBtn = document.querySelector(".js-video-btn");
-    const video = document.querySelector(
-      ".js-mission-video",
-    ) as HTMLVideoElement; // Type casting for TS
-    const pauseIcon = document.querySelector(".js-pause-icon");
-    const playIcon = document.querySelector(".js-play-icon");
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: ".mission-section .grid",
+              start: "top 85%",
+              end: "top 60%",
+              toggleActions: "play none none reverse",
+            },
+          })
+          .to(".mission-card", {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            stagger: 0.15,
+            duration: 0.8,
+            ease: "power2.out",
+          });
+        const videoBtn = document.querySelector(".js-video-btn");
+        const video = document.querySelector(
+          ".js-mission-video",
+        ) as HTMLVideoElement; // Type casting for TS
+        const pauseIcon = document.querySelector(".js-pause-icon");
+        const playIcon = document.querySelector(".js-play-icon");
 
-    if (videoBtn && video && pauseIcon && playIcon) {
-      videoBtn.addEventListener("click", () => {
-        if (video.paused) {
-          video.play();
-          playIcon.classList.add("hidden");
-          pauseIcon.classList.remove("hidden");
-        } else {
-          video.pause();
-          playIcon.classList.remove("hidden");
-          pauseIcon.classList.add("hidden");
+        if (videoBtn && video && pauseIcon && playIcon) {
+          videoBtn.addEventListener("click", () => {
+            if (video.paused) {
+              video.play();
+              playIcon.classList.add("hidden");
+              pauseIcon.classList.remove("hidden");
+            } else {
+              video.pause();
+              playIcon.classList.remove("hidden");
+              pauseIcon.classList.add("hidden");
+            }
+          });
         }
-      });
-    }
+      }
+    });
   }
+  document.addEventListener("astro:page-load", initMissionBrief);
+  document.addEventListener("astro:before-swap", () => {
+    ctx?.revert();
+  });
 </script>

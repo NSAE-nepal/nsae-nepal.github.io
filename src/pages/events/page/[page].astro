@@ -90,8 +90,10 @@ const pageDescription =
 <script>
   import { gsap, SplitText } from "@/utils/gsap-init";
   import { initCardSplitTextAnimation } from "@/utils/animations/cards-split-text-animation";
-
-  {
+ 
+  let ctx: gsap.Context | undefined;
+  function initEventsPage() {
+    ctx = gsap.context(() => {
     const mainTl = gsap.timeline({
       defaults: { ease: "power3.out" },
     });
@@ -155,5 +157,8 @@ const pageDescription =
         ease: "back.out(1.2)",
       }, "-=0.4");
     }
+  });
   }
+  document.addEventListener("astro:page-load", initEventsPage);
+  document.addEventListener("astro:before-swap", () => ctx?.revert());
 </script>
