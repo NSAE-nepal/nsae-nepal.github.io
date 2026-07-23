@@ -7,6 +7,8 @@ import sanity from "@sanity/astro";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 
+const isDev = process.argv.includes("dev");
+
 // https://astro.build/config
 export default defineConfig({
 	site: "https://www.nsae.org.np",
@@ -44,22 +46,24 @@ export default defineConfig({
 				external: ["/pagefind/pagefind.js"],
 			},
 		},
-		server: {
-			proxy: {
-				"/pagefind": {
-					target: "http://localhost:1414",
-					changeOrigin: true,
-					configure: (proxy, options) => {
-						proxy.on("error", (err, req, res) => {
-							console.log("proxy error", err);
-						});
-						proxy.on("proxyReq", (proxyReq, req, res) => {
-							console.log("Proxying:", req.method, req.url);
-						});
+		server: isDev
+			? {
+					proxy: {
+						"/pagefind": {
+							target: "http://localhost:1414",
+							changeOrigin: true,
+							configure: (proxy, options) => {
+								proxy.on("error", (err, req, res) => {
+									console.log("proxy error", err);
+								});
+								proxy.on("proxyReq", (proxyReq, req, res) => {
+									console.log("Proxying:", req.method, req.url);
+								});
+							},
+						},
 					},
-				},
-			},
-		},
+				}
+			: undefined,
 	},
 	prefetch: true,
 	redirects: {
