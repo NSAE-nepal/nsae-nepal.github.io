@@ -69,9 +69,6 @@ const { title, description, image = FallbackImage } = Astro.props;
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={new URL(image.src, Astro.url)} />
 
-<link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
-<script src="/pagefind/pagefind-ui.js" is:inline></script>
-
 <script>
   import Lenis from "lenis";
   import { gsap, ScrollTrigger } from "@/utils/gsap-init";

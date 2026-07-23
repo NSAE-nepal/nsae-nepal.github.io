@@ -1,0 +1,400 @@
+---
+import { Image } from "astro:assets";
+import ArrowDown from "@tabler/icons/outline/arrow-down.svg";
+import ChevronLeft from "@tabler/icons/outline/chevron-left.svg";
+import ChevronRight from "@tabler/icons/outline/chevron-right.svg";
+import Badge from "../astro/Badge.astro";
+import Button from "../astro/Button/Button.astro";
+
+export interface HeroSlide {
+  image: string;
+  alt: string;
+}
+
+interface Props {
+  slides: HeroSlide[];
+  autoplayDelay?: number;
+  regdNumber?: string;
+  title?: string;
+  badgeLabel?: string;
+  subtitleLines?: string[];
+  description?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  exploreHref?: string;
+}
+
+const {
+  slides,
+  autoplayDelay = 4000,
+  regdNumber = "Regd.No.29/046/047",
+  title = "NSAE",
+  badgeLabel = "EST. 1990",
+  subtitleLines = ["Nepalese Society of", "Agricultural Engineers"],
+  description = "NSAE connects leading engineers, scientists, and students dedicated to creating practical solutions for real‑world agricultural challenges.",
+  ctaLabel = "Get in Touch",
+  ctaHref = "/contact",
+  exploreHref = "#mission-brief",
+} = Astro.props;
+---
+
+<section
+  class="home-hero-section rounded-2xl relative flex min-h-[85vh] items-center overflow-hidden px-6 py-20 md:px-12 md:py-32"
+  style="visibility:hidden"
+  data-hero-carousel
+  data-autoplay-delay={autoplayDelay}
+>
+  <div
+    class="home-hero-redg-text absolute top-42 left-6 md:left-12 z-20 hidden md:block opacity-0 -translate-y-4"
+  >
+    <span
+      class="font-mono text-sm text-white/60 tracking-widest uppercase vertical-lr"
+    >
+      [ {regdNumber} ]
+    </span>
+  </div>
+
+  <div
+    class="home-hero-text relative z-20 flex max-w-5xl flex-col gap-8 md:gap-10 mt-22"
+  >
+    <h2
+      class="font-sans text-[3.5rem] font-medium leading-[0.9] text-white md:text-[7rem] tracking-tighter"
+    >
+      <div class="relative inline-block">
+        <div class="overflow-hidden inline-block align-bottom pb-4">
+          <span
+            class="engineering-text-anim inline-block font-bold italic underline decoration-2 underline-offset-12 decoration-white/30 invisible"
+          >
+            {title}
+          </span>
+        </div>
+        <Badge
+          class="badge-anim-wrapper opacity-0 absolute -top-8 -right-24 rotate-12 font-mono text-xs tracking-wide border-white/40"
+          size="sm"
+        >
+          {badgeLabel}
+        </Badge>
+      </div>
+
+      {
+        subtitleLines.map((line) => (
+          <>
+            <br />
+            <span class="subtitle-lines inline-block text-white/80 invisible pb-3">
+              {line}
+            </span>
+          </>
+        ))
+      }
+    </h2>
+
+    <p
+      class="hero-desc-anim max-w-xl text-lg text-white/70 font-sans leading-relaxed opacity-0 translate-y-4"
+    >
+      {description}
+    </p>
+
+    <div
+      class="hero-actions-anim mt-4 flex items-center gap-6 dark opacity-0 translate-y-4"
+    >
+      <Button
+        href={ctaHref}
+        size={"lg"}
+        class="rounded-full px-8 py-4 font-sans font-medium"
+      >
+        {ctaLabel}
+      </Button>
+
+      <a
+        href={exploreHref}
+        class="font-mono text-sm text-white/60 uppercase tracking-widest hover:text-white transition-colors flex items-center gap-2"
+      >
+        ( Explore ) <ArrowDown class="w-3 h-3" />
+      </a>
+    </div>
+  </div>
+
+  <div
+    class="scroll-indicator absolute bottom-10 right-12 z-20 hidden md:flex items-center gap-4 opacity-0"
+  >
+    <span class="font-mono text-sm text-white/50 uppercase">
+      Scroll to explore
+    </span>
+    <div class="scroll-line h-[1px] w-0 bg-white/30"></div>
+  </div>
+
+  <div class="absolute inset-0 z-10">
+    <div
+      class="absolute rounded-2xl inset-0 z-20 bg-linear-to-r from-black/80 via-black/50 to-transparent"
+    >
+    </div>
+
+    <div
+      class="hero-image-wrapper absolute inset-0 z-10 bg-black/40 rounded-2xl"
+    >
+    </div>
+
+    {
+      slides.map((slide, index) => (
+        <div
+          class="hero-carousel-slide absolute inset-0 will-change-[opacity]"
+          data-index={index}
+          style={`opacity:${index === 0 ? 1 : 0}; z-index:${index === 0 ? 1 : 0};`}
+        >
+          <Image
+            class="hero-image-anim absolute inset-0 h-full w-full object-cover rounded-2xl scale-110 will-change-transform"
+            alt={slide.alt}
+            inferSize
+            src={slide.image}
+            loading={index === 0 ? "eager" : "lazy"}
+            fetchpriority={index === 0 ? "high" : "auto"}
+            decoding="async"
+          />
+        </div>
+      ))
+    }
+
+    {
+      slides.length > 1 && (
+        <div class="hero-carousel-controls absolute bottom-8 left-1/2 z-30 flex -translate-x-1/2 gap-4 md:bottom-0 md:left-auto md:right-12 md:translate-x-0">
+          <button
+            type="button"
+            class="hero-carousel-prev inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-white/20 bg-black/20 text-white transition-colors hover:bg-black/40"
+            aria-label="Previous slide"
+          >
+            <ChevronLeft class="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            class="hero-carousel-next inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-white/20 bg-black/20 text-white transition-colors hover:bg-black/40"
+            aria-label="Next slide"
+          >
+            <ChevronRight class="h-4 w-4" />
+          </button>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<script>
+  import { gsap, SplitText } from "@/utils/gsap-init";
+
+  let ctx: gsap.Context | undefined;
+  const cleanupCarousels: Array<() => void> = [];
+
+  function initHeroCarousels() {
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    const sections = document.querySelectorAll<HTMLElement>(
+      ".home-hero-section[data-hero-carousel]",
+    );
+
+    sections.forEach((section) => {
+      const slides = Array.from(
+        section.querySelectorAll<HTMLElement>(".hero-carousel-slide"),
+      );
+      if (slides.length === 0) return;
+
+      const images = slides.map((slide) =>
+        slide.querySelector<HTMLImageElement>(".hero-image-anim"),
+      );
+      const prevBtn = section.querySelector<HTMLButtonElement>(
+        ".hero-carousel-prev",
+      );
+      const nextBtn = section.querySelector<HTMLButtonElement>(
+        ".hero-carousel-next",
+      );
+      const delay = Number(section.dataset.autoplayDelay) || 4000;
+      const revealDuration = Math.max(delay / 1000 + 2, 4);
+
+      let current = 0;
+      let timerId: ReturnType<typeof setInterval> | null = null;
+
+      function showSlide(targetIndex: number) {
+        const nextIndex =
+          ((targetIndex % slides.length) + slides.length) % slides.length;
+        if (nextIndex === current) return;
+
+        const outgoing = slides[current];
+        const incoming = slides[nextIndex];
+        const incomingImg = images[nextIndex];
+
+        gsap.set(incoming, { zIndex: 1 });
+        gsap.set(outgoing, { zIndex: 0 });
+
+        if (prefersReducedMotion) {
+          gsap.set(outgoing, { opacity: 0 });
+          gsap.set(incoming, { opacity: 1 });
+        } else {
+          gsap.to(outgoing, { opacity: 0, duration: 1, ease: "power2.inOut" });
+          gsap.to(incoming, { opacity: 1, duration: 1, ease: "power2.inOut" });
+
+          if (incomingImg) {
+            gsap.fromTo(
+              incomingImg,
+              { scale: 1.1 },
+              { scale: 1, duration: revealDuration, ease: "expo.out" },
+            );
+          }
+        }
+
+        current = nextIndex;
+      }
+
+      function next() {
+        showSlide(current + 1);
+      }
+      function prev() {
+        showSlide(current - 1);
+      }
+
+      function startAutoplay() {
+        stopAutoplay();
+        if (slides.length > 1 && !prefersReducedMotion) {
+          timerId = setInterval(next, delay);
+        }
+      }
+      function stopAutoplay() {
+        if (timerId) {
+          clearInterval(timerId);
+          timerId = null;
+        }
+      }
+
+      function handleNextClick() {
+        next();
+        startAutoplay();
+      }
+      function handlePrevClick() {
+        prev();
+        startAutoplay();
+      }
+
+      nextBtn?.addEventListener("click", handleNextClick);
+      prevBtn?.addEventListener("click", handlePrevClick);
+      section.addEventListener("mouseenter", stopAutoplay);
+      section.addEventListener("mouseleave", startAutoplay);
+
+      if (images[0] && !prefersReducedMotion) {
+        gsap.fromTo(
+          images[0],
+          { scale: 1.1 },
+          { scale: 1, duration: revealDuration, ease: "expo.out", delay: 0.2 },
+        );
+      }
+
+      startAutoplay();
+
+      cleanupCarousels.push(() => {
+        stopAutoplay();
+        nextBtn?.removeEventListener("click", handleNextClick);
+        prevBtn?.removeEventListener("click", handlePrevClick);
+        section.removeEventListener("mouseenter", stopAutoplay);
+        section.removeEventListener("mouseleave", startAutoplay);
+      });
+    });
+  }
+
+  function initHomeHero() {
+    ctx = gsap.context(() => {
+      if (typeof window === "undefined") return;
+
+      const sections = document.querySelectorAll(".home-hero-section");
+      gsap.set(sections, { autoAlpha: 1 });
+
+      const subtitleInner = SplitText.create(".subtitle-lines", {
+        type: "lines",
+        linesClass: "line-inner will-change-transform",
+      });
+
+      const tl = gsap.timeline({
+        defaults: { ease: "power3.out" },
+        scrollTrigger: {
+          trigger: ".home-hero-section",
+          start: "top 75%",
+          end: "top 20%",
+          toggleActions: "play none none reverse",
+        },
+      });
+
+      tl.to(
+        ".home-hero-redg-text",
+        { y: 0, opacity: 1, duration: 1.5, ease: "power3.out" },
+        0.2,
+      );
+
+      tl.set(".engineering-text-anim", { autoAlpha: 1 }, 0.3);
+      tl.from(
+        ".engineering-text-anim",
+        {
+          yPercent: 100,
+          rotation: 2,
+          opacity: 0,
+          duration: 1.2,
+          ease: "power4.out",
+        },
+        0.3,
+      );
+
+      tl.to(
+        ".badge-anim-wrapper",
+        {
+          opacity: 1,
+          scale: 1,
+          rotation: 12,
+          startAt: { scale: 0, rotation: 0 },
+          duration: 0.8,
+          ease: "back.out(1.7)",
+        },
+        0.8,
+      );
+
+      tl.set(".subtitle-lines", { autoAlpha: 1 }, 0.5);
+      tl.from(
+        subtitleInner.lines,
+        {
+          yPercent: 100,
+          opacity: 0,
+          duration: 1.1,
+          stagger: 0.1,
+          ease: "power4.out",
+        },
+        0.5,
+      );
+
+      tl.to(
+        [".hero-desc-anim", ".hero-actions-anim"],
+        { y: 0, opacity: 1, stagger: 0.1, duration: 0.5 },
+        "-=1",
+      );
+      tl.to(".scroll-indicator", { opacity: 1, duration: 1 }, "-=1");
+      tl.to(
+        ".scroll-line",
+        { width: 48, duration: 1, ease: "expo.out" },
+        "-=0.5",
+      );
+
+      gsap.to(".hero-image-anim", {
+        yPercent: 20,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".home-hero-section",
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+    });
+
+    initHeroCarousels();
+  }
+
+  document.addEventListener("astro:page-load", initHomeHero);
+  document.addEventListener("astro:before-swap", () => {
+    ctx?.revert();
+    cleanupCarousels.splice(0).forEach((cleanup) => cleanup());
+  });
+</script>
