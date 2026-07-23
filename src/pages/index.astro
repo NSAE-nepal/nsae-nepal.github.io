@@ -3,7 +3,7 @@ import AnnouncementRibbon from "@/components/astro/AnnouncementRibbon.astro";
 import BannersArchive from "@/components/sections/BannersArchive.astro";
 import BlogsArchive from "@/components/sections/BlogsArchive.astro";
 import Faq from "@/components/sections/Faq.astro";
-import { HeroCarousel } from "@/components/sections/HeroCarousel";
+import HeroCarousel from "@/components/sections/HeroCarousel.astro";
 import Memberships from "@/components/sections/Memberships.astro";
 import MissionBrief from "@/components/sections/MissionBrief.astro";
 import PageLayout from "@/layouts/PageLayout.astro";
@@ -31,7 +31,8 @@ const homePage = await getHomePage();
       />
     )
   }
-  <HeroCarousel client:load slides={homePage.carousel} />
+  <HeroCarousel slides={homePage.carousel} />
+  <!-- <HeroCarousel client:idle slides={homePage.carousel} /> -->
 
   <MissionBrief objective={homePage.objective} bylaws={homePage.bylaws} />
   <Memberships membership={homePage.membership} />

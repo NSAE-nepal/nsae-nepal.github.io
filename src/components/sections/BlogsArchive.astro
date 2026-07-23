@@ -70,7 +70,7 @@ if (featuredPosts.length > 0) {
         >
           {sideListPosts.map((post) => (
             <ClickableCard
-              class="group relative border-b border-border last:border-b-0 hover:bg-secondary transition-colors duration-300 overflow-hidden"
+              class="group relative border-b border-border last:border-b-0 hover:bg-secondary/60 transition-colors duration-300 overflow-hidden"
               href={`/blog/${post.slug}/`}
             >
               <BlogCard data={post} />
