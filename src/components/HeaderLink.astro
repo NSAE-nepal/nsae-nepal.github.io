@@ -1,6 +1,6 @@
 ---
-import { cn } from "@/lib/utils";
 import type { HTMLAttributes } from "astro/types";
+import { cn } from "@/lib/utils";
 
 type Props = HTMLAttributes<"a">;
 
@@ -9,12 +9,12 @@ const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
 
 const hrefString = href?.toString() ?? "";
 
-const currentSubpath = pathname.match(/[^\/]+/g);
+const currentSubpath = pathname.match(/[^/]+/g);
 const currentRoot = currentSubpath?.[0];
 
 const hrefSubpath = hrefString
   .replace(import.meta.env.BASE_URL, "")
-  .match(/[^\/]+/g);
+  .match(/[^/]+/g);
 const hrefRoot = hrefSubpath?.[0];
 
 const isActive =
@@ -23,16 +23,28 @@ const isActive =
   (currentRoot && hrefRoot === currentRoot);
 
 const baseClasses =
-  "hover:rounded-full hover:bg-background/50 dark:hover:text-foreground text-background px-2.5 py-1 text-sm";
+  "relative rounded-full px-2.5 py-1 text-sm transition-colors duration-300 ease-out " +
+  "hover:bg-background/50 dark:hover:text-foreground";
 ---
 
 <a
   href={href}
-  class={cn(baseClasses, className, {
-    "bg-primary text-primary-foreground dark:hover:text-primary-foreground hover:bg-primary hover:text-primary-foreground rounded-full":
-      isActive,
-  })}
+  aria-current={isActive ? "page" : undefined}
+  class={cn(
+    baseClasses,
+    isActive && "text-background hover:text-background!",
+    className,
+  )}
   {...props}
 >
-  <slot />
+  {
+    isActive && (
+      <span
+        transition:name="active-pill"
+        class="absolute inset-0 rounded-full bg-primary"
+        aria-hidden="true"
+      />
+    )
+  }
+  <span class="relative"><slot /></span>
 </a>

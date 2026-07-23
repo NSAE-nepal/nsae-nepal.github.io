@@ -111,64 +111,69 @@ const pageDescription =
 <script>
   import { gsap, SplitText } from "@/utils/gsap-init";
 
-  {
-    const headerTl = gsap.timeline({
-      defaults: { ease: "power3.out" },
-    });
+  let ctx: gsap.Context | undefined;
+  function initPastCommitteePage() {
+    ctx = gsap.context(() => {
+      const headerTl = gsap.timeline({
+        defaults: { ease: "power3.out" },
+      });
 
-    const titleSplit = SplitText.create(".anim-header-title", {
-      type: "lines, words",
-      linesClass: "overflow-hidden",
-    });
+      const titleSplit = SplitText.create(".anim-header-title", {
+        type: "lines, words",
+        linesClass: "overflow-hidden",
+      });
 
-    headerTl
-      .to(".anim-header-badge", {
-        scale: 1,
-        opacity: 1,
-        duration: 0.8,
-        ease: "back.out(1.7)",
-      })
-      .set(".anim-header-title", { autoAlpha: 1 }, "-=0.4")
-      .from(
-        titleSplit.words,
-        {
-          yPercent: 100,
-          opacity: 0,
-          duration: 1,
-          stagger: 0.05,
-          ease: "power4.out",
-        },
-        "<",
-      )
-      .to(
-        ".anim-header-desc",
-        {
-          y: 0,
+      headerTl
+        .to(".anim-header-badge", {
+          scale: 1,
           opacity: 1,
           duration: 0.8,
-        },
-        "-=0.5",
-      );
+          ease: "back.out(1.7)",
+        })
+        .set(".anim-header-title", { autoAlpha: 1 }, "-=0.4")
+        .from(
+          titleSplit.words,
+          {
+            yPercent: 100,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.05,
+            ease: "power4.out",
+          },
+          "<",
+        )
+        .to(
+          ".anim-header-desc",
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+          },
+          "-=0.5",
+        );
 
-    if (document.querySelector(".anim-pagination")) {
-      gsap.to(".anim-pagination", {
-        opacity: 1,
-        duration: 1,
-        scrollTrigger: {
-          trigger: ".anim-pagination",
-          start: "top 95%",
-        },
-      });
-    }
+      if (document.querySelector(".anim-pagination")) {
+        gsap.to(".anim-pagination", {
+          opacity: 1,
+          duration: 1,
+          scrollTrigger: {
+            trigger: ".anim-pagination",
+            start: "top 95%",
+          },
+        });
+      }
 
-    if (document.querySelector(".anim-empty-state")) {
-      gsap.to(".anim-empty-state", {
-        scale: 1,
-        opacity: 1,
-        duration: 0.8,
-        ease: "back.out(1.5)",
-        delay: 0.5,
-      });
-    }
+      if (document.querySelector(".anim-empty-state")) {
+        gsap.to(".anim-empty-state", {
+          scale: 1,
+          opacity: 1,
+          duration: 0.8,
+          ease: "back.out(1.5)",
+          delay: 0.5,
+        });
+      }
+    });
   }
+  document.addEventListener("astro:page-load", initPastCommitteePage);
+  document.addEventListener("astro:before-swap", () => ctx?.revert());
 </script>

@@ -107,111 +107,118 @@ import homeimage from "../../assets/nsae-logo.png";
 <script>
   import { gsap, SplitText } from "@/utils/gsap-init";
 
-  if (typeof window !== "undefined") {
-    const section = document.querySelectorAll(".home-hero-section");
-    gsap.set(section, { autoAlpha: 1 });
+  let ctx: gsap.Context | undefined;
+  function initHomeHero() {
+    ctx = gsap.context(() => {
+      if (typeof window !== "undefined") {
+        const section = document.querySelectorAll(".home-hero-section");
+        gsap.set(section, { autoAlpha: 1 });
 
-    const subtitleInner = SplitText.create(".subtitle-lines", {
-      type: "lines",
-      linesClass: "line-inner will-change-transform",
-    });
+        const subtitleInner = SplitText.create(".subtitle-lines", {
+          type: "lines",
+          linesClass: "line-inner will-change-transform",
+        });
 
-    const tl = gsap.timeline({
-      defaults: { ease: "power3.out" },
-      scrollTrigger: {
-        trigger: ".home-hero-section",
-        start: "top 75%",
-        end: "top 20%",
-        toggleActions: "play none none reverse",
-      },
-    });
+        const tl = gsap.timeline({
+          defaults: { ease: "power3.out" },
+          scrollTrigger: {
+            trigger: ".home-hero-section",
+            start: "top 75%",
+            end: "top 20%",
+            toggleActions: "play none none reverse",
+          },
+        });
 
-    tl.to(
-      ".hero-image-anim",
-      {
-        scale: 1,
-        duration: 2.5,
-        ease: "expo.out",
-      },
-      0,
-    );
+        tl.to(
+          ".hero-image-anim",
+          {
+            scale: 1,
+            duration: 2.5,
+            ease: "expo.out",
+          },
+          0,
+        );
 
-    tl.to(
-      ".home-hero-redg-text",
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1.5,
-        ease: "power3.out",
-      },
-      0.2,
-    );
+        tl.to(
+          ".home-hero-redg-text",
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1.5,
+            ease: "power3.out",
+          },
+          0.2,
+        );
 
-    tl.set(".engineering-text-anim", { autoAlpha: 1 }, 0.3);
-    tl.from(
-      ".engineering-text-anim",
-      {
-        yPercent: 100,
-        rotation: 2,
-        opacity: 0,
-        duration: 1.2,
-        ease: "power4.out",
-      },
-      0.3,
-    );
+        tl.set(".engineering-text-anim", { autoAlpha: 1 }, 0.3);
+        tl.from(
+          ".engineering-text-anim",
+          {
+            yPercent: 100,
+            rotation: 2,
+            opacity: 0,
+            duration: 1.2,
+            ease: "power4.out",
+          },
+          0.3,
+        );
 
-    tl.to(
-      ".badge-anim-wrapper",
-      {
-        opacity: 1,
-        scale: 1,
-        rotation: 12,
-        startAt: { scale: 0, rotation: 0 },
-        duration: 0.8,
-        ease: "back.out(1.7)",
-      },
-      0.8,
-    );
+        tl.to(
+          ".badge-anim-wrapper",
+          {
+            opacity: 1,
+            scale: 1,
+            rotation: 12,
+            startAt: { scale: 0, rotation: 0 },
+            duration: 0.8,
+            ease: "back.out(1.7)",
+          },
+          0.8,
+        );
 
-    tl.set(".subtitle-lines", { autoAlpha: 1 }, 0.5);
-    tl.from(
-      subtitleInner.lines,
-      {
-        yPercent: 100,
-        opacity: 0,
-        duration: 1.1,
-        stagger: 0.1,
-        ease: "power4.out",
-      },
-      0.5,
-    );
+        tl.set(".subtitle-lines", { autoAlpha: 1 }, 0.5);
+        tl.from(
+          subtitleInner.lines,
+          {
+            yPercent: 100,
+            opacity: 0,
+            duration: 1.1,
+            stagger: 0.1,
+            ease: "power4.out",
+          },
+          0.5,
+        );
 
-    tl.to(
-      [".hero-desc-anim", ".hero-actions-anim"],
-      {
-        y: 0,
-        opacity: 1,
-        stagger: 0.1,
-        duration: 0.5,
-      },
-      "-=1",
-    );
-    tl.to(".scroll-indicator", { opacity: 1, duration: 1 }, "-=1");
-    tl.to(
-      ".scroll-line",
-      { width: 48, duration: 1, ease: "expo.out" },
-      "-=0.5",
-    );
+        tl.to(
+          [".hero-desc-anim", ".hero-actions-anim"],
+          {
+            y: 0,
+            opacity: 1,
+            stagger: 0.1,
+            duration: 0.5,
+          },
+          "-=1",
+        );
+        tl.to(".scroll-indicator", { opacity: 1, duration: 1 }, "-=1");
+        tl.to(
+          ".scroll-line",
+          { width: 48, duration: 1, ease: "expo.out" },
+          "-=0.5",
+        );
 
-    gsap.to(".hero-image-anim", {
-      yPercent: 20,
-      ease: "none",
-      scrollTrigger: {
-        trigger: ".home-hero-section",
-        start: "top top",
-        end: "bottom top",
-        scrub: true,
-      },
+        gsap.to(".hero-image-anim", {
+          yPercent: 20,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".home-hero-section",
+            start: "top top",
+            end: "bottom top",
+            scrub: true,
+          },
+        });
+      }
     });
   }
+  document.addEventListener("astro:page-load", initHomeHero);
+  document.addEventListener("astro:before-swap", () => ctx?.revert());
 </script>

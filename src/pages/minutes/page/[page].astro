@@ -102,99 +102,103 @@ const pageDescription =
 <script>
   import { gsap, SplitText } from "@/utils/gsap-init";
   import { initCardSplitTextAnimation } from "@/utils/animations/cards-split-text-animation";
+  let ctx: gsap.Context | undefined;
+  function initMinutesPage() {
+    ctx = gsap.context(() => {
+      const mainTl = gsap.timeline({
+        defaults: { ease: "power3.out" },
+      });
 
-  {
-    const mainTl = gsap.timeline({
-      defaults: { ease: "power3.out" },
-    });
+      const titleSplit = SplitText.create(".anim-header-title", {
+        type: "lines, words",
+        linesClass: "overflow-hidden",
+      });
 
-    const titleSplit = SplitText.create(".anim-header-title", {
-      type: "lines, words",
-      linesClass: "overflow-hidden",
-    });
+      mainTl
+        .to(".anim-header-badge", {
+          scale: 1,
+          opacity: 1,
+          duration: 0.6,
+          ease: "back.out(1.5)",
+        })
+        .set(".anim-header-title", { autoAlpha: 1 }, "-=0.3")
+        .from(
+          titleSplit.words,
+          {
+            yPercent: 100,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.04,
+            ease: "power4.out",
+          },
+          "<",
+        );
 
-    mainTl
-      .to(".anim-header-badge", {
-        scale: 1,
-        opacity: 1,
-        duration: 0.6,
-        ease: "back.out(1.5)",
-      })
-      .set(".anim-header-title", { autoAlpha: 1 }, "-=0.3")
-      .from(
-        titleSplit.words,
-        {
-          yPercent: 100,
-          opacity: 0,
-          duration: 0.8,
-          stagger: 0.04,
-          ease: "power4.out",
-        },
-        "<",
-      );
+      if (document.querySelector(".anim-header-desc")) {
+        mainTl.to(
+          ".anim-header-desc",
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.5,
+          },
+          "-=0.6",
+        );
+      }
 
-    if (document.querySelector(".anim-header-desc")) {
       mainTl.to(
-        ".anim-header-desc",
+        ".anim-section-title",
         {
           y: 0,
           opacity: 1,
           duration: 0.5,
         },
-        "-=0.6",
+        "-=0.5",
       );
-    }
 
-    mainTl.to(
-      ".anim-section-title",
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.5,
-      },
-      "-=0.5",
-    );
+      if (document.querySelector(".anim-minutes-card")) {
+        mainTl
+          .to(
+            ".anim-minutes-card, .anim-divider",
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.5,
+              stagger: 0.06,
+              ease: "power2.out",
+            },
+            "-=0.3",
+          )
+          .add(() => {
+            initCardSplitTextAnimation({ cardSelector: ".anim-minutes-card" });
+          }, "<");
+      }
 
-    if (document.querySelector(".anim-minutes-card")) {
-      mainTl
-        .to(
-          ".anim-minutes-card, .anim-divider",
+      if (document.querySelector(".anim-pagination")) {
+        mainTl.to(
+          ".anim-pagination",
           {
-            y: 0,
             opacity: 1,
             duration: 0.5,
-            stagger: 0.06,
-            ease: "power2.out",
+          },
+          "-=0.2",
+        );
+      }
+
+      if (document.querySelector(".anim-empty-state")) {
+        mainTl.to(
+          ".anim-empty-state",
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 0.6,
+            ease: "back.out(1.2)",
           },
           "-=0.3",
-        )
-        .add(() => {
-          initCardSplitTextAnimation({ cardSelector: ".anim-minutes-card" });
-        }, "<");
-    }
-
-    if (document.querySelector(".anim-pagination")) {
-      mainTl.to(
-        ".anim-pagination",
-        {
-          opacity: 1,
-          duration: 0.5,
-        },
-        "-=0.2",
-      );
-    }
-
-    if (document.querySelector(".anim-empty-state")) {
-      mainTl.to(
-        ".anim-empty-state",
-        {
-          scale: 1,
-          opacity: 1,
-          duration: 0.6,
-          ease: "back.out(1.2)",
-        },
-        "-=0.3",
-      );
-    }
+        );
+      }
+    });
   }
+  document.addEventListener("astro:page-load", initMinutesPage);
+  document.addEventListener("astro:before-swap", () => ctx?.revert());
 </script>
