@@ -1,6 +1,6 @@
 ---
 import { getImage } from "astro:assets";
-import ArrowUpRight from "@tabler/icons/outline/arrow-up-right.svg";
+import { IconArrowUpRight } from "@tabler/icons-astro";
 import type { Banner } from "@/sanity/lib/queries/banner";
 import Button from "./Button/Button.astro";
 
@@ -84,7 +84,7 @@ const subtleVignette = `radial-gradient(
         class="rounded-full font-sans font-medium h-12 text-base shadow-sm hover:shadow-md transition-all px-5!"
       >
         {banner.buttonText}
-        <ArrowUpRight class={"ml-2 size-5"} />
+        <IconArrowUpRight class={"ml-2 size-5"} />
       </Button>
     </div>
   </div>

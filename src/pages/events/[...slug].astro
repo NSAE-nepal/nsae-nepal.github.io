@@ -1,6 +1,5 @@
 ---
-import { type CollectionEntry, getCollection, render } from "astro:content";
-import ArrowLeft from "@tabler/icons/outline/arrow-left.svg";
+import { IconArrowLeft } from "@tabler/icons-astro";
 import PortableText from "@/components/PortableText.astro";
 import EventContact from "@/components/pages/events/EventContact.astro";
 import EventHeader from "@/components/pages/events/EventHeader.astro";
@@ -36,7 +35,7 @@ const event = await getEventDetails(slug!);
       href="/events/page/1"
       class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors px-4"
     >
-      <ArrowLeft class="size-4" /> Back to All Events
+      <IconArrowLeft class="size-4" /> Back to All Events
     </a>
 
     <EventHeader data={event} />
@@ -64,8 +63,8 @@ const event = await getEventDetails(slug!);
         class="flex flex-col gap-6 lg:sticky lg:top-24 h-fit"
       >
         <EventLocation location={event.location} />
-        <EventInstructors instructors={event.instructors} />
         <EventContact contactPersons={event.contactPersons} />
+        <EventInstructors instructors={event.instructors} />
       </aside>
     </div>
   </article>

@@ -1,5 +1,5 @@
 ---
-import MoodEmpty from "@tabler/icons/outline/mood-empty.svg";
+import { IconMoodEmpty } from "@tabler/icons-astro";
 
 interface Props {
   title: string;
@@ -14,7 +14,7 @@ const { title, description } = Astro.props;
 >
   <div class="p-4 bg-secondary rounded-full mb-4">
     <slot name="icon">
-      <MoodEmpty class="size-8 text-muted-foreground" />
+      <IconMoodEmpty class="size-8 text-muted-foreground" />
     </slot>
   </div>
   <h3 class="font-sans text-xl font-medium mb-2">{title}</h3>

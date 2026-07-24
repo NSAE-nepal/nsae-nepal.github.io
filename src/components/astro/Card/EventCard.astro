@@ -1,10 +1,12 @@
 ---
 import { Image } from "astro:assets";
-import ArrowNarrowRight from "@tabler/icons/outline/arrow-narrow-right.svg";
-import ArrowUpRight from "@tabler/icons/outline/arrow-up-right.svg";
-import CalendarEvent from "@tabler/icons/outline/calendar-event.svg";
-import MapPin from "@tabler/icons/outline/map-pin.svg";
-import Video from "@tabler/icons/outline/video.svg";
+import {
+  IconArrowNarrowRight,
+  IconArrowUpRight,
+  IconCalendarEvent,
+  IconMapPin,
+  IconVideo,
+} from "@tabler/icons-astro";
 import Badge from "@/components/astro/Badge.astro";
 import Button from "@/components/astro/Button/Button.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
@@ -61,7 +63,7 @@ const isOnline =
       class="mt-auto hidden md:flex items-center gap-1 font-mono text-xs uppercase tracking-widest text-foreground hover:text-primary transition-colors pt-4"
     >
       <span>View Details</span>
-      <ArrowNarrowRight
+      <IconArrowNarrowRight
         class="w-4 h-4 group-hover:translate-x-1 transition-transform"
       />
     </div>
@@ -74,7 +76,7 @@ const isOnline =
       <div
         class="p-2 bg-secondary/50 rounded-lg shrink-0 border border-border/50"
       >
-        <CalendarEvent class="w-5 h-5 text-primary" />
+        <IconCalendarEvent class="w-5 h-5 text-primary" />
       </div>
       <div>
         <p class="font-sans font-medium text-sm">Date</p>
@@ -98,9 +100,9 @@ const isOnline =
       >
         {
           isOnline ? (
-            <Video class="w-5 h-5 text-primary" />
+            <IconVideo class="w-5 h-5 text-primary" />
           ) : (
-            <MapPin class="w-5 h-5 text-primary" />
+            <IconMapPin class="w-5 h-5 text-primary" />
           )
         }
       </div>
@@ -139,7 +141,7 @@ const isOnline =
             class="font-sans font-medium"
           >
             Register Now
-            <ArrowUpRight class={"ml-2 size-4"} />
+            <IconArrowUpRight class={"ml-2 size-4"} />
           </Button>
         </div>
       )

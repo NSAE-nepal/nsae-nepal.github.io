@@ -1,8 +1,7 @@
 ---
 import { Image } from "astro:assets";
-import Building from "@tabler/icons/outline/building.svg";
-import User from "@tabler/icons/outline/user.svg";
-import World from "@tabler/icons/outline/world.svg";
+import { IconBuilding, IconUser, IconWorld } from "@tabler/icons-astro";
+
 import type {
   EventDetails,
   Instructor,
@@ -92,7 +91,7 @@ const displayProfiles: DisplayProfile[] = instructors.map((inst, index) => {
                           class="h-full w-full object-contain p-1.5 transition-transform duration-300 group-hover:scale-110"
                         />
                       ) : (
-                        <Building class="size-6 text-muted-foreground/50" />
+                        <IconBuilding class="size-6 text-muted-foreground/50" />
                       )}
                     </div>
 
@@ -119,7 +118,7 @@ const displayProfiles: DisplayProfile[] = instructors.map((inst, index) => {
                             rel="noopener noreferrer"
                             class="inline-flex items-center gap-1 text-xs text-primary/80 hover:text-primary w-fit hover:underline"
                           >
-                            <World class="size-3" />
+                            <IconWorld class="size-3" />
                             <span>Visit Website</span>
                           </a>
                         )}
@@ -141,7 +140,7 @@ const displayProfiles: DisplayProfile[] = instructors.map((inst, index) => {
                                   class="h-full w-full object-cover transition-transform duration-300 group-hover/rep:scale-110"
                                 />
                               ) : (
-                                <User class="size-4 text-muted-foreground/50" />
+                                <IconUser class="size-4 text-muted-foreground/50" />
                               )}
                             </div>
 
@@ -179,7 +178,7 @@ const displayProfiles: DisplayProfile[] = instructors.map((inst, index) => {
                       class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                     />
                   ) : (
-                    <User class="size-6 text-muted-foreground/50" />
+                    <IconUser class="size-6 text-muted-foreground/50" />
                   )}
                 </div>
 

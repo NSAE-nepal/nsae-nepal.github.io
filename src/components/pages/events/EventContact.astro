@@ -1,7 +1,5 @@
 ---
-import type { CollectionEntry } from "astro:content";
-import Mail from "@tabler/icons/outline/mail.svg";
-import Phone from "@tabler/icons/outline/phone.svg";
+import { IconMail, IconPhone } from "@tabler/icons-astro";
 import type { EventDetails } from "@/sanity/lib/queries/events";
 
 interface Props {
@@ -15,8 +13,8 @@ const { contactPersons } = Astro.props;
   contactPersons && contactPersons.length > 0 && (
     <div class="rounded-lg border bg-card text-card-foreground">
       <div class="p-6">
-        <h3 class="font-sans text-xl font-medium tracking-tight mb-4">
-          Contact
+        <h3 class="font-sans text-xl font-medium tracking-tight mb-4 capitalize">
+          Reach out to our team
         </h3>
         <div class="flex flex-col gap-5">
           {contactPersons.map((person) => (
@@ -45,7 +43,7 @@ const { contactPersons } = Astro.props;
                     href={`mailto:${person.email}`}
                     class="flex items-center gap-2 font-mono text-xs text-muted-foreground hover:text-primary transition-colors"
                   >
-                    <Mail class={"size-4"} />
+                    <IconMail class={"size-4"} />
                     {person.email}
                   </a>
                 )}
@@ -54,7 +52,7 @@ const { contactPersons } = Astro.props;
                     href={`tel:${person.phone}`}
                     class="flex items-center gap-2 font-mono text-xs text-muted-foreground hover:text-primary transition-colors"
                   >
-                    <Phone class={"size-4"} />
+                    <IconPhone class={"size-4"} />
                     {person.phone}
                   </a>
                 )}

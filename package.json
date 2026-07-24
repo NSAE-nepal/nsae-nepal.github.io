@@ -23,7 +23,6 @@
     "@sanity/client": "^7.24.0",
     "@sanity/code-input": "^7.3.0",
     "@sanity/image-url": "^2.1.1",
-    "@tabler/icons": "^3.36.1",
     "@tabler/icons-astro": "^3.45.0",
     "@tabler/icons-react": "^3.36.1",
     "@tailwindcss/vite": "^4.1.18",

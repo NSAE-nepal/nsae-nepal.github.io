@@ -1,5 +1,6 @@
 ---
-import ArrowNarrowRight from "@tabler/icons/outline/arrow-narrow-right.svg";
+import { IconArrowNarrowRight } from "@tabler/icons-astro";
+
 import Categories from "@/components/Categories.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
 import AvatarGroup from "../AvatarGroup.astro";
@@ -42,7 +43,7 @@ const { title, subtitle, publishedAt, categories, authors, slug } = data;
         class="font-mono text-xs uppercase tracking-widest flex flex-row gap-2 items-center hover:text-primary transition-colors"
         href={href ? href : `/blog/${slug}`}
       >
-        Read more <ArrowNarrowRight class="w-4 h-4" />
+        Read more <IconArrowNarrowRight class="w-4 h-4" />
       </a>
       {authors?.length > 0 && <AvatarGroup data={authors} />}
     </div>
