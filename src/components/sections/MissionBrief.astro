@@ -1,9 +1,11 @@
 ---
 import { Image } from "astro:assets";
-import ArrowRight from "@tabler/icons/outline/arrow-right.svg";
-import PlayerPause from "@tabler/icons/outline/player-pause.svg";
-import PlayerPlay from "@tabler/icons/outline/player-play.svg";
-import Plus from "@tabler/icons/outline/plus.svg";
+import {
+  IconArrowRight,
+  IconPlayerPause,
+  IconPlayerPlay,
+  IconPlus,
+} from "@tabler/icons-astro";
 import MissionPlaceholder3 from "src/assets/pages/mission-placeholder-3.avif";
 import Badge from "@/components/astro/Badge.astro";
 import type { Home } from "@/sanity/lib/queries/home";
@@ -81,7 +83,7 @@ const { objective, bylaws } = Astro.props as {
               Uplifting professionalism
             </h1>
           </div>
-          <ArrowRight
+          <IconArrowRight
             class="w-6 h-6 text-white/50 group-hover:text-white transition-colors"
           />
         </div>
@@ -93,7 +95,7 @@ const { objective, bylaws } = Astro.props as {
         class="mission-card group rounded-2xl p-6 md:p-8 bg-secondary flex flex-col justify-between min-h-[200px] border border-border/50 hover:border-foreground/20 transition-colors opacity-0 translate-y-12 scale-95"
       >
         <div class="flex justify-between items-start">
-          <Plus class="w-5 h-5 text-muted-foreground" />
+          <IconPlus class="w-5 h-5 text-muted-foreground" />
           <span class="font-mono text-xs text-muted-foreground"
             >( {objective.metric1.name} )</span
           >
@@ -131,7 +133,7 @@ const { objective, bylaws } = Astro.props as {
         class="mission-card group rounded-2xl p-6 md:p-8 bg-secondary flex flex-col justify-between min-h-[200px] border border-border/50 hover:border-foreground/20 transition-colors opacity-0 translate-y-12 scale-95"
       >
         <div class="flex justify-between items-start">
-          <Plus class="w-5 h-5 text-muted-foreground" />
+          <IconPlus class="w-5 h-5 text-muted-foreground" />
           <span class="font-mono text-xs text-muted-foreground"
             >( {objective.metric2.name} )</span
           >
@@ -168,10 +170,10 @@ const { objective, bylaws } = Astro.props as {
             aria-label="Toggle Video Playback"
           >
             <span class="js-pause-icon block">
-              <PlayerPause class="w-4 h-4" />
+              <IconPlayerPause class="w-4 h-4" />
             </span>
             <span class="js-play-icon hidden">
-              <PlayerPlay class="w-4 h-4" />
+              <IconPlayerPlay class="w-4 h-4" />
             </span>
           </button>
         </div>
@@ -212,7 +214,7 @@ const { objective, bylaws } = Astro.props as {
           target="_blank"
           class="group/btn flex items-center gap-4 font-mono text-xs uppercase tracking-widest hover:text-primary transition-colors"
         >
-          Read the Full bylaws <ArrowRight
+          Read the Full bylaws <IconArrowRight
             class="w-4 h-4 transition-transform group-hover/btn:translate-x-2"
           />
         </a>

@@ -1,6 +1,5 @@
 ---
-import { getEntries } from "astro:content";
-import ArrowNarrowRight from "@tabler/icons/outline/arrow-narrow-right.svg";
+import { IconArrowNarrowRight } from "@tabler/icons-astro";
 import Image from "astro/components/Image.astro";
 import Categories from "@/components/Categories.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
@@ -72,7 +71,7 @@ const {
         class="font-mono text-xs uppercase tracking-widest flex flex-row gap-2 items-center hover:text-primary transition-colors"
         href={`/blog/${data.slug}`}
       >
-        Read more <ArrowNarrowRight class="w-4 h-4" />
+        Read more <IconArrowNarrowRight class="w-4 h-4" />
       </a>
       {authors?.length > 0 && <AvatarGroup data={authors} />}
     </div>

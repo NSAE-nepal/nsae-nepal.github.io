@@ -1,11 +1,13 @@
 ---
 import { Image } from "astro:assets";
-import ArrowRight from "@tabler/icons/outline/arrow-right.svg";
-import Book from "@tabler/icons/outline/book.svg";
-import Bulb from "@tabler/icons/outline/bulb.svg";
-import Gavel from "@tabler/icons/outline/gavel.svg";
-import Leaf from "@tabler/icons/outline/leaf.svg";
-import Users from "@tabler/icons/outline/users.svg";
+import {
+  IconArrowRight,
+  IconBook,
+  IconBulb,
+  IconGavel,
+  IconLeaf,
+  IconUsers,
+} from "@tabler/icons-astro";
 import Badge from "@/components/astro/Badge.astro";
 import Button from "@/components/astro/Button/Button.astro";
 import PageLayout from "@/layouts/PageLayout.astro";
@@ -17,17 +19,17 @@ const featuredMembers = latestCommittee?.committeeMembers.slice(0, 4) || [];
 const values = [
   {
     title: "Innovation",
-    icon: Bulb,
+    icon: IconBulb,
     description: "Pushing the boundaries of agricultural technology.",
   },
   {
     title: "Sustainability",
-    icon: Leaf,
+    icon: IconLeaf,
     description: "Promoting practices that ensure long-term health.",
   },
   {
     title: "Community",
-    icon: Users,
+    icon: IconUsers,
     description: "Building a strong network of engineers and farmers.",
   },
 ];
@@ -35,25 +37,25 @@ const values = [
 const focusAreas = [
   {
     title: "Policy Advocacy",
-    icon: Gavel,
+    icon: IconGavel,
     content:
       "Working with government bodies to shape agricultural policies that benefit the nation and the engineering profession.",
   },
   {
     title: "Professional Development",
-    icon: Users,
+    icon: IconUsers,
     content:
       "Organizing workshops, trainings, and conferences to enhance the skills and knowledge of our members.",
   },
   {
     title: "Research & Development",
-    icon: Bulb,
+    icon: IconBulb,
     content:
       "Promoting and publishing innovative research to solve real-world agricultural challenges in Nepal.",
   },
   {
     title: "Education Support",
-    icon: Book,
+    icon: IconBook,
     content:
       "Collaborating with universities to improve curriculum and support student engineers.",
   },
@@ -287,7 +289,7 @@ function formatPosition(position: string) {
             variant="ghost"
             class="hidden md:flex font-mono text-xs uppercase tracking-widest gap-2"
           >
-            View Full Committee <ArrowRight class="size-4" />
+            View Full Committee <IconArrowRight class="size-4" />
           </Button>
         </div>
       </div>

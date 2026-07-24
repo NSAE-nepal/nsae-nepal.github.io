@@ -1,6 +1,5 @@
 ---
-import ArrowLeft from "@tabler/icons/outline/arrow-left.svg";
-import ArrowRight from "@tabler/icons/outline/arrow-right.svg";
+import { IconArrowLeft, IconArrowRight } from "@tabler/icons-astro";
 
 interface Url {
   current: string;
@@ -31,7 +30,7 @@ const lastPage = Number(url.last?.split("/").pop());
               rel="prev"
               aria-label="Go to previous page"
             >
-              <ArrowLeft class={"size-4"} />
+              <IconArrowLeft class={"size-4"} />
             </a>
           </li>
         )}
@@ -120,7 +119,7 @@ const lastPage = Number(url.last?.split("/").pop());
               rel="next"
               aria-label="Go to next page"
             >
-              <ArrowRight class={"size-4"} />
+              <IconArrowRight class={"size-4"} />
             </a>
           </li>
         )}

@@ -1,14 +1,16 @@
 ---
-import ArrowUpRight from "@tabler/icons/outline/arrow-up-right.svg";
-import BrandBluesky from "@tabler/icons/outline/brand-bluesky.svg";
-import BrandFacebook from "@tabler/icons/outline/brand-facebook.svg";
-import BrandGithub from "@tabler/icons/outline/brand-github.svg";
-import BrandLinkedin from "@tabler/icons/outline/brand-linkedin.svg";
-import BrandX from "@tabler/icons/outline/brand-x.svg";
-import BrandYoutube from "@tabler/icons/outline/brand-youtube.svg";
-import Mail from "@tabler/icons/outline/mail.svg";
-import { default as MapIcon } from "@tabler/icons/outline/map.svg";
-import Phone from "@tabler/icons/outline/phone.svg";
+import {
+  IconArrowUpRight,
+  IconBrandBluesky,
+  IconBrandFacebook,
+  IconBrandGithub,
+  IconBrandLinkedin,
+  IconBrandX,
+  IconBrandYoutube,
+  IconMail,
+  IconMap,
+  IconPhone,
+} from "@tabler/icons-astro";
 import Badge from "@/components/astro/Badge.astro";
 import PageLayout from "@/layouts/PageLayout.astro";
 import { getContactsDetails } from "@/sanity/lib/queries/contacts";
@@ -16,13 +18,13 @@ import { getContactsDetails } from "@/sanity/lib/queries/contacts";
 const data = await getContactsDetails();
 const socials = data?.socials;
 const socialIcons: Record<string, any> = {
-  linkedin: BrandLinkedin,
-  twitter: BrandX,
-  x: BrandX,
-  facebook: BrandFacebook,
-  youtube: BrandYoutube,
-  bluesky: BrandBluesky,
-  github: BrandGithub,
+  linkedin: IconBrandLinkedin,
+  twitter: IconBrandX,
+  x: IconBrandX,
+  facebook: IconBrandFacebook,
+  youtube: IconBrandYoutube,
+  bluesky: IconBrandBluesky,
+  github: IconBrandGithub,
 };
 ---
 
@@ -63,7 +65,7 @@ const socialIcons: Record<string, any> = {
         <span
           class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground"
         >
-          <Mail class="size-4" /> Email
+          <IconMail class="size-4" /> Email
         </span>
         {
           data.emails && data.emails.length > 0 && (
@@ -92,7 +94,7 @@ const socialIcons: Record<string, any> = {
         <span
           class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground"
         >
-          <Phone class="size-4" /> Phone
+          <IconPhone class="size-4" /> Phone
         </span>
         {
           data.phoneNumbers && data.phoneNumbers.length > 0 && (
@@ -121,7 +123,7 @@ const socialIcons: Record<string, any> = {
         <span
           class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground"
         >
-          <MapIcon class="size-4" /> Visit us
+          <IconMap class="size-4" /> Visit us
         </span>
         <div class="font-sans text-2xl font-medium tracking-tight">
           {
@@ -133,7 +135,7 @@ const socialIcons: Record<string, any> = {
                 class="hover:text-primary transition-colors flex items-start gap-2 group"
               >
                 {data.address ?? "View on map"}
-                <ArrowUpRight class="size-6 text-muted-foreground group-hover:text-primary transition-colors mt-1 shrink-0" />
+                <IconArrowUpRight class="size-6 text-muted-foreground group-hover:text-primary transition-colors mt-1 shrink-0" />
               </a>
             ) : (
               <span>{data.address ?? "Address not provided"}</span>

@@ -1,5 +1,5 @@
 ---
-import Point from "@tabler/icons/outline/point.svg";
+import { IconPoint } from "@tabler/icons-astro";
 import type { Category } from "@/sanity/lib/queries/posts";
 import type { BadgeVariantProps } from "./astro/Badge.astro";
 import Badge from "./astro/Badge.astro";
@@ -37,7 +37,7 @@ const remainingCount = totalCount - visibleCategoriesCount;
     categoriesToDisplay.map((item) => {
       return (
         <Badge variant={badgeVariant} size={badgeSize} class="capitalize">
-          <Point class="fill-destructive text-destructive w-4 h-4" />
+          <IconPoint class="fill-destructive text-destructive w-4 h-4" />
           {item.title}
         </Badge>
       );

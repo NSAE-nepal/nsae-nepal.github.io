@@ -1,10 +1,11 @@
 ---
 import { Image } from "astro:assets";
-import type { CollectionEntry } from "astro:content";
-import ArrowUpRight from "@tabler/icons/outline/arrow-up-right.svg";
-import CalendarWeek from "@tabler/icons/outline/calendar-week.svg";
-import MapPin from "@tabler/icons/outline/map-pin.svg";
-import World from "@tabler/icons/outline/world.svg";
+import {
+  IconArrowUpRight,
+  IconCalendarWeek,
+  IconMapPin,
+  IconWorld,
+} from "@tabler/icons-astro";
 import Badge from "@/components/astro/Badge.astro";
 import Button from "@/components/astro/Button/Button.astro";
 import type { EventDetails } from "@/sanity/lib/queries/events";
@@ -76,7 +77,13 @@ if (data.location) {
         <span
           class="flex h-fit w-fit items-center justify-center rounded-full bg-primary p-3 text-primary-foreground"
         >
-          {isOnline ? <World class="h-5 w-5" /> : <MapPin class="h-5 w-5" />}
+          {
+            isOnline ? (
+              <IconWorld class="h-5 w-5" />
+            ) : (
+              <IconMapPin class="h-5 w-5" />
+            )
+          }
         </span>
         <div class="flex flex-col">
           <span class="font-sans text-lg font-medium tracking-tight"
@@ -134,7 +141,7 @@ if (data.location) {
               size={"lg"}
               class="flex font-mono text-xs uppercase tracking-wider flex-row items-center shrink-0"
             >
-              <CalendarWeek class="h-4 w-4 mr-2" />
+              <IconCalendarWeek class="h-4 w-4 mr-2" />
               {durationDisplay}
             </Badge>
           )
@@ -160,11 +167,11 @@ if (data.location) {
               rel="noopener noreferrer"
               class="w-full md:w-auto font-sans font-medium"
             >
-              Register Now <ArrowUpRight class="ml-2 size-4" />
+              Register Now <IconArrowUpRight class="ml-2 size-4" />
             </Button>
             {data.registrationDeadline && (
               <div class="flex items-center justify-center md:justify-end gap-2 font-mono text-xs text-muted-foreground uppercase tracking-wider">
-                <CalendarWeek class="h-4 w-4 shrink-0" />
+                <IconCalendarWeek class="h-4 w-4 shrink-0" />
                 <span>
                   Deadline: {formatDate(new Date(data.registrationDeadline))}
                 </span>

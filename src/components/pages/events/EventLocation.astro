@@ -1,7 +1,6 @@
 ---
-import Map from "@tabler/icons/outline/map.svg";
-import LinkIcon from "@tabler/icons/outline/link.svg";
 import type { CollectionEntry } from "astro:content";
+import { IconLink, IconMap } from "@tabler/icons-astro";
 
 interface Props {
   location: CollectionEntry<"events">["data"]["location"];
@@ -37,7 +36,7 @@ const { location } = Astro.props;
                   target="_blank"
                   class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-primary hover:underline mt-1"
                 >
-                  <Map class="h-4 w-4" /> View on Map
+                  <IconMap class="h-4 w-4" /> View on Map
                 </a>
               )}
             </>
@@ -50,7 +49,7 @@ const { location } = Astro.props;
                   target="_blank"
                   class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-primary hover:underline"
                 >
-                  <LinkIcon class="h-4 w-4" /> Join Online Meeting
+                  <IconLink class="h-4 w-4" /> Join Online Meeting
                 </a>
               )}
               {location.meetingId && (

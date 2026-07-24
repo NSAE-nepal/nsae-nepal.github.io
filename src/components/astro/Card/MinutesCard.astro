@@ -1,7 +1,9 @@
 ---
-import ArrowNarrowRight from "@tabler/icons/outline/arrow-narrow-right.svg";
-import MapPin from "@tabler/icons/outline/map-pin.svg";
-import Point from "@tabler/icons/outline/point.svg";
+import {
+  IconArrowNarrowRight,
+  IconMapPin,
+  IconPoint,
+} from "@tabler/icons-astro";
 import FormattedDate from "@/components/FormattedDate.astro";
 import type { Minutes } from "@/sanity/lib/queries/minutes";
 import Badge from "../Badge.astro";
@@ -27,7 +29,7 @@ const formatType = (type: string) => {
       size={"xs"}
       class={"font-mono text-xs uppercase tracking-wider flex items-center gap-1.5"}
     >
-      <Point class="fill-destructive text-destructive w-2.5 h-2.5" />
+      <IconPoint class="fill-destructive text-destructive w-2.5 h-2.5" />
       {formatType(data.type)}
     </Badge>
     <span class="flex items-center gap-1 text-muted-foreground font-medium">
@@ -44,14 +46,14 @@ const formatType = (type: string) => {
 
     <div class="flex flex-row items-center justify-between mt-4">
       <div class="flex items-center gap-1.5 text-sm text-muted-foreground">
-        <MapPin class="size-4" />
+        <IconMapPin class="size-4" />
         <span>{data.location}</span>
       </div>
       <a
         class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest hover:text-primary transition-colors leading-none"
         href={`/minutes/${data.slug}/`}
       >
-        Read minutes <ArrowNarrowRight class="w-4 h-4" />
+        Read minutes <IconArrowNarrowRight class="w-4 h-4" />
       </a>
     </div>
   </div>
