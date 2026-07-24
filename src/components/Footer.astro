@@ -1,6 +1,6 @@
 ---
+import { IconBrightness } from "@tabler/icons-astro";
 import Button from "./astro/Button/Button.astro";
-import Brightness from "@tabler/icons/outline/brightness.svg";
 
 const today = new Date();
 ---
@@ -117,13 +117,9 @@ const today = new Date();
           <button
             id="theme-toggle"
             aria-label="Toggle Dark Mode"
-            class="flex items-center text-muted-foreground transition hover:opacity-75 hover:text-foreground"
+            class="flex items-center text-muted-foreground transition hover:opacity-75 hover:text-foreground cursor-pointer"
           >
-            <img
-              src={Brightness.src}
-              alt="Toggle Theme"
-              class="h-5 w-5 dark:invert"
-            />
+            <IconBrightness class="h-5 w-5" />
           </button>
         </li>
         <li>

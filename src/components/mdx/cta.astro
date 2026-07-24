@@ -1,37 +1,37 @@
 ---
+import { IconArrowUpRight } from "@tabler/icons-astro";
 import Button from "../astro/Button/Button.astro";
-import ArrowUpRight from "@tabler/icons/outline/arrow-up-right.svg";
 
 interface Props {
-    heading: string;
-    buttonText: string;
-    url: string;
-    className?: string;
+  heading: string;
+  buttonText: string;
+  url: string;
+  className?: string;
 }
 
 const { heading, buttonText, url, className } = Astro.props;
 ---
 
 <div
-    class:list={[
-        "flex flex-col gap-6 rounded-lg border p-6 shadow-sm md:flex-row md:items-center md:justify-between my-8 bg-card text-card-foreground border-border",
-        className,
-    ]}
+  class:list={[
+    "flex flex-col gap-6 rounded-lg border p-6 shadow-sm md:flex-row md:items-center md:justify-between my-8 bg-card text-card-foreground border-border",
+    className,
+  ]}
 >
-    <div class="space-y-2">
-        <h3 class="text-xl mt-0 font-semibold tracking-tight">
-            {heading}
-        </h3>
-        <div class="text-sm text-muted-foreground md:text-base">
-            <slot />
-        </div>
+  <div class="space-y-2">
+    <h3 class="text-xl mt-0 font-semibold tracking-tight">
+      {heading}
+    </h3>
+    <div class="text-sm text-muted-foreground md:text-base">
+      <slot />
     </div>
-    <Button
-        href={url}
-        target="_blank"
-        class="w-full md:w-auto font-sans font-medium no-underline"
-    >
-        {buttonText}
-        <ArrowUpRight class="ml-2 size-4" />
-    </Button>
+  </div>
+  <Button
+    href={url}
+    target="_blank"
+    class="w-full md:w-auto font-sans font-medium no-underline"
+  >
+    {buttonText}
+    <IconArrowUpRight class="ml-2 size-4" />
+  </Button>
 </div>

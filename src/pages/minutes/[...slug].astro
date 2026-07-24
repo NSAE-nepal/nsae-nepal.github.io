@@ -1,9 +1,11 @@
 ---
-import ArrowLeft from "@tabler/icons/outline/arrow-left.svg";
-import CalendarWeek from "@tabler/icons/outline/calendar-week.svg";
-import Download from "@tabler/icons/outline/download.svg";
-import MapPin from "@tabler/icons/outline/map-pin.svg";
-import Point from "@tabler/icons/outline/point.svg";
+import {
+  IconArrowLeft,
+  IconCalendarWeek,
+  IconDownload,
+  IconMapPin,
+  IconPoint,
+} from "@tabler/icons-astro";
 import Badge from "@/components/astro/Badge.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
 import PortableText from "@/components/PortableText.astro";
@@ -43,7 +45,7 @@ const {
       href="/minutes"
       class="px-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
     >
-      <ArrowLeft class="size-4" /> Back to All Minutes
+      <IconArrowLeft class="size-4" /> Back to All Minutes
     </a>
     <header class="space-y-8 border-b border-border/50 pb-8">
       <div class="space-y-4 text-center">
@@ -53,7 +55,7 @@ const {
             size={"xs"}
             class={"font-mono text-xs uppercase tracking-wider flex items-center gap-1.5"}
           >
-            <Point class="fill-destructive text-destructive w-2.5 h-2.5" />
+            <IconPoint class="fill-destructive text-destructive w-2.5 h-2.5" />
             {type}
           </Badge>
           <span
@@ -61,13 +63,13 @@ const {
             data-pagefind-ignore
             class="flex flex-row gap-1.5 items-center font-mono text-xs text-muted-foreground uppercase tracking-wider"
           >
-            <CalendarWeek class={"size-4"} />
+            <IconCalendarWeek class={"size-4"} />
             <FormattedDate date={new Date(pubDate)} />
           </span>
           <span
             class="flex flex-row gap-1.5 items-center font-mono text-xs text-muted-foreground uppercase tracking-wider"
           >
-            <MapPin class={"size-4"} />
+            <IconMapPin class={"size-4"} />
             {location}
           </span>
         </div>
@@ -128,7 +130,7 @@ const {
               target="_blank"
               class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-mono text-xs uppercase tracking-widest"
             >
-              <Download class="size-4" /> Download PDF
+              <IconDownload class="size-4" /> Download PDF
             </a>
           </div>
         )

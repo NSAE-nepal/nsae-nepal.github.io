@@ -1,5 +1,5 @@
 ---
-import MoodEmpty from "@tabler/icons/outline/mood-empty.svg";
+import {IconMoodEmpty} from "@tabler/icons-astro";
 import type { GetStaticPaths, Page } from "astro";
 import Badge from "@/components/astro/Badge.astro";
 import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
@@ -74,7 +74,7 @@ const pageDescription =
   ) : (
     <div class="anim-empty-state flex flex-col items-center justify-center py-16 text-center border border-dashed border-border/60 rounded-xl bg-secondary/5 opacity-0 scale-95">
         <div class="p-4 bg-secondary rounded-full mb-4">
-          <MoodEmpty class="size-8 text-muted-foreground" />
+          <IconMoodEmpty class="size-8 text-muted-foreground" />
         </div>
         <h3 class="font-sans text-xl font-medium mb-2">No upcoming events</h3>
         <p class="text-muted-foreground max-w-xs mx-auto">

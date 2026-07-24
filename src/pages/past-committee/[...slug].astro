@@ -1,8 +1,6 @@
 ---
 import { Image } from "astro:assets";
-import { type CollectionEntry, getCollection } from "astro:content";
-import ArrowLeft from "@tabler/icons/outline/arrow-left.svg";
-import UsersGroup from "@tabler/icons/outline/users-group.svg";
+import { IconArrowLeft, IconUsersGroup } from "@tabler/icons-astro";
 import Badge from "@/components/astro/Badge.astro";
 import PageLayout from "@/layouts/PageLayout.astro";
 import {
@@ -43,7 +41,7 @@ function formatPosition(position: string) {
       href="/past-committee/page/1"
       class="px-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors mb-4"
     >
-      <ArrowLeft class="size-4" /> Back to Committees
+      <IconArrowLeft class="size-4" /> Back to Committees
     </a>
     <header class="flex flex-col text-center gap-6 mb-16">
       <div class="space-y-4 items-center">
@@ -62,7 +60,7 @@ function formatPosition(position: string) {
         <div
           class="flex items-center justify-center gap-2 text-muted-foreground"
         >
-          <UsersGroup class="size-5" />
+          <IconUsersGroup class="size-5" />
           <span class="font-mono text-xs uppercase tracking-widest">
             {committee.committeeMembers.length} Members
           </span>

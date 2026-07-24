@@ -1,6 +1,5 @@
 ---
-import ArrowRight from "@tabler/icons/outline/arrow-right.svg";
-import Plus from "@tabler/icons/outline/plus.svg";
+import { IconArrowRight, IconPlus } from "@tabler/icons-astro";
 import { getFaqDetails } from "@/sanity/lib/queries/faq";
 import Badge from "../astro/Badge.astro";
 
@@ -40,7 +39,7 @@ const faqItems = data?.items ?? [];
 
               <span class="relative flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-muted-foreground transition-colors duration-300 group-hover:border-primary">
                 <div class="icon-container relative size-4">
-                  <Plus class="absolute inset-0 size-4 transition-all duration-300" />
+                  <IconPlus class="absolute inset-0 size-4 transition-all duration-300" />
                 </div>
               </span>
             </summary>
@@ -70,7 +69,7 @@ const faqItems = data?.items ?? [];
       href="/contact"
       class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-primary hover:text-primary/80 transition-colors"
     >
-      Contact our team <ArrowRight class="size-4" />
+      Contact our team <IconArrowRight class="size-4" />
     </a>
   </div>
 </section>
