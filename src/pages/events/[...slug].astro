@@ -64,8 +64,8 @@ const event = await getEventDetails(slug!);
         class="flex flex-col gap-6 lg:sticky lg:top-24 h-fit"
       >
         <EventLocation location={event.location} />
-        <EventInstructors instructors={event.instructors} />
         <EventContact contactPersons={event.contactPersons} />
+        <EventInstructors instructors={event.instructors} />
       </aside>
     </div>
   </article>

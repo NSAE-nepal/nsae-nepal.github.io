@@ -1,5 +1,7 @@
 ---
-import AnnouncementRibbon from "@/components/astro/AnnouncementRibbon.astro";
+import AnnouncementRibbon, {
+  type Announcement,
+} from "@/components/astro/AnnouncementRibbon.astro";
 import BannersArchive from "@/components/sections/BannersArchive.astro";
 import BlogsArchive from "@/components/sections/BlogsArchive.astro";
 import Faq from "@/components/sections/Faq.astro";
@@ -12,8 +14,28 @@ import { getPosts } from "@/sanity/lib/queries/posts";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 
 const allNotices = (await getPosts("notice")) || [];
+const featuredNotices = allNotices.filter((post) => post.featured);
 const latestNotice = allNotices?.[0];
 const homePage = await getHomePage();
+
+const announcements: Announcement[] = [
+  ...(latestNotice
+    ? [
+        {
+          label: "Latest Update",
+          message: latestNotice.title,
+          href: `/notices/${latestNotice.slug}/`,
+          linkText: "Read more",
+        },
+      ]
+    : []),
+  ...featuredNotices.map((notice) => ({
+    label: "Notice",
+    message: notice.title,
+    href: `/notices/${notice.slug}/`,
+    linkText: "Read more",
+  })),
+];
 ---
 
 <PageLayout
@@ -22,17 +44,16 @@ const homePage = await getHomePage();
   dataPagefindIgnore="all"
 >
   {
-    latestNotice && (
+    announcements.length > 0 && (
       <AnnouncementRibbon
-        id={latestNotice.slug}
-        label="Latest Update"
-        message={latestNotice.title}
-        href={`/notices/${latestNotice.slug}/`}
+        id="home-announcements"
+        announcements={announcements}
+        rotationInterval={6}
+        dismissDuration={12}
       />
     )
   }
   <HeroCarousel slides={homePage.carousel} />
-  <!-- <HeroCarousel client:idle slides={homePage.carousel} /> -->
 
   <MissionBrief objective={homePage.objective} bylaws={homePage.bylaws} />
   <Memberships membership={homePage.membership} />

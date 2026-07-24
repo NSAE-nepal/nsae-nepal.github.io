@@ -1,99 +1,242 @@
 ---
 import X from "@tabler/icons/outline/x.svg";
 
-interface Props {
-  id?: string;
+export interface Announcement {
   label?: string;
   message: string;
   href?: string;
   linkText?: string;
+}
+
+interface Props {
+  id?: string;
+  announcements: Announcement[];
+  rotationInterval?: number; // seconds
+  dismissible?: boolean;
+  dismissDuration?: number; // hours
+  style?: "default" | "prominent" | "subtle";
   class?: string;
 }
 
 const {
   id = "global-announcement",
-  label = "Announcement",
-  message,
-  href,
-  linkText = "Read more here.",
+  announcements,
+  rotationInterval = 5,
+  dismissible = true,
+  dismissDuration = 24,
+  style = "default",
   class: className,
 } = Astro.props;
 
-const storageKey = `announcement-dismissed-${id}`;
+const items = announcements ?? [];
+
+const hashContent = (str: string) => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash).toString(36);
+};
+
+const contentSignature = items.map((a) => `${a.label ?? ""}-${a.message}`).join("|");
+const storageKey = `announcement-dismissed-${id}-${hashContent(contentSignature)}`;
 ---
 
-<div
-  role="alert"
-  id={id}
-  data-storage-key={storageKey}
-  class:list={[
-    "announcement-ribbon text-sm bg-foreground rounded-md text-background px-4 py-2 md:py-1.5 flex items-center gap-2 mb-4 transition-opacity duration-300",
-    className,
-  ]}
->
-  <script is:inline define:vars={{ id, storageKey }}>
-    if (localStorage.getItem(storageKey) === "true") {
-      const ribbon = document.getElementById(id);
-      if (ribbon) ribbon.style.display = "none";
-    }
-  </script>
+{
+  items.length > 0 && (
+    <div
+      role="alert"
+      id={id}
+      data-storage-key={storageKey}
+      data-rotation-interval={rotationInterval}
+      class:list={[
+        "announcement-ribbon text-sm bg-foreground rounded-md text-background px-4 py-2 md:py-1.5 flex items-center gap-2 mb-4 transition-opacity duration-300",
+        { "font-bold": style === "prominent", "opacity-70": style === "subtle" },
+        className,
+      ]}
+    >
+      <script is:inline data-astro-rerun define:vars={{ id, storageKey }}>
+        {
+          const dismissedAt = localStorage.getItem(storageKey);
+          if (dismissedAt && Date.now() < parseInt(dismissedAt, 10)) {
+            const ribbon = document.getElementById(id);
+            if (ribbon) ribbon.style.display = "none";
+          } else if (dismissedAt) {
+            localStorage.removeItem(storageKey);
+          }
+        }
+      </script>
 
-  <button
-    type="button"
-    aria-label="Close announcement"
-    class="cursor-pointer close-ribbon-btn shrink-0 mr-4 md:mr-8 hover:opacity-70 transition-opacity"
-  >
-    <X class="w-3 h-3" />
-  </button>
-
-  <div class="flex flex-wrap items-baseline gap-1 md:gap-2">
-    <span class="font-mono text-xs uppercase tracking-widest opacity-80">
-      {label}:
-    </span>
-
-    <span class="font-medium line-clamp-1 overflow-hidden">
-      {message}
-    </span>
-
-    {
-      href && (
-        <a
-          href={href}
-          class="italic underline decoration-1 underline-offset-2 ml-1 transition-colors"
+      {dismissible && (
+        <button
+          type="button"
+          aria-label="Close announcement"
+          class="cursor-pointer close-ribbon-btn shrink-0 mr-4 md:mr-8 hover:opacity-70 transition-opacity"
         >
-          {linkText}
-        </a>
-      )
+          <X class="w-3 h-3" />
+        </button>
+      )}
+
+      <div class="flex-1 overflow-hidden">
+        <div class="announcement-content flex flex-wrap items-baseline gap-1 md:gap-2 transition-all duration-300 ease-in-out">
+          <span class="announcement-label font-mono text-xs uppercase tracking-widest opacity-80">
+            {items[0].label ?? "Announcement"}:
+          </span>
+          <span class="announcement-message font-medium line-clamp-1 overflow-hidden">
+            {items[0].message}
+          </span>
+          {items[0].href && (
+            <a
+              class="announcement-link italic underline decoration-1 underline-offset-2 ml-1 transition-colors hover:opacity-80"
+              href={items[0].href}
+            >
+              {items[0].linkText ?? "Learn more"}
+            </a>
+          )}
+        </div>
+      </div>
+
+      {items.length > 1 && (
+        <div class="announcement-dots flex gap-1 shrink-0">
+          {items.map((_, index) => (
+            <button
+              type="button"
+              aria-label={`Go to announcement ${index + 1}`}
+              data-index={index}
+              class:list={[
+                "announcement-dot w-1.5 h-1.5 rounded-full transition-all duration-300",
+                index === 0
+                  ? "bg-background opacity-100 scale-110"
+                  : "bg-background/40 opacity-60 hover:opacity-80 scale-100",
+              ]}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+<script define:vars={{ id, storageKeyClient: storageKey, items, dismissDuration }}>
+  function checkDismissed(ribbon) {
+    const dismissedAt = localStorage.getItem(storageKeyClient);
+
+    if (dismissedAt && Date.now() < parseInt(dismissedAt, 10)) {
+      ribbon.style.display = "none";
+      return true;
     }
-  </div>
-</div>
 
-<script>
-  document.addEventListener("click", (event) => {
-    const btn = (event.target as HTMLElement).closest(".close-ribbon-btn");
-    if (!btn) return;
-
-    const ribbon = btn.closest(".announcement-ribbon") as HTMLElement | null;
-    if (!ribbon) return;
-
-    const storageKey = ribbon.dataset.storageKey;
-
-    if (storageKey) {
-      localStorage.setItem(storageKey, "true");
+    if (dismissedAt) {
+      localStorage.removeItem(storageKeyClient);
     }
 
-    ribbon.remove();
-  });
-</script>
-<script is:inline define:vars={{ id, storageKey }}>
-  function updateRibbon() {
-    const ribbon = document.getElementById(id);
-
-    if (localStorage.getItem(storageKey) === "true") {
-      ribbon?.remove();
-    }
+    ribbon.style.display = "";
+    return false;
   }
 
-  updateRibbon();
-  document.addEventListener("astro:page-load", updateRibbon);
+  function initRibbon() {
+    const ribbon = document.getElementById(id);
+    if (!ribbon) return;
+
+    if (checkDismissed(ribbon)) return;
+
+    if (ribbon.dataset.initialized === "true") return;
+    ribbon.dataset.initialized = "true";
+
+    const contentEl = ribbon.querySelector(".announcement-content");
+    const labelEl = ribbon.querySelector(".announcement-label");
+    const messageEl = ribbon.querySelector(".announcement-message");
+    const dots = Array.from(ribbon.querySelectorAll(".announcement-dot"));
+    const closeBtn = ribbon.querySelector(".close-ribbon-btn");
+    const rotationIntervalMs = parseFloat(ribbon.dataset.rotationInterval || "5") * 1000;
+
+    let currentIndex = 0;
+    let isTransitioning = false;
+    let timer = null;
+
+    function renderIndex(index) {
+      const item = items[index];
+      if (!item || !contentEl) return;
+
+      if (labelEl) labelEl.textContent = `${item.label ?? "Announcement"}:`;
+      if (messageEl) messageEl.textContent = item.message;
+
+      const existingLink = contentEl.querySelector(".announcement-link");
+      if (existingLink) existingLink.remove();
+
+      if (item.href) {
+        const link = document.createElement("a");
+        link.href = item.href;
+        link.className =
+          "announcement-link italic underline decoration-1 underline-offset-2 ml-1 transition-colors hover:opacity-80";
+        link.textContent = item.linkText ?? "Learn more";
+        contentEl.appendChild(link);
+      }
+
+      dots.forEach((dot, i) => {
+        dot.classList.toggle("bg-background", i === index);
+        dot.classList.toggle("opacity-100", i === index);
+        dot.classList.toggle("scale-110", i === index);
+        dot.classList.toggle("bg-background/40", i !== index);
+        dot.classList.toggle("opacity-60", i !== index);
+        dot.classList.toggle("scale-100", i !== index);
+      });
+    }
+
+    function goTo(index, direction = "next") {
+      if (isTransitioning || index === currentIndex || !contentEl) return;
+      isTransitioning = true;
+
+      contentEl.classList.add("opacity-0", direction === "next" ? "-translate-x-4" : "translate-x-4");
+
+      setTimeout(() => {
+        renderIndex(index);
+        currentIndex = index;
+
+        contentEl.classList.remove("-translate-x-4", "translate-x-4");
+        void contentEl.offsetWidth;
+        contentEl.classList.remove("opacity-0");
+
+        setTimeout(() => {
+          isTransitioning = false;
+        }, 50);
+      }, 300);
+    }
+
+    function startRotation() {
+      if (items.length <= 1) return;
+      stopRotation();
+      timer = setInterval(() => {
+        goTo((currentIndex + 1) % items.length, "next");
+      }, rotationIntervalMs);
+    }
+
+    function stopRotation() {
+      if (timer) clearInterval(timer);
+      timer = null;
+    }
+
+    dots.forEach((dot) => {
+      dot.addEventListener("click", () => {
+        const index = parseInt(dot.dataset.index || "0", 10);
+        goTo(index, index > currentIndex ? "next" : "prev");
+        startRotation();
+      });
+    });
+
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => {
+        const expirationTime = Date.now() + dismissDuration * 60 * 60 * 1000;
+        localStorage.setItem(storageKeyClient, expirationTime.toString());
+        stopRotation();
+        ribbon.remove();
+      });
+    }
+
+    startRotation();
+  }
+
+  initRibbon();
+  document.addEventListener("astro:page-load", initRibbon);
 </script>
