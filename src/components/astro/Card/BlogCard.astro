@@ -13,7 +13,14 @@ const { title, subtitle, publishedAt, categories, authors, slug } = data;
   class="split-card space-y-2 cursor-pointer flex flex-col relative z-10 p-4"
 >
   <div class="flex flex-row justify-between items-center">
-    {categories?.length > 0 ? <Categories categories={categories} /> : <div />}
+    {categories?.length > 0 ? (
+      <Categories
+        categories={categories}
+        basePath={data.type === "notice" ? "/notices" : "/blog"}
+      />
+    ) : (
+      <div />
+    )}
 
     {
       publishedAt && (

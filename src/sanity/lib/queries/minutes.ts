@@ -103,3 +103,21 @@ export async function getMinutesDetails(slug: string): Promise<MinutesDetails> {
 
 	return data;
 }
+
+/** Display label for a meeting type: "agm" -> "AGM", "sub-committee" -> "Sub committee". */
+export function minutesTypeLabel(type: string) {
+	if (type === "agm") return "AGM";
+	return type.charAt(0).toUpperCase() + type.slice(1).replace("-", " ");
+}
+
+/** Meeting types present in `minutes`, with counts, most common first. */
+export function summarizeMinutesTypes(minutes: Minutes[]) {
+	const counts = new Map<string, number>();
+	for (const minute of minutes) {
+		const type = minute.type ?? "other";
+		counts.set(type, (counts.get(type) ?? 0) + 1);
+	}
+	return [...counts]
+		.map(([value, count]) => ({ value, label: minutesTypeLabel(value), count }))
+		.sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
+}

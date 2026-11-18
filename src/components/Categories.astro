@@ -1,5 +1,6 @@
 ---
 import { IconPoint } from "@tabler/icons-astro";
+import { categoryPath, categorySlug } from "@/lib/categories";
 import type { Category } from "@/sanity/lib/queries/posts";
 import type { BadgeVariantProps } from "./astro/Badge.astro";
 import Badge from "./astro/Badge.astro";
@@ -13,6 +14,8 @@ type Props = {
   showAll?: boolean;
   badgeVariant?: BadgeVariant;
   badgeSize?: BadgeSize;
+  /** Section listing ("/blog", "/notices"); when set, badges link to that section's category page. */
+  basePath?: string;
 };
 
 const {
@@ -21,6 +24,7 @@ const {
   showAll = false,
   badgeVariant = "secondary",
   badgeSize = "xs",
+  basePath,
 } = Astro.props;
 
 const totalCount = categories.length;
@@ -35,11 +39,23 @@ const remainingCount = totalCount - visibleCategoriesCount;
 <div class="flex flex-row gap-2 font-mono flex-wrap">
   {
     categoriesToDisplay.map((item) => {
-      return (
+      const badge = (
         <Badge variant={badgeVariant} size={badgeSize} class="capitalize">
           <IconPoint class="fill-destructive text-destructive w-4 h-4" />
           {item.title}
         </Badge>
+      );
+      const slug = item?.title ? categorySlug(item) : "";
+      return basePath && slug ? (
+        <a
+          href={categoryPath(basePath, slug)}
+          class="rounded-full transition-opacity hover:opacity-80"
+          aria-label={`More in ${item.title}`}
+        >
+          {badge}
+        </a>
+      ) : (
+        badge
       );
     })
   }

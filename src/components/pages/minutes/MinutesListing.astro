@@ -1,0 +1,229 @@
+---
+import type { Page } from "astro";
+import Badge from "@/components/astro/Badge.astro";
+import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
+import MinutesCard from "@/components/astro/Card/MinutesCard.astro";
+import Empty from "@/components/astro/Empty.astro";
+import Pagination from "@/components/astro/Pagination.astro";
+import FilterChips from "@/components/FilterChips.astro";
+import PageLayout from "@/layouts/PageLayout.astro";
+import type { Minutes } from "@/sanity/lib/queries/minutes";
+
+export type MinutesTypeSummary = { value: string; label: string; count: number };
+
+/**
+ * Minutes listing, shared by /minutes/page/[page] and
+ * /minutes/type/[type]/page/[page]. Items are grouped under year headings.
+ */
+interface Props {
+  page: Page<Minutes>;
+  types: MinutesTypeSummary[];
+  activeType?: MinutesTypeSummary;
+}
+
+const { page, types, activeType } = Astro.props;
+
+const yearOf = (minute?: Minutes) =>
+  minute?.pubDate
+    ? new Date(minute.pubDate).toLocaleDateString("en-US", {
+        timeZone: "Asia/Kathmandu",
+        year: "numeric",
+      })
+    : undefined;
+
+const pageTitle = activeType ? `${activeType.label} Meeting Minutes` : "Meeting Minutes";
+const pageDescription =
+  "Browse the minutes from our General, Executive, and Committee meetings.";
+---
+
+<PageLayout
+  title={pageTitle}
+  description={pageDescription}
+  dataPagefindIgnore="all"
+>
+  <header class="flex flex-col items-center justify-center py-16 md:py-24">
+    <div class="anim-header-badge opacity-0 scale-50">
+      <Badge
+        variant={"secondary"}
+        size={"sm"}
+        class="font-mono uppercase tracking-widest text-xs mb-3 border border-border/50"
+      >
+        Transparency
+      </Badge>
+    </div>
+    <h1
+      class="anim-header-title invisible font-sans text-5xl md:text-7xl font-medium tracking-tighter leading-tight max-w-4xl text-balance"
+    >
+      Official Meeting Records
+    </h1>
+    <p
+      class="anim-header-desc font-sans text-lg text-muted-foreground max-w-2xl text-balance pt-2 opacity-0 translate-y-4"
+    >
+      Browse the minutes from our General, Executive, and Committee meetings.
+    </p>
+  </header>
+
+  <section class="mb-12" data-manual-card-anim>
+    <h2
+      class="anim-section-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
+    >
+      {activeType ? activeType.label : "All Minutes"}
+    </h2>
+    <FilterChips
+      label="Filter minutes by meeting type"
+      allHref="/minutes/page/1/"
+      options={types.map((type) => ({
+        href: `/minutes/type/${type.value}/page/1/`,
+        label: type.label,
+        count: type.count,
+        active: type.value === activeType?.value,
+      }))}
+    />
+    {
+      page.data.length > 0 ? (
+        <>
+          <div class="grid grid-cols-2">
+            {page.data.map((minute: Minutes, index) => (
+              <>
+                {yearOf(minute) !== yearOf(page.data[index - 1]) && (
+                  <h3 class="anim-divider col-span-2 mb-4 mt-2 font-mono text-sm uppercase tracking-widest text-muted-foreground opacity-0 translate-y-4">
+                    {yearOf(minute)}
+                  </h3>
+                )}
+                <ClickableCard
+                  class="anim-minutes-card group relative col-span-2 hover:bg-secondary/60 transition-colors opacity-0 translate-y-4"
+                  href={`/minutes/${minute.slug}/`}
+                  label={minute.title}
+                >
+                  <MinutesCard data={minute} />
+                </ClickableCard>
+                {index < page.data.length - 1 &&
+                  yearOf(minute) === yearOf(page.data[index + 1]) && (
+                  <div class="anim-divider col-span-2 my-6 border-b-2 border-dashed border-secondary-foreground opacity-0 translate-y-4" />
+                )}
+              </>
+            ))}
+          </div>
+          <div class="anim-pagination flex justify-center mt-16 opacity-0">
+            <Pagination
+              url={page.url}
+              class="font-mono text-sm uppercase tracking-widest"
+            />
+          </div>
+        </>
+      ) : (
+        <div class="anim-empty-state opacity-0 scale-95">
+          <Empty
+            title="No minutes available"
+            description="There are no minutes available at the moment. Check back later for
+            updates."
+          />
+        </div>
+      )
+    }
+  </section>
+</PageLayout>
+
+<script>
+  import { gsap, SplitText } from "@/utils/gsap-init";
+  import { initCardSplitTextAnimation } from "@/utils/animations/cards-split-text-animation";
+  let ctx: gsap.Context | undefined;
+  function initMinutesPage() {
+    ctx = gsap.context(() => {
+      const mainTl = gsap.timeline({
+        defaults: { ease: "power3.out" },
+      });
+
+      const titleSplit = SplitText.create(".anim-header-title", {
+        type: "lines, words",
+        linesClass: "overflow-hidden",
+      });
+
+      mainTl
+        .to(".anim-header-badge", {
+          scale: 1,
+          opacity: 1,
+          duration: 0.6,
+          ease: "back.out(1.5)",
+        })
+        .set(".anim-header-title", { autoAlpha: 1 }, "-=0.3")
+        .from(
+          titleSplit.words,
+          {
+            yPercent: 100,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.04,
+            ease: "power4.out",
+          },
+          "<",
+        );
+
+      if (document.querySelector(".anim-header-desc")) {
+        mainTl.to(
+          ".anim-header-desc",
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.5,
+          },
+          "-=0.6",
+        );
+      }
+
+      mainTl.to(
+        ".anim-section-title",
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+        },
+        "-=0.5",
+      );
+
+      if (document.querySelector(".anim-minutes-card")) {
+        mainTl
+          .to(
+            ".anim-minutes-card, .anim-divider",
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.5,
+              stagger: 0.06,
+              ease: "power2.out",
+            },
+            "-=0.3",
+          )
+          .add(() => {
+            initCardSplitTextAnimation({ cardSelector: ".anim-minutes-card" });
+          }, "<");
+      }
+
+      if (document.querySelector(".anim-pagination")) {
+        mainTl.to(
+          ".anim-pagination",
+          {
+            opacity: 1,
+            duration: 0.5,
+          },
+          "-=0.2",
+        );
+      }
+
+      if (document.querySelector(".anim-empty-state")) {
+        mainTl.to(
+          ".anim-empty-state",
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 0.6,
+            ease: "back.out(1.2)",
+          },
+          "-=0.3",
+        );
+      }
+    });
+  }
+  document.addEventListener("astro:page-load", initMinutesPage);
+  document.addEventListener("astro:before-swap", () => ctx?.revert());
+</script>

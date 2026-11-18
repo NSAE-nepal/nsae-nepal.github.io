@@ -1,0 +1,59 @@
+---
+/**
+ * A row of filter links ("All" + options). Renders nothing when there are no
+ * options, so listings without categories/types look unchanged.
+ */
+interface Option {
+  href: string;
+  label: string;
+  count?: number;
+  active?: boolean;
+}
+
+interface Props {
+  label: string;
+  allHref: string;
+  options: Option[];
+  class?: string;
+}
+
+const { label, allHref, options, class: className } = Astro.props;
+const noneActive = !options.some((option) => option.active);
+
+const chip =
+  "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-xs uppercase tracking-wider transition-colors";
+const idle = "border-border/60 text-muted-foreground hover:border-primary hover:text-primary";
+const current = "border-primary bg-primary text-primary-foreground";
+---
+
+{
+  options.length > 0 && (
+    <nav aria-label={label} class:list={["mb-8", className]} data-pagefind-ignore>
+      <ul class="flex flex-wrap gap-2">
+        <li>
+          <a
+            href={allHref}
+            class:list={[chip, noneActive ? current : idle]}
+            aria-current={noneActive ? "page" : undefined}
+          >
+            All
+          </a>
+        </li>
+        {options.map((option) => (
+          <li>
+            <a
+              href={option.href}
+              class:list={[chip, option.active ? current : idle]}
+              aria-current={option.active ? "page" : undefined}
+            >
+              {option.label}
+              {option.count !== undefined && (
+                <span class="opacity-70">({option.count})</span>
+              )}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}

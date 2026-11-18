@@ -1,0 +1,25 @@
+---
+import type { GetStaticPaths } from "astro";
+import NoticeListing from "@/components/pages/notices/NoticeListing.astro";
+import { PAGE_SIZE } from "@/consts";
+import { postsInCategory, summarizeCategories } from "@/lib/categories";
+import { getPosts } from "@/sanity/lib/queries/posts";
+
+// One paginated listing per notice category that has notices.
+export const getStaticPaths = (async ({ paginate }) => {
+  const notices = (await getPosts("notice")) ?? [];
+  const categories = summarizeCategories(notices);
+
+  return categories.flatMap((category) =>
+    paginate(postsInCategory(notices, category.slug), {
+      pageSize: PAGE_SIZE,
+      params: { category: category.slug },
+      props: { categories, activeCategory: category },
+    }),
+  );
+}) satisfies GetStaticPaths;
+
+const { page, categories, activeCategory } = Astro.props;
+---
+
+<NoticeListing page={page} categories={categories} activeCategory={activeCategory} />

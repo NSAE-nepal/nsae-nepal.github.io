@@ -66,7 +66,17 @@ const structuredData = [
   type="article"
 >
   <JsonLd slot="head" data={structuredData} />
-  <article class="py-8 space-y-10" data-pagefind-body>
+  <article
+    class="py-8 space-y-10"
+    data-pagefind-body
+    data-pagefind-filter={`type:${type === "notice" ? "Notice" : "Blog"}`}
+  >
+    {/* Category filters for search (no visible content). */}
+    {(categories ?? [])
+      .filter((category) => category?.title)
+      .map((category) => (
+        <span data-pagefind-filter={`category:${category.title}`} hidden />
+      ))}
     <header class="space-y-8 border-b border-border pb-10">
       <a
         data-pagefind-ignore
@@ -129,7 +139,7 @@ const structuredData = [
       <div class="flex flex-row justify-around items-center text-xs">
         {
           categories?.length > 0 ? (
-            <Categories categories={categories} />
+            <Categories categories={categories} basePath={`/${section}`} />
           ) : (
             <div />
           )

@@ -1,0 +1,27 @@
+---
+import type { GetStaticPaths } from "astro";
+import MinutesListing from "@/components/pages/minutes/MinutesListing.astro";
+import { PAGE_SIZE } from "@/consts";
+import { getMinutes, summarizeMinutesTypes } from "@/sanity/lib/queries/minutes";
+
+// One paginated listing per meeting type that has minutes.
+export const getStaticPaths = (async ({ paginate }) => {
+  const minutes = (await getMinutes()) ?? [];
+  const types = summarizeMinutesTypes(minutes);
+
+  return types.flatMap((type) =>
+    paginate(
+      minutes.filter((minute) => (minute.type ?? "other") === type.value),
+      {
+        pageSize: PAGE_SIZE,
+        params: { type: type.value },
+        props: { types, activeType: type },
+      },
+    ),
+  );
+}) satisfies GetStaticPaths;
+
+const { page, types, activeType } = Astro.props;
+---
+
+<MinutesListing page={page} types={types} activeType={activeType} />
