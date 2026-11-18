@@ -1,17 +1,15 @@
 ---
-import { Image } from "astro:assets";
 import { IconMoodEmpty } from "@tabler/icons-astro";
 import type { Page } from "astro";
 import Badge from "@/components/astro/Badge.astro";
-import BlogCard from "@/components/astro/Card/BlogCard.astro";
 import BlogFeaturedCard from "@/components/astro/Card/BlogFeaturedCard.astro";
 import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
 import Pagination from "@/components/astro/Pagination.astro";
+import PostGrid from "@/components/astro/PostGrid.astro";
 import FilterChips from "@/components/FilterChips.astro";
 import PageLayout from "@/layouts/PageLayout.astro";
 import { type CategorySummary, categoryPath } from "@/lib/categories";
 import type { Post } from "@/sanity/lib/queries/posts";
-import { sanityImage } from "@/sanity/lib/url-for-image";
 
 /**
  * Blog listing, shared by /blog/page/[page] and
@@ -114,27 +112,10 @@ const pageDescription = activeCategory
     {
       page.data.length > 0 ? (
         <>
-          <div class="grid grid-cols-2 gap-8">
-            {page.data.map((post) => (
-              <ClickableCard
-                class="anim-regular-card group relative col-span-2 lg:col-span-1 border-b border-border last:border-b-0 lg:[&:nth-last-child(2)]:border-b-0 hover:bg-secondary/60 transition-colors opacity-0 translate-y-4"
-                href={`/blog/${post.slug}/`}
-                label={post.title}
-              >
-                <BlogCard data={post} />
-                {post.heroImage && (
-                  <Image
-                    inferSize
-                    class={
-                      "absolute top-0 right-0 h-full w-1/4 object-cover z-0 hidden group-hover:block opacity-40 grayscale group-hover:grayscale-0 transition-all duration-500"
-                    }
-                    src={sanityImage(post.heroImage, { width: 480 })}
-                    alt={post.heroImageAlt ?? ""}
-                  />
-                )}
-              </ClickableCard>
-            ))}
-          </div>
+          <PostGrid
+            posts={page.data}
+            cardClass="anim-regular-card opacity-0 translate-y-4"
+          />
           <div class="anim-pagination flex justify-center mt-16 opacity-0">
             <Pagination
               url={page.url}

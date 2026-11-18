@@ -1,0 +1,52 @@
+---
+import { Image } from "astro:assets";
+import BlogCard from "@/components/astro/Card/BlogCard.astro";
+import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
+import { cn } from "@/lib/utils";
+import type { Post } from "@/sanity/lib/queries/posts";
+import { sanityImage } from "@/sanity/lib/url-for-image";
+
+/**
+ * The blog listing's post grid: two columns on large screens, divider lines
+ * between rows, and the post's hero image revealed on hover. Shared by the
+ * blog listing and author pages so they always look the same.
+ */
+interface Props {
+  posts: Post[];
+  /**
+   * Extra classes for each card, e.g. the entrance-animation hooks
+   * (`anim-regular-card opacity-0 translate-y-4`) that the page's script reveals.
+   */
+  cardClass?: string;
+}
+
+const { posts, cardClass } = Astro.props;
+
+const postHref = (post: Post) =>
+  `/${post.type === "notice" ? "notices" : "blog"}/${post.slug}/`;
+---
+
+<div class="grid grid-cols-2 gap-8">
+  {
+    posts.map((post) => (
+      <ClickableCard
+        class={cn(
+          "group relative col-span-2 lg:col-span-1 border-b border-border last:border-b-0 lg:[&:nth-last-child(2)]:border-b-0 hover:bg-secondary/60 transition-colors",
+          cardClass,
+        )}
+        href={postHref(post)}
+        label={post.title}
+      >
+        <BlogCard data={post} href={postHref(post)} />
+        {post.heroImage && (
+          <Image
+            inferSize
+            class="absolute top-0 right-0 h-full w-1/4 object-cover z-0 hidden group-hover:block opacity-40 grayscale group-hover:grayscale-0 transition-all duration-500"
+            src={sanityImage(post.heroImage, { width: 480 })}
+            alt={post.heroImageAlt ?? ""}
+          />
+        )}
+      </ClickableCard>
+    ))
+  }
+</div>
