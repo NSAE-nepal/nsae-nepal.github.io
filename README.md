@@ -26,8 +26,8 @@ bun run dev            # http://localhost:4321, Sanity Studio at /studio
 
 | Variable | Purpose |
 | --- | --- |
-| `PUBLIC_SANITY_PROJECT_ID` | Sanity project ID (used by the embedded Studio) |
-| `PUBLIC_SANITY_DATASET` | Sanity dataset, usually `production` |
+| `PUBLIC_SANITY_PROJECT_ID` | Sanity project ID, used by both the site's queries and the embedded Studio (required) |
+| `PUBLIC_SANITY_DATASET` | Sanity dataset, usually `production` (required) |
 | `PUBLIC_CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name (not currently read by the code) |
 
 The same values are configured as repository secrets for the GitHub Actions workflows.
