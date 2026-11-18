@@ -1,0 +1,106 @@
+---
+import { IconExternalLink, IconPlayerPlayFilled, IconVideo } from "@tabler/icons-astro";
+import { parseVideoUrl } from "@/lib/video";
+
+/**
+ * Portable Text `videoEmbed` block (YouTube, Vimeo, Loom). Shows a poster and
+ * loads the provider's player only when the visitor presses play. A link we
+ * can't embed becomes a plain link instead of failing the build.
+ */
+interface Props {
+  node: { url?: string; caption?: string };
+}
+
+const { url, caption } = Astro.props.node;
+const video = parseVideoUrl(url);
+if (url && !video) {
+  console.warn(`[video] Can't embed "${url}"; rendering it as a link.`);
+}
+const title = caption || (video ? `${video.providerName} video` : "Video");
+---
+
+{
+  video ? (
+    <figure class="not-prose my-8">
+      <div
+        class="video-embed group relative aspect-video overflow-hidden rounded-2xl bg-foreground"
+        data-embed={video.embedUrl}
+        data-title={title}
+      >
+        {video.thumbnail ? (
+          <img
+            src={video.thumbnail}
+            alt=""
+            class="size-full object-cover opacity-90 transition-transform duration-300 group-hover:scale-105"
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <div class="flex size-full items-center justify-center" aria-hidden="true">
+            <IconVideo class="size-16 text-background/30" />
+          </div>
+        )}
+        <button
+          type="button"
+          class="absolute inset-0 grid cursor-pointer place-items-center focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-primary"
+          aria-label={`Play video: ${title}`}
+        >
+          <span class="flex size-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform duration-300 group-hover:scale-110">
+            <IconPlayerPlayFilled class="size-7 translate-x-0.5" aria-hidden="true" />
+          </span>
+        </button>
+        <span class="pointer-events-none absolute bottom-3 left-3 rounded-full bg-black/60 px-2.5 py-1 font-mono text-[11px] uppercase tracking-wider text-white">
+          {video.providerName}
+        </span>
+      </div>
+      <noscript>
+        <a href={url} class="mt-2 inline-block text-sm text-primary underline">
+          Watch on {video.providerName}
+        </a>
+      </noscript>
+      {caption && (
+        <figcaption class="mt-2 text-center text-sm text-muted-foreground">{caption}</figcaption>
+      )}
+    </figure>
+  ) : (
+    url && (
+      <p class="not-prose my-6">
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 rounded-xl border border-border/60 px-4 py-3 text-sm font-medium transition-colors hover:border-primary/50 hover:text-primary"
+        >
+          <IconVideo class="size-4" aria-hidden="true" />
+          {caption || "Watch the video"}
+          <IconExternalLink class="size-4 text-muted-foreground" aria-hidden="true" />
+        </a>
+      </p>
+    )
+  )
+}
+
+<script>
+  // Runs on every client-side navigation; the flag stops double-binding.
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll<HTMLElement>(".video-embed").forEach((player) => {
+      if (player.dataset.videoReady === "true") return;
+      player.dataset.videoReady = "true";
+
+      player.querySelector("button")?.addEventListener("click", () => {
+        const embed = player.dataset.embed;
+        if (!embed) return;
+        const iframe = document.createElement("iframe");
+        iframe.src = embed;
+        iframe.title = player.dataset.title ?? "Video";
+        iframe.allow =
+          "accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture";
+        iframe.allowFullscreen = true;
+        iframe.referrerPolicy = "strict-origin-when-cross-origin";
+        iframe.className = "absolute inset-0 size-full";
+        player.replaceChildren(iframe);
+        iframe.focus();
+      });
+    });
+  });
+</script>
