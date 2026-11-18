@@ -1,9 +1,9 @@
 ---
-import type { CollectionEntry } from "astro:content";
 import { IconLink, IconMap } from "@tabler/icons-astro";
+import type { LocationDetails } from "@/sanity/lib/queries/events";
 
 interface Props {
-  location: CollectionEntry<"events">["data"]["location"];
+  location?: LocationDetails;
 }
 const { location } = Astro.props;
 ---
