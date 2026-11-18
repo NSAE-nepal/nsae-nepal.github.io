@@ -7,7 +7,10 @@ import EventInstructors from "@/components/pages/events/EventInstructors.astro";
 import EventLocation from "@/components/pages/events/EventLocation.astro";
 import EventSchedule from "@/components/pages/events/EventSchedule.astro";
 import { SITE_DESCRIPTION } from "@/consts";
+import JsonLd from "@/components/seo/JsonLd.astro";
 import PageLayout from "@/layouts/PageLayout.astro";
+import { breadcrumbLd, eventLd } from "@/lib/structured-data";
+import { getEventStatus } from "@/utils/datetime";
 import { getEventDetails, getEvents } from "@/sanity/lib/queries/events";
 
 export async function getStaticPaths() {
@@ -23,6 +26,8 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 
 const event = await getEventDetails(slug!);
+const { isRegistrationOpen } = getEventStatus(event);
+const site = Astro.site!;
 ---
 
 <PageLayout
@@ -30,6 +35,20 @@ const event = await getEventDetails(slug!);
   description={event.subtitle || SITE_DESCRIPTION}
   image={event.coverImage || undefined}
 >
+  <JsonLd
+    slot="head"
+    data={[
+      eventLd(event, site, { isRegistrationOpen }),
+      breadcrumbLd(
+        [
+          { name: "Home", path: "/" },
+          { name: "Events", path: "/events/page/1/" },
+          { name: event.title, path: `/events/${event.slug}/` },
+        ],
+        site,
+      ),
+    ]}
+  />
   <article class="py-8 space-y-10" data-pagefind-body>
     <a
       data-pagefind-ignore

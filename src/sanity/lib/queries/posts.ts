@@ -11,6 +11,10 @@ export type Category = {
 export type Authors = {
 	_id: string;
 	name: string;
+	slug?: string;
+	prefix?: string[];
+	position?: string;
+	company?: string;
 	profileImage?: string;
 };
 
@@ -65,9 +69,13 @@ export async function getPosts(type?: PostType): Promise<Post[]> {
     "heroImage": heroImage.asset->url,
     "heroImageAlt": heroImage.alt,
 	"authors": authors[]->{
-    _id,
-    name,
-    "profileImage": profileImage.asset->url
+		_id,
+		name,
+		"slug": slug.current,
+		prefix,
+		position,
+		company,
+		"profileImage": profileImage.asset->url
 	},
 
 	"categories": categories[]->{
@@ -112,6 +120,10 @@ export async function getPostsDetails(slug: string): Promise<PostDetails> {
   "authors": authors[]->{
     _id,
     name,
+    "slug": slug.current,
+    prefix,
+    position,
+    company,
     "profileImage": profileImage.asset->url
   },
 

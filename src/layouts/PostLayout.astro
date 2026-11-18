@@ -4,6 +4,8 @@ import { IconArrowLeft } from "@tabler/icons-astro";
 import Categories from "@/components/Categories.astro";
 import type { PostDetails } from "@/sanity/lib/queries/posts";
 import FormattedDate from "../components/FormattedDate.astro";
+import JsonLd from "@/components/seo/JsonLd.astro";
+import { articleLd, breadcrumbLd } from "@/lib/structured-data";
 import PageLayout from "./PageLayout.astro";
 import { sanityImage } from "@/sanity/lib/url-for-image";
 
@@ -28,6 +30,20 @@ const backLinkConfig: Record<string, { href: string; label: string }> = {
 
 const { href: backHref, label: backLabel } =
   backLinkConfig[type] || backLinkConfig.blog;
+
+const site = Astro.site!;
+const section = type === "notice" ? "notices" : "blog";
+const structuredData = [
+  articleLd(Astro.props, site),
+  breadcrumbLd(
+    [
+      { name: "Home", path: "/" },
+      { name: type === "notice" ? "Notices" : "Blog", path: `/${section}/page/1/` },
+      { name: title, path: `/${section}/${Astro.props.slug}/` },
+    ],
+    site,
+  ),
+];
 ---
 
 <PageLayout
@@ -36,6 +52,7 @@ const { href: backHref, label: backLabel } =
   image={heroImage || undefined}
   type="article"
 >
+  <JsonLd slot="head" data={structuredData} />
   <article class="py-8 space-y-10" data-pagefind-body>
     <header class="space-y-8 border-b border-border pb-10">
       <a
