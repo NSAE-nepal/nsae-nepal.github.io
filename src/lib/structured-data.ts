@@ -264,3 +264,37 @@ export function breadcrumbLd(items: { name: string; path: string }[], site: Site
     })),
   };
 }
+
+export function personLd(
+  author: {
+    name: string;
+    slug: string;
+    position?: string;
+    company?: string;
+    profileImage?: string;
+    bio?: string;
+    portfolio?: string;
+    socials?: Record<string, { link?: string } | undefined>;
+  },
+  site: Site,
+) {
+  return {
+    "@context": CONTEXT,
+    "@type": "Person",
+    name: author.name,
+    url: abs(`/authors/${author.slug}/`, site),
+    jobTitle: author.position,
+    worksFor: author.company
+      ? { "@type": "Organization", name: author.company }
+      : undefined,
+    memberOf: orgRef(site),
+    image: author.profileImage
+      ? sanityImage(author.profileImage, { width: 600, height: 600 })
+      : undefined,
+    description: author.bio,
+    sameAs: nonEmpty([
+      author.portfolio,
+      ...Object.values(author.socials ?? {}).map((social) => social?.link),
+    ]),
+  };
+}

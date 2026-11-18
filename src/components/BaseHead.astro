@@ -14,7 +14,7 @@ interface Props {
   description: string;
   /** Local image, or a remote (Sanity CDN) image URL such as a post's hero image. */
   image?: ImageMetadata | string;
-  type?: "website" | "article";
+  type?: "website" | "article" | "profile";
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);

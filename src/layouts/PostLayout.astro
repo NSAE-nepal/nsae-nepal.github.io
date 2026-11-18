@@ -1,7 +1,9 @@
 ---
 import { Image } from "astro:assets";
 import { IconArrowLeft } from "@tabler/icons-astro";
+import AvatarGroup from "@/components/astro/AvatarGroup.astro";
 import Categories from "@/components/Categories.astro";
+import { formatName } from "@/lib/utils";
 import type { PostDetails } from "@/sanity/lib/queries/posts";
 import FormattedDate from "../components/FormattedDate.astro";
 import JsonLd from "@/components/seo/JsonLd.astro";
@@ -32,6 +34,8 @@ const { href: backHref, label: backLabel } =
   backLinkConfig[type] || backLinkConfig.blog;
 
 const site = Astro.site!;
+// Skip dangling references (deleted authors come back as null).
+const bylineAuthors = (Astro.props.authors ?? []).filter(Boolean);
 const section = type === "notice" ? "notices" : "blog";
 const structuredData = [
   articleLd(Astro.props, site),
@@ -78,6 +82,37 @@ const structuredData = [
             >
               {subtitle}
             </p>
+          )
+        }
+        {
+          bylineAuthors.length > 0 && (
+            <div
+              class="flex flex-wrap items-center justify-center gap-3 pt-2"
+              data-pagefind-ignore
+            >
+              <AvatarGroup data={bylineAuthors} />
+              <p class="font-sans text-sm text-muted-foreground">
+                By{" "}
+                {bylineAuthors.map((author, index) => (
+                  <>
+                    {index > 0 &&
+                      (index === bylineAuthors.length - 1 ? " and " : ", ")}
+                    {author.slug ? (
+                      <a
+                        href={`/authors/${author.slug}/`}
+                        class="font-medium text-foreground underline-offset-4 hover:text-primary hover:underline"
+                      >
+                        {formatName(author.name, author.prefix)}
+                      </a>
+                    ) : (
+                      <span class="font-medium text-foreground">
+                        {formatName(author.name, author.prefix)}
+                      </span>
+                    )}
+                  </>
+                ))}
+              </p>
+            </div>
           )
         }
       </div>
