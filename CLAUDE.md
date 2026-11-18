@@ -39,6 +39,10 @@ Package manager is **bun** (`bun.lock`).
 - File-based routing in `src/pages/`. Listings are paginated at `/<section>/page/[page]` (`PAGE_SIZE = 10` in `src/consts.ts`); `/blog`, `/notices`, … are redirects defined in `astro.config.mjs`.
 - `src/layouts/PageLayout.astro` (props: `title`, `description`, `image` = local import or Sanity URL for social previews, `type` = `website`|`article`; named slot `head`). `BaseHead.astro` appends ` | NSAE` to titles. `PostLayout.astro` wraps blog/notice pages.
 - Portable Text rendering: `src/components/PortableText.astro` maps block types to `Portable*.astro` components.
+- Listings with filters: list markup lives in `src/components/pages/{blog,notices,minutes}/*Listing.astro`, shared by `/<section>/page/[page]` and the filtered routes `/blog|notices/category/[category]/page/[page]` and `/minutes/type/[type]/page/[page]`. Category slugs are derived from titles (`src/lib/categories.ts`); `FilterChips.astro` hides itself when there are no options.
+- Events listing splits upcoming (all, on page 1) from past (paginated) at build time; `/events/<slug>.ics` + Google Calendar links come from `src/utils/calendar.ts`.
+- Authors: `/authors/[slug]` exists only for authors with at least one published post (`getAuthorsWithPosts`); bylines link there. Use `formatName()`/`formatPrefix()` from `src/lib/utils.ts` for name prefixes.
+- Related posts: `getRelatedPosts()` in `src/lib/related-posts.ts`, passed to `PostLayout` as `related`.
 - RSS: `src/pages/rss.xml.ts` (Sanity posts).
 - Social preview cards: `src/pages/og/[...path].png.ts` renders `/og/<section>/<slug>.png` at build time via `src/lib/og.ts` (satori + resvg); detail pages fall back to them when there's no cover image.
 - Structured data: builders in `src/lib/structured-data.ts`, rendered with `<JsonLd slot="head" data={...} />`.
@@ -46,7 +50,7 @@ Package manager is **bun** (`bun.lock`).
 ### Components
 - Astro components in `src/components/astro/` (Button, Badge, Card/*, Avatar, Pagination, …), page sections in `src/components/sections/`, shadcn/React UI in `src/components/ui/`.
 - `Card/ClickableCard.astro` is a stretched-link card: requires `href` and `label`; nested links/buttons keep working.
-- Search: Pagefind. `Header.astro` renders a static trigger; `src/components/search/mount.tsx` lazy-loads the React `SearchDialog` on click or Ctrl/Cmd+K. Mark page content with `data-pagefind-body` / `data-pagefind-meta`.
+- Search: Pagefind. `Header.astro` renders a static trigger; `src/components/search/mount.tsx` lazy-loads the React `SearchDialog` on click or Ctrl/Cmd+K. Mark page content with `data-pagefind-body` / `data-pagefind-meta`, and tag detail pages with `data-pagefind-filter="type:<Type>"` (the dialog builds its type chips from these).
 - Header: fixed bottom pill nav + "More" menu (native Popover API).
 
 ### Client-side scripts and animation
