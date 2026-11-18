@@ -29,7 +29,9 @@ export default defineConfig({
 	},
 	integrations: [
 		mdx(),
-		sitemap(),
+		sitemap({
+			filter: (page) => !page.includes("/studio"),
+		}),
 		react(),
 		sanity({
 			projectId: "zv3un63s",
@@ -71,7 +73,6 @@ export default defineConfig({
 		"/notices": "/notices/page/1",
 		"/careers": "/careers/page/1",
 		"/past-committee": "/past-committee/page/1",
-		"/resources": "/resources/page/1",
 		"/minutes": "/minutes/page/1",
 		"/events": "/events/page/1",
 	},

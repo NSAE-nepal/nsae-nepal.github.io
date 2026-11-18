@@ -3,12 +3,24 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  # Fired by the Sanity "publish" webhook so CMS edits go live without a code push.
+  repository_dispatch:
+    types: [sanity-publish]
+  # Daily rebuild (00:15 UTC ≈ 06:00 NPT) keeps date-based UI current:
+  # upcoming vs. past events, registration buttons, closed vacancies.
+  schedule:
+    - cron: "15 0 * * *"
   workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
+
+# Only one deploy at a time; a newer trigger supersedes a running one.
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -21,10 +33,10 @@ jobs:
         uses: withastro/action@v6
         env:
           PUBLIC_CLOUDINARY_CLOUD_NAME: ${{ secrets.PUBLIC_CLOUDINARY_CLOUD_NAME }}
-          PUBLIC_SANITY_DATASET:  ${{ secrets.PUBLIC_SANITY_DATASET }}
-          PUBLIC_SANITY_PROJECT_ID:  ${{ secrets.PUBLIC_SANITY_PROJECT_ID }}
+          PUBLIC_SANITY_DATASET: ${{ secrets.PUBLIC_SANITY_DATASET }}
+          PUBLIC_SANITY_PROJECT_ID: ${{ secrets.PUBLIC_SANITY_PROJECT_ID }}
         with:
-          package-manager: bun@latest
+          package-manager: bun@1.4.4
 
   deploy:
     needs: build

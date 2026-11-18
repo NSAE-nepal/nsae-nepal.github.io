@@ -11,6 +11,8 @@ import Badge from "@/components/astro/Badge.astro";
 import Button from "@/components/astro/Button/Button.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
 import type { Event } from "@/sanity/lib/queries/events";
+import { getEventStatus } from "@/utils/datetime";
+import { sanityImage } from "@/sanity/lib/url-for-image";
 
 type Props = {
   data: Event;
@@ -26,6 +28,7 @@ const formatEventType = (type: string) => {
 };
 const isOnline =
   data.location?.type === "online" || data.location?.type === "hybrid";
+const { hasEnded, isRegistrationOpen } = getEventStatus(data);
 ---
 
 <article
@@ -132,8 +135,8 @@ const isOnline =
     </div>
 
     {
-      data.registrationLink && (
-        <div class="pt-2" onclick="event.stopPropagation()">
+      isRegistrationOpen ? (
+        <div class="pt-2">
           <Button
             href={data.registrationLink}
             target="_blank"
@@ -144,6 +147,17 @@ const isOnline =
             <IconArrowUpRight class={"ml-2 size-4"} />
           </Button>
         </div>
+      ) : (
+        (hasEnded || data.registrationLink) && (
+          <div class="pt-2">
+            <Badge
+              variant="outline"
+              class="font-mono text-xs uppercase tracking-widest text-muted-foreground"
+            >
+              {hasEnded ? "Event ended" : "Registration closed"}
+            </Badge>
+          </div>
+        )
       )
     }
   </div>
@@ -154,7 +168,9 @@ const isOnline =
         <Image
           inferSize
           class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-          src={data.coverImage}
+          src={sanityImage(data.coverImage, { width: 1200 })}
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 1024px) 50vw, 100vw"
           alt={data.title ?? ""}
         />
       </div>

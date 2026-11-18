@@ -22,7 +22,7 @@ interface Props {
 }
 
 const { page } = Astro.props;
-const pageTitle = "Our latest careers";
+const pageTitle = "Careers";
 const pageDescription = "Your Next Chapter Starts Here";
 ---
 
@@ -62,6 +62,7 @@ const pageDescription = "Your Next Chapter Starts Here";
                 <ClickableCard
                   class="anim-card group relative col-span-2 hover:bg-secondary/60 transition-colors opacity-0 translate-y-4"
                   href={`/careers/${vacancy.slug}/`}
+                  label={vacancy.title}
                 >
                   <CareersCard data={vacancy} />
                 </ClickableCard>

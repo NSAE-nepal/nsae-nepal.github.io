@@ -7,6 +7,7 @@ import {
 } from "@tabler/icons-astro";
 import Badge from "../astro/Badge.astro";
 import Button from "../astro/Button/Button.astro";
+import { sanityImage } from "@/sanity/lib/url-for-image";
 
 export interface HeroSlide {
   image: string;
@@ -41,8 +42,7 @@ const {
 ---
 
 <section
-  class="home-hero-section rounded-2xl relative flex min-h-[85vh] items-center overflow-hidden px-6 py-20 md:px-12 md:py-32"
-  style="visibility:hidden"
+  class="home-hero-section invisible rounded-2xl relative flex min-h-[85vh] items-center overflow-hidden px-6 py-20 md:px-12 md:py-32"
   data-hero-carousel
   data-autoplay-delay={autoplayDelay}
 >
@@ -147,7 +147,9 @@ const {
             class="hero-image-anim absolute inset-0 h-full w-full object-cover rounded-2xl scale-110 will-change-transform"
             alt={slide.alt}
             inferSize
-            src={slide.image}
+            src={sanityImage(slide.image, { width: 2000 })}
+            widths={[640, 1024, 1600, 2000]}
+            sizes="100vw"
             loading={index === 0 ? "eager" : "lazy"}
             fetchpriority={index === 0 ? "high" : "auto"}
             decoding="async"

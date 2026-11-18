@@ -21,3 +21,27 @@ export const formatTime = (date: Date | undefined) => {
     hour12: true,
   });
 };
+
+type EventDates = {
+  eventStart: string;
+  eventEnd?: string;
+  registrationLink?: string;
+  registrationDeadline?: string;
+};
+
+/**
+ * Registration/ended state for an event, evaluated at build time.
+ * The daily scheduled deploy keeps this current on the static site.
+ */
+export const getEventStatus = (event: EventDates, now = new Date()) => {
+  const endsAt = new Date(event.eventEnd ?? event.eventStart);
+  const registrationClosesAt = event.registrationDeadline
+    ? new Date(event.registrationDeadline)
+    : endsAt;
+
+  return {
+    hasEnded: endsAt < now,
+    isRegistrationOpen:
+      Boolean(event.registrationLink) && now < registrationClosesAt,
+  };
+};

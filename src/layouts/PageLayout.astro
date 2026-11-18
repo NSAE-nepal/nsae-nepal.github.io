@@ -7,17 +7,25 @@ import Header from "../components/Header.astro";
 interface Props {
   title: string;
   description: string;
-  image?: ImageMetadata;
+  /** Social preview image: a local import or a Sanity image URL. */
+  image?: ImageMetadata | string;
+  type?: "website" | "article";
   dataPagefindIgnore?: "index" | "all";
 }
 
-const { title, description, image, dataPagefindIgnore } = Astro.props;
+const { title, description, image, type, dataPagefindIgnore } = Astro.props;
 ---
 
 <html lang="en">
   <head>
-    <BaseHead title={title} description={description} image={image} />
+    <BaseHead
+      title={title}
+      description={description}
+      image={image}
+      type={type}
+    />
     <ClientRouter />
+    <slot name="head" />
   </head>
   <body class="m-3 lg:m-4" data-pagefind-ignore={dataPagefindIgnore}>
     <Header />

@@ -3,6 +3,7 @@ import { getImage } from "astro:assets";
 import { IconArrowUpRight } from "@tabler/icons-astro";
 import type { Banner } from "@/sanity/lib/queries/banner";
 import Button from "./Button/Button.astro";
+import { sanityImage } from "@/sanity/lib/url-for-image";
 
 type Props = {
   banner: Banner;
@@ -10,7 +11,7 @@ type Props = {
 const { banner } = Astro.props;
 
 const optimizedImage = await getImage({
-  src: banner.backgroundImage,
+  src: sanityImage(banner.backgroundImage, { width: 2000 }),
   inferSize: true,
 });
 

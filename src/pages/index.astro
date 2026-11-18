@@ -14,8 +14,11 @@ import { getPosts } from "@/sanity/lib/queries/posts";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 
 const allNotices = (await getPosts("notice")) || [];
-const featuredNotices = allNotices.filter((post) => post.featured);
 const latestNotice = allNotices?.[0];
+// The latest notice gets its own slot, so don't repeat it if it's also featured.
+const featuredNotices = allNotices.filter(
+  (post) => post.featured && post._id !== latestNotice?._id,
+);
 const homePage = await getHomePage();
 
 const announcements: Announcement[] = [

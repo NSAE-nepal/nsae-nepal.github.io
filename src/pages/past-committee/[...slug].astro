@@ -8,6 +8,7 @@ import {
   getCommittees,
 } from "@/sanity/lib/queries/committee";
 import { SITE_TITLE } from "../../consts";
+import { sanityImage } from "@/sanity/lib/url-for-image";
 
 export async function getStaticPaths() {
   const committees = await getCommittees();
@@ -74,7 +75,7 @@ function formatPosition(position: string) {
           <div class="relative overflow-hidden rounded-lg shadow-lg group">
             {member.profileImage ? (
               <Image
-                src={member.profileImage}
+                src={sanityImage(member.profileImage, { width: 600 })}
                 inferSize
                 alt={`Profile picture of ${member.name}`}
                 class="aspect-3/4 w-full object-cover transition-transform duration-300 group-hover:scale-105"

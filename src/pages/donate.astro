@@ -13,6 +13,7 @@ import Badge from "@/components/astro/Badge.astro";
 import Button from "@/components/astro/Button/Button.astro";
 import PageLayout from "@/layouts/PageLayout.astro";
 import { getDonateDetails } from "@/sanity/lib/queries/donate";
+import { sanityImage } from "@/sanity/lib/url-for-image";
 
 const impactAreas = [
   {
@@ -38,7 +39,7 @@ const impactAreas = [
 const data = await getDonateDetails();
 
 if (!data) {
-  throw new Error("Donate page data not found in src/content/donate.json");
+  throw new Error('Donate page data not found: publish the "donate" document in Sanity.');
 }
 
 const iconMap: Record<string, any> = {
@@ -49,8 +50,8 @@ const iconMap: Record<string, any> = {
 ---
 
 <PageLayout
-  title="Donate - NSAE"
-  description="Support the mission of the Nepal Society of Agricultural Engineers."
+  title="Donate"
+  description="Support the mission of the Nepalese Society of Agricultural Engineers."
   dataPagefindIgnore="all"
 >
   <section
@@ -284,7 +285,7 @@ const iconMap: Record<string, any> = {
             class="bg-white p-4 rounded-xl border border-border shadow-sm max-w-[250px] w-full aspect-square flex items-center justify-center"
           >
             <Image
-              src={data.bankDetails?.accountQRCode}
+              src={sanityImage(data.bankDetails?.accountQRCode, { width: 500 })}
               alt="Donation QR Code"
               class="w-full h-full object-contain"
               inferSize

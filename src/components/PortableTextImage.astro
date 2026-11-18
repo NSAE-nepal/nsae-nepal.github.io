@@ -1,11 +1,40 @@
 ---
 // ./src/components/PortableTextImage.astro
 import { urlForImage } from "../sanity/lib/url-for-image";
+
 const { asset, alt } = Astro.props.node;
-const url = urlForImage(asset).url();
-const webpUrl = urlForImage(asset).format("webp").url();
+
+// Sanity asset refs encode the original size: image-<id>-<W>x<H>-<ext>
+const [, w, h] = String(asset?._ref ?? "").match(/-(\d+)x(\d+)-/) ?? [];
+const originalWidth = w ? Number(w) : undefined;
+const originalHeight = h ? Number(h) : undefined;
+
+const widths = [480, 800, 1200, 1600].filter(
+  (width) => !originalWidth || width <= originalWidth,
+);
+if (widths.length === 0 && originalWidth) widths.push(originalWidth);
+
+const sizedUrl = (width: number) =>
+  urlForImage(asset).width(width).fit("max").auto("format").url();
+
+const src = sizedUrl(widths.at(-1) ?? 1200);
+const srcset = widths.map((width) => `${sizedUrl(width)} ${width}w`).join(", ");
+
+const displayWidth = widths.at(-1);
+const displayHeight =
+  originalWidth && originalHeight && displayWidth
+    ? Math.round((originalHeight / originalWidth) * displayWidth)
+    : undefined;
 ---
-<picture>
-  <source srcset={webpUrl} type="image/webp" />
-  <img class="responsive__img" src={url} alt={alt} />
-</picture>
+
+<img
+  class="responsive__img h-auto max-w-full"
+  src={src}
+  srcset={srcset}
+  sizes="(min-width: 1280px) 768px, 100vw"
+  width={displayWidth}
+  height={displayHeight}
+  alt={alt ?? ""}
+  loading="lazy"
+  decoding="async"
+/>

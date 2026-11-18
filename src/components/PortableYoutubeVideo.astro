@@ -57,18 +57,30 @@ const embed = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
 </div>
 
 <script>
-  document.querySelectorAll(".youtube-player").forEach((player) => {
-    player.addEventListener("click", () => {
-      const iframe = document.createElement("iframe");
+  // Runs on every client-side navigation; the flag stops double-binding.
+  function initYoutubePlayers() {
+    document
+      .querySelectorAll<HTMLElement>(".youtube-player")
+      .forEach((player) => {
+        if (player.dataset.ytInit === "true") return;
+        player.dataset.ytInit = "true";
 
-      iframe.src = player.dataset.embed;
-      iframe.allow =
-        "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-      iframe.allowFullscreen = true;
-      iframe.loading = "lazy";
-      iframe.className = "absolute inset-0 h-full w-full";
+        player.addEventListener("click", () => {
+          const embed = player.dataset.embed;
+          if (!embed) return;
 
-      player.replaceChildren(iframe);
-    });
-  });
+          const iframe = document.createElement("iframe");
+          iframe.src = embed;
+          iframe.allow =
+            "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+          iframe.allowFullscreen = true;
+          iframe.loading = "lazy";
+          iframe.className = "absolute inset-0 h-full w-full";
+
+          player.replaceChildren(iframe);
+        });
+      });
+  }
+
+  document.addEventListener("astro:page-load", initYoutubePlayers);
 </script>

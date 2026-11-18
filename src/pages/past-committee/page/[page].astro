@@ -69,7 +69,7 @@ const pageDescription =
               {page.data.map((committee: Committee) => (
                 <ClickableCard
                   href={`/past-committee/${committee.committeeIteration}/`}
-                  ariaLabel={`View details for ${committee.title}`}
+                  label={`View details for ${committee.title}`}
                   class="group relative flex flex-col justify-between rounded-xl border border-border/50 bg-secondary text-secondary-foreground p-6 transition-all hover:border-primary/50"
                 >
                   <div class="space-y-2">

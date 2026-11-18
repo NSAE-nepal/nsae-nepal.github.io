@@ -11,7 +11,14 @@ const today = new Date();
       <div class="flex items-center gap-2">
         <span class="text-2xl font-bold text-secondary-foreground">NSAE</span>
         <span>
-          <img src={"/nsae-logo.png"} alt="NSAE Logo" class="h-8 w-8" />
+          <img
+            src="/nsae-logo-96.png"
+            alt="NSAE Logo"
+            width="32"
+            height="32"
+            class="h-8 w-8"
+            loading="lazy"
+          />
         </span>
       </div>
       <p class="mt-4 max-w-xs text-muted-foreground">
@@ -123,13 +130,11 @@ const today = new Date();
           </button>
         </li>
         <li>
-          <a href="#" class="text-muted-foreground transition hover:opacity-75">
-            Terms & Conditions
-          </a>
-        </li>
-        <li>
-          <a href="#" class="text-muted-foreground transition hover:opacity-75">
-            Privacy Policy
+          <a
+            href="/rss.xml"
+            class="text-muted-foreground transition hover:opacity-75"
+          >
+            RSS Feed
           </a>
         </li>
       </ul>

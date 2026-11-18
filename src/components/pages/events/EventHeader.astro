@@ -9,13 +9,15 @@ import {
 import Badge from "@/components/astro/Badge.astro";
 import Button from "@/components/astro/Button/Button.astro";
 import type { EventDetails } from "@/sanity/lib/queries/events";
-import { formatDate, formatTime } from "@/utils/datetime";
+import { formatDate, formatTime, getEventStatus } from "@/utils/datetime";
+import { sanityImage } from "@/sanity/lib/url-for-image";
 
 interface Props {
   data: EventDetails;
 }
 
 const { data } = Astro.props;
+const { hasEnded, isRegistrationOpen } = getEventStatus(data);
 
 let dateDisplay = "";
 let durationDisplay = "";
@@ -159,7 +161,7 @@ if (data.location) {
       </div>
 
       {
-        data.registrationLink && (
+        isRegistrationOpen ? (
           <div class="flex flex-col gap-3 md:items-end md:text-right">
             <Button
               href={data.registrationLink}
@@ -178,6 +180,16 @@ if (data.location) {
               </div>
             )}
           </div>
+        ) : (
+          (hasEnded || data.registrationLink) && (
+            <Badge
+              variant="outline"
+              size={"lg"}
+              class="font-mono text-xs uppercase tracking-widest text-muted-foreground"
+            >
+              {hasEnded ? "Event ended" : "Registration closed"}
+            </Badge>
+          )
         )
       }
     </div>
@@ -188,8 +200,11 @@ if (data.location) {
       <div class="relative w-full aspect-video lg:aspect-[4/3] overflow-hidden rounded-lg shadow-md">
         <Image
           inferSize
-          src={data.coverImage}
+          src={sanityImage(data.coverImage, { width: 1000 })}
+          widths={[480, 800, 1000]}
+          sizes="(min-width: 1024px) 33vw, 100vw"
           alt={data.title}
+          loading="eager"
           class="object-cover w-full h-full"
         />
       </div>

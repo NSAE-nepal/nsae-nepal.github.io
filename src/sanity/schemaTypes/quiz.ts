@@ -220,7 +220,7 @@ export const quizType = defineType({
 												.filter((id): id is string => Boolean(id)),
 										);
 
-										const invalidIds = correctOptionIds.filter(
+										const invalidIds = (correctOptionIds as string[]).filter(
 											(id) => !validOptionIds.has(id),
 										);
 

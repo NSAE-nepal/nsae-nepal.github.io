@@ -9,6 +9,7 @@ import {
 import MissionPlaceholder3 from "src/assets/pages/mission-placeholder-3.avif";
 import Badge from "@/components/astro/Badge.astro";
 import type { Home } from "@/sanity/lib/queries/home";
+import { sanityImage } from "@/sanity/lib/url-for-image";
 
 const { objective, bylaws } = Astro.props as {
   objective: Home["objective"];
@@ -60,7 +61,7 @@ const { objective, bylaws } = Astro.props as {
     >
       <Image
         alt={objective.imagePrimary.alt || ""}
-        src={objective.imagePrimary.url}
+        src={sanityImage(objective.imagePrimary.url, { width: 1200 })}
         inferSize
         class="absolute w-full h-full top-0 left-0 object-cover transition-all duration-700 grayscale group-hover:grayscale-0 group-hover:scale-105"
       />
@@ -119,7 +120,7 @@ const { objective, bylaws } = Astro.props as {
       >
         <Image
           alt={objective.imageSecondary.alt || ""}
-          src={objective.imageSecondary.url}
+          src={sanityImage(objective.imageSecondary.url, { width: 1000 })}
           inferSize
           class="absolute w-full h-full top-0 left-0 object-cover transition-transform duration-700 group-hover:scale-110"
         />
