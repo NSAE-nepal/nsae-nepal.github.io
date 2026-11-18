@@ -1,0 +1,236 @@
+---
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconCheck,
+  IconChevronDown,
+  IconClock,
+  IconListCheck,
+} from "@tabler/icons-astro";
+import CourseProgress from "@/components/pages/courses/CourseProgress.astro";
+import CourseSyllabus from "@/components/pages/courses/CourseSyllabus.astro";
+import ResourceList from "@/components/pages/courses/ResourceList.astro";
+import PortableText from "@/components/PortableText.astro";
+import JsonLd from "@/components/seo/JsonLd.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import PageLayout from "@/layouts/PageLayout.astro";
+import {
+  courseLessons,
+  coursePath,
+  formatDuration,
+  lessonNeighbours,
+  lessonPath,
+} from "@/lib/courses";
+import { breadcrumbLd, lessonLd } from "@/lib/structured-data";
+import {
+  type Course,
+  getCourses,
+  getLessonDetails,
+  type LessonSummary,
+} from "@/sanity/lib/queries/courses";
+
+export async function getStaticPaths() {
+  const courses = await getCourses();
+  return courses.flatMap((course) =>
+    courseLessons(course).map((lesson) => ({
+      params: { course: course.slug, lesson: lesson.slug },
+      props: { course, lessonSummary: lesson },
+    })),
+  );
+}
+
+interface Props {
+  course: Course;
+  lessonSummary: LessonSummary;
+}
+
+const { course, lessonSummary } = Astro.props;
+const site = Astro.site!;
+const lesson = await getLessonDetails(lessonSummary.slug);
+if (!lesson) {
+  throw new Error(`Lesson "${lessonSummary.slug}" is in "${course.slug}" but could not be loaded.`);
+}
+
+const { index, total, previous, next } = lessonNeighbours(course, lesson._id);
+const moduleIndex = course.modules.findIndex((module) =>
+  module.lessons.some((item) => item._id === lesson._id),
+);
+const module = course.modules[moduleIndex];
+const lessonIds = courseLessons(course).map((item) => item._id);
+const pagePath = lessonPath(course, lesson);
+---
+
+<PageLayout
+  title={`${lesson.title} – ${course.title}`}
+  description={lesson.summary || course.summary}
+  image={course.coverImage || `/og/courses/${course.slug}.png`}
+  type="article"
+>
+  <JsonLd
+    slot="head"
+    data={[
+      lessonLd(lesson, course, site),
+      breadcrumbLd(
+        [
+          { name: "Home", path: "/" },
+          { name: "Courses", path: "/courses/page/1/" },
+          { name: course.title, path: coursePath(course) },
+          { name: lesson.title, path: pagePath },
+        ],
+        site,
+      ),
+    ]}
+  />
+
+  <div
+    class="py-8"
+    data-lesson-page
+    data-course-id={course._id}
+    data-course-title={course.title}
+    data-course-path={coursePath(course)}
+    data-lesson-id={lesson._id}
+    data-lesson-title={lesson.title}
+    data-requires-quiz={String(lesson.hasQuiz)}
+  >
+    <nav aria-label="Breadcrumb" class="mb-8 px-4" data-pagefind-ignore>
+      <ol class="flex flex-wrap items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+        <li><a href="/courses/page/1/" class="hover:text-primary transition-colors">Courses</a></li>
+        <li aria-hidden="true">/</li>
+        <li>
+          <a href={coursePath(course)} class="hover:text-primary transition-colors">{course.title}</a>
+        </li>
+      </ol>
+    </nav>
+
+    <div class="grid grid-cols-1 gap-10 lg:grid-cols-[18rem_minmax(0,1fr)] xl:gap-14">
+      <!-- Syllabus: drawer on small screens, sticky sidebar on large ones. -->
+      <aside class="lg:sticky lg:top-8 lg:h-fit lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto" data-pagefind-ignore>
+        <details class="group rounded-2xl border border-border/60 bg-secondary/30 lg:hidden">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-3 p-4 [&::-webkit-details-marker]:hidden">
+            <span>
+              <span class="block font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+                Lesson {index + 1} of {total}
+              </span>
+              <span class="block font-medium">Course content</span>
+            </span>
+            <IconChevronDown class="size-5 transition-transform group-open:rotate-180" aria-hidden="true" />
+          </summary>
+          <div class="border-t border-border/60 p-2 pb-4">
+            <CourseSyllabus course={course} currentLessonId={lesson._id} variant="compact" />
+          </div>
+        </details>
+
+        <div class="hidden space-y-5 lg:block">
+          <div class="space-y-3 px-2">
+            <a href={coursePath(course)} class="block font-sans text-lg font-medium leading-snug hover:text-primary transition-colors">
+              {course.title}
+            </a>
+            <CourseProgress courseId={course._id} lessonIds={lessonIds} />
+          </div>
+          <CourseSyllabus course={course} currentLessonId={lesson._id} variant="compact" />
+        </div>
+      </aside>
+
+      <article class="min-w-0 space-y-10" data-pagefind-body data-pagefind-filter="type:Lesson">
+        <span data-pagefind-meta={`course:${course.title}`} hidden></span>
+        <header class="space-y-4 border-b border-border pb-8">
+          <p class="font-mono text-xs uppercase tracking-widest text-primary" data-pagefind-ignore>
+            {module ? `Module ${moduleIndex + 1} · ${module.title}` : course.title}
+          </p>
+          <h1 class="font-sans text-3xl md:text-5xl font-medium tracking-tighter leading-tight" data-pagefind-meta="title">
+            {lesson.title}
+          </h1>
+          {lesson.summary && <p class="text-lg text-muted-foreground max-w-3xl">{lesson.summary}</p>}
+          <p class="flex flex-wrap gap-x-5 gap-y-1 font-mono text-xs uppercase tracking-wider text-muted-foreground" data-pagefind-ignore>
+            <span>Lesson {index + 1} of {total}</span>
+            <span class="inline-flex items-center gap-1.5">
+              <IconClock class="size-3.5" aria-hidden="true" />
+              {formatDuration(lesson.minutes ?? 1)}
+            </span>
+            {lesson.hasQuiz && (
+              <span class="inline-flex items-center gap-1.5">
+                <IconListCheck class="size-3.5" aria-hidden="true" />
+                Includes a quiz
+              </span>
+            )}
+          </p>
+        </header>
+
+        <div class="prose prose-lg max-w-none dark:prose-invert">
+          <PortableText portableText={lesson.body} />
+        </div>
+
+        <ResourceList resources={lesson.attachments} title="Lesson files" />
+
+        <footer class="space-y-8 border-t border-border pt-8" data-pagefind-ignore>
+          <div hidden data-progress-ui class="flex flex-col items-center gap-2 text-center">
+            <button
+              type="button"
+              data-lesson-complete
+              aria-pressed="false"
+              class="group/toggle inline-flex h-11 items-center gap-2 rounded-full border border-primary px-6 font-medium text-primary transition-colors hover:bg-primary/10 disabled:cursor-not-allowed disabled:border-border disabled:text-muted-foreground disabled:hover:bg-transparent data-[complete=true]:bg-primary data-[complete=true]:text-primary-foreground cursor-pointer"
+            >
+              <IconCheck class="size-4" aria-hidden="true" />
+              <span data-toggle-label>Mark as complete</span>
+            </button>
+            {lesson.hasQuiz && (
+              <p class="text-xs text-muted-foreground">Passing the quiz above completes this lesson.</p>
+            )}
+          </div>
+
+          <nav aria-label="Lessons" class="grid gap-3 sm:grid-cols-2">
+            {previous ? (
+              <a
+                href={lessonPath(course, previous)}
+                class="group flex items-center gap-3 rounded-2xl border border-border/60 p-4 transition-colors hover:border-primary/50 hover:bg-secondary/50"
+              >
+                <IconArrowLeft class="size-5 shrink-0 text-muted-foreground transition-transform group-hover:-translate-x-1" aria-hidden="true" />
+                <span class="min-w-0">
+                  <span class="block font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Previous</span>
+                  <span class="block truncate font-medium">{previous.title}</span>
+                </span>
+              </a>
+            ) : (
+              <span class="hidden sm:block" />
+            )}
+            {next ? (
+              <a
+                href={lessonPath(course, next)}
+                class="group flex items-center justify-end gap-3 rounded-2xl border border-primary/40 bg-primary/5 p-4 text-right transition-colors hover:bg-primary/10"
+              >
+                <span class="min-w-0">
+                  <span class="block font-mono text-[11px] uppercase tracking-widest text-primary">Next lesson</span>
+                  <span class="block truncate font-medium">{next.title}</span>
+                </span>
+                <IconArrowRight class="size-5 shrink-0 text-primary transition-transform group-hover:translate-x-1" aria-hidden="true" />
+              </a>
+            ) : (
+              <a
+                href={coursePath(course)}
+                class="group flex items-center justify-end gap-3 rounded-2xl border border-primary/40 bg-primary/5 p-4 text-right transition-colors hover:bg-primary/10"
+              >
+                <span class="min-w-0">
+                  <span class="block font-mono text-[11px] uppercase tracking-widest text-primary">Last lesson</span>
+                  <span class="block truncate font-medium">Back to the course overview</span>
+                </span>
+                <IconArrowRight class="size-5 shrink-0 text-primary transition-transform group-hover:translate-x-1" aria-hidden="true" />
+              </a>
+            )}
+          </nav>
+
+          <ShareBar
+            class="justify-center"
+            label="Share this lesson"
+            title={`${lesson.title} – ${course.title}`}
+            text={lesson.summary || course.summary}
+            url={pagePath}
+          />
+        </footer>
+      </article>
+    </div>
+  </div>
+</PageLayout>
+
+<script>
+  import "@/scripts/course-progress";
+</script>

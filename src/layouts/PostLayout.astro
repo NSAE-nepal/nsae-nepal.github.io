@@ -5,7 +5,8 @@ import AvatarGroup from "@/components/astro/AvatarGroup.astro";
 import BlogCard from "@/components/astro/Card/BlogCard.astro";
 import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
 import Categories from "@/components/Categories.astro";
-import { formatName } from "@/lib/utils";
+import ShareBar from "@/components/ShareBar.astro";
+import { formatName, formatReadingTime } from "@/lib/utils";
 import type { Post, PostDetails } from "@/sanity/lib/queries/posts";
 import FormattedDate from "../components/FormattedDate.astro";
 import JsonLd from "@/components/seo/JsonLd.astro";
@@ -28,8 +29,10 @@ const {
   heroImageAlt,
   type,
   showToc,
+  readingMinutes,
   related = [],
 } = Astro.props;
+const readingTime = formatReadingTime(readingMinutes);
 
 const relatedHref = (post: Post) =>
   `/${post.type === "notice" ? "notices" : "blog"}/${post.slug}/`;
@@ -66,6 +69,12 @@ const structuredData = [
   type="article"
 >
   <JsonLd slot="head" data={structuredData} />
+  <div
+    class="pointer-events-none fixed inset-x-0 top-0 z-50 h-1 origin-left scale-x-0 bg-primary"
+    data-reading-progress
+    aria-hidden="true"
+  >
+  </div>
   <article
     class="py-8 space-y-10"
     data-pagefind-body
@@ -153,6 +162,8 @@ const structuredData = [
               data-pagefind-ignore
             >
               <FormattedDate date={new Date(publishedAt)} />
+              {readingTime && <span aria-hidden="true"> · </span>}
+              {readingTime && <span>{readingTime}</span>}
             </span>
           )
         }
@@ -177,7 +188,10 @@ const structuredData = [
     }
 
     <div class={`mx-auto max-w-7xl ${showToc ? "xl:flex xl:gap-12" : ""}`}>
-      <div class="prose w-full min-w-0 max-w-none dark:prose-invert">
+      <div
+        class="prose w-full min-w-0 max-w-none dark:prose-invert"
+        data-reading-target
+      >
         <slot />
       </div>
 
@@ -191,6 +205,14 @@ const structuredData = [
         )
       }
     </div>
+
+    <ShareBar
+      class="justify-center border-t border-border/50 pt-8"
+      label={type === "notice" ? "Share this notice" : "Share this article"}
+      title={title}
+      text={subtitle || title}
+      url={`/${section}/${Astro.props.slug}/`}
+    />
 
     {
       related.length > 0 && (
@@ -227,3 +249,43 @@ const structuredData = [
     }
   </article>
 </PageLayout>
+
+<script>
+  // Thin bar at the top of article pages that fills as you read the body.
+  let cleanup: (() => void) | undefined;
+
+  document.addEventListener("astro:page-load", () => {
+    cleanup?.();
+    cleanup = undefined;
+    const bar = document.querySelector<HTMLElement>("[data-reading-progress]");
+    const target = document.querySelector<HTMLElement>("[data-reading-target]");
+    if (!bar || !target) return;
+
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const rect = target.getBoundingClientRect();
+      const scrollable = rect.height - window.innerHeight;
+      const progress =
+        scrollable > 0 ? Math.min(1, Math.max(0, -rect.top / scrollable)) : 1;
+      bar.style.transform = `scaleX(${progress})`;
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    cleanup = () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
+  });
+
+  document.addEventListener("astro:before-swap", () => {
+    cleanup?.();
+    cleanup = undefined;
+  });
+</script>

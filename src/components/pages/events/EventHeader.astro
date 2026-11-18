@@ -75,6 +75,7 @@ if (data.location) {
     if (data.location.type === "hybrid") locationDisplay += " (Hybrid)";
   }
 }
+import ShareBar from "@/components/ShareBar.astro";
 ---
 
 <header class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8 lg:gap-12 mb-12">
@@ -233,6 +234,8 @@ if (data.location) {
         </div>
       )
     }
+
+    <ShareBar title={data.title} text={data.subtitle || data.title} url={`/events/${data.slug}/`} />
   </div>
 
   {

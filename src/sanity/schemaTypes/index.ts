@@ -6,6 +6,12 @@ import { blockContentSimpleType } from "./blockContentSimple";
 import { careerType } from "./careers";
 import { categoryType } from "./category";
 import { committeeType } from "./committee";
+import {
+	courseModuleType,
+	courseResourceType,
+	courseType,
+	lessonType,
+} from "./courses";
 import { contactsType } from "./contacts";
 import { donateType } from "./donate";
 import {
@@ -45,6 +51,10 @@ export const schema: { types: SchemaTypeDefinition[] } = {
 		contactPersonType,
 		scheduleItemType,
 		eventType,
+		courseResourceType,
+		courseModuleType,
+		courseType,
+		lessonType,
 		homeType,
 		blockContentSimpleType,
 	],

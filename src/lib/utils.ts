@@ -24,3 +24,9 @@ export function formatName(name: string, prefix?: string[] | string | null) {
   const formatted = formatPrefix(prefix);
   return formatted ? `${formatted} ${name}` : name;
 }
+
+/** "6 min read" for a reading-time estimate; empty when unknown. */
+export function formatReadingTime(minutes?: number | null) {
+  if (minutes == null) return "";
+  return `${Math.max(1, Math.round(minutes))} min read`;
+}

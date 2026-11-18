@@ -1,0 +1,107 @@
+---
+import { IconCheck, IconClock, IconListCheck } from "@tabler/icons-astro";
+import { formatDuration, lessonPath } from "@/lib/courses";
+import { cn } from "@/lib/utils";
+import type { Course } from "@/sanity/lib/queries/courses";
+
+/**
+ * Modules and their lessons. `full` is the course overview; `compact` is the
+ * lesson sidebar. Completed lessons get a check via data-complete, set by
+ * src/scripts/course-progress.ts.
+ */
+interface Props {
+  course: Pick<Course, "_id" | "slug" | "modules">;
+  currentLessonId?: string;
+  variant?: "full" | "compact";
+  class?: string;
+}
+
+const { course, currentLessonId, variant = "full", class: className } = Astro.props;
+const compact = variant === "compact";
+let position = 0;
+---
+
+<ol class={cn(compact ? "space-y-6" : "space-y-4", className)} data-pagefind-ignore>
+  {
+    course.modules.map((module, moduleIndex) => (
+      <li
+        class={cn(
+          !compact && "rounded-2xl border border-border/60 bg-secondary/30 p-4 md:p-6",
+        )}
+      >
+        <div class={cn("mb-3", compact && "px-2")}>
+          <p class="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+            Module {moduleIndex + 1}
+          </p>
+          <h3 class={cn("font-sans font-medium tracking-tight", compact ? "text-sm" : "text-xl")}>
+            {module.title}
+          </h3>
+          {!compact && module.description && (
+            <p class="mt-1 text-sm text-muted-foreground">{module.description}</p>
+          )}
+        </div>
+
+        <ol class="space-y-1">
+          {module.lessons.map((lesson) => {
+            position += 1;
+            const isCurrent = lesson._id === currentLessonId;
+            return (
+              <li
+                class="group/lesson"
+                data-lesson-item
+                data-course-id={course._id}
+                data-lesson-id={lesson._id}
+              >
+                <a
+                  href={lessonPath(course, lesson)}
+                  aria-current={isCurrent ? "page" : undefined}
+                  class={cn(
+                    "flex items-start gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-secondary",
+                    isCurrent && "bg-secondary text-foreground",
+                  )}
+                >
+                  <span
+                    class={cn(
+                      "mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border font-mono text-[11px]",
+                      "border-border bg-background text-muted-foreground",
+                      "group-data-[complete=true]/lesson:border-primary group-data-[complete=true]/lesson:bg-primary group-data-[complete=true]/lesson:text-primary-foreground",
+                      isCurrent && "border-primary text-primary",
+                    )}
+                  >
+                    <span class="group-data-[complete=true]/lesson:hidden">{position}</span>
+                    <IconCheck class="hidden size-3.5 group-data-[complete=true]/lesson:block" aria-hidden="true" />
+                  </span>
+                  <span class="min-w-0 flex-1">
+                    <span class={cn("block leading-snug", compact ? "text-sm" : "font-medium")}>
+                      {lesson.title}
+                      <span class="sr-only group-data-[complete=true]/lesson:not-sr-only">
+                        {" "}(completed)
+                      </span>
+                    </span>
+                    {!compact && lesson.summary && (
+                      <span class="mt-0.5 block text-sm text-muted-foreground line-clamp-2">
+                        {lesson.summary}
+                      </span>
+                    )}
+                    <span class="mt-1 flex flex-wrap items-center gap-3 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
+                      <span class="inline-flex items-center gap-1">
+                        <IconClock class="size-3" aria-hidden="true" />
+                        {formatDuration(lesson.minutes ?? 1)}
+                      </span>
+                      {lesson.hasQuiz && (
+                        <span class="inline-flex items-center gap-1">
+                          <IconListCheck class="size-3" aria-hidden="true" />
+                          Quiz
+                        </span>
+                      )}
+                    </span>
+                  </span>
+                </a>
+              </li>
+            );
+          })}
+        </ol>
+      </li>
+    ))
+  }
+</ol>

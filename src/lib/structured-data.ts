@@ -7,6 +7,7 @@ import type { PortableTextBlock } from "sanity";
 import { SITE_DESCRIPTION } from "@/consts";
 import type { VacancyDetails } from "@/sanity/lib/queries/careers";
 import type { ContactsDetails } from "@/sanity/lib/queries/contacts";
+import type { Course, LessonDetails } from "@/sanity/lib/queries/courses";
 import type { EventDetails, LocationDetails } from "@/sanity/lib/queries/events";
 import type { PostDetails } from "@/sanity/lib/queries/posts";
 import { sanityImage } from "@/sanity/lib/url-for-image";
@@ -296,5 +297,85 @@ export function personLd(
       author.portfolio,
       ...Object.values(author.socials ?? {}).map((social) => social?.link),
     ]),
+  };
+}
+
+/** ISO 8601 duration for minutes, e.g. 95 → "PT1H35M". */
+const isoDuration = (minutes: number) => {
+  const hours = Math.floor(minutes / 60);
+  const rest = Math.round(minutes % 60);
+  return `PT${hours ? `${hours}H` : ""}${rest || !hours ? `${rest}M` : ""}`;
+};
+
+/**
+ * schema.org Course. `authorSlugs` lists authors that have a public page, so
+ * instructor URLs never point at a 404.
+ */
+export function courseLd(
+  course: Course,
+  site: Site,
+  { totalMinutes, authorSlugs }: { totalMinutes: number; authorSlugs: Set<string> },
+) {
+  return {
+    "@context": CONTEXT,
+    "@type": "Course",
+    name: course.title,
+    description: course.summary,
+    url: abs(`/courses/${course.slug}/`, site),
+    image: nonEmpty([image(course.coverImage)]),
+    inLanguage: "en",
+    educationalLevel: course.level,
+    isAccessibleForFree: true,
+    datePublished: course.publishedAt,
+    provider: orgRef(site),
+    teaches: nonEmpty(course.outcomes ?? []),
+    coursePrerequisites: nonEmpty(course.prerequisites ?? []),
+    about: nonEmpty(course.categories.map((category) => category?.title)),
+    offers: {
+      "@type": "Offer",
+      category: "Free",
+      price: 0,
+      priceCurrency: "NPR",
+    },
+    hasCourseInstance: {
+      "@type": "CourseInstance",
+      courseMode: "Online",
+      courseWorkload: isoDuration(totalMinutes),
+      instructor: nonEmpty(
+        course.instructors.map((instructor) => ({
+          "@type": "Person",
+          name: instructor.name,
+          url:
+            instructor.slug && authorSlugs.has(instructor.slug)
+              ? abs(`/authors/${instructor.slug}/`, site)
+              : undefined,
+        })),
+      ),
+    },
+  };
+}
+
+/** A lesson as a LearningResource that is part of its course. */
+export function lessonLd(
+  lesson: Pick<LessonDetails, "title" | "slug" | "summary" | "minutes">,
+  course: Pick<Course, "title" | "slug">,
+  site: Site,
+) {
+  return {
+    "@context": CONTEXT,
+    "@type": "LearningResource",
+    name: lesson.title,
+    description: lesson.summary,
+    url: abs(`/courses/${course.slug}/${lesson.slug}/`, site),
+    inLanguage: "en",
+    isAccessibleForFree: true,
+    timeRequired: lesson.minutes ? isoDuration(lesson.minutes) : undefined,
+    learningResourceType: "Lesson",
+    provider: orgRef(site),
+    isPartOf: {
+      "@type": "Course",
+      name: course.title,
+      url: abs(`/courses/${course.slug}/`, site),
+    },
   };
 }

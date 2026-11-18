@@ -19,7 +19,7 @@ Package manager is **bun** (`bun.lock`).
 ## Architecture
 
 ### Content: Sanity
-- Sanity project `zv3un63s`, dataset `production`; client configured in `astro.config.mjs` (`@sanity/astro`), Studio config in `sanity.config.ts`.
+- Sanity project and dataset come from `PUBLIC_SANITY_PROJECT_ID` / `PUBLIC_SANITY_DATASET` (`.env` locally, repository secrets in CI); both the client in `astro.config.mjs` (`@sanity/astro`) and the Studio config in `sanity.config.ts` read them. Never hardcode the project ID.
 - Schemas: `src/sanity/schemaTypes/` (singletons: `home`, `contacts`, `donate`, `faq`).
 - GROQ queries + hand-written result types: `src/sanity/lib/queries/*.ts`, all via `loadQuery()` in `src/sanity/lib/load-query.ts`. Queries return image URLs (`asset->url`), not image objects.
 - GROQ params: declare every `$param` used in a query. For optional filters pass `null` (e.g. `{ type: type ?? null }`), never omit it, or the query fails to parse.
@@ -44,6 +44,9 @@ Package manager is **bun** (`bun.lock`).
 - Authors: `/authors/[slug]` exists only for authors with at least one published post (`getAuthorsWithPosts`); bylines link there. Use `formatName()`/`formatPrefix()` from `src/lib/utils.ts` for name prefixes.
 - Related posts: `getRelatedPosts()` in `src/lib/related-posts.ts`, passed to `PostLayout` as `related`.
 - RSS: `src/pages/rss.xml.ts` (Sanity posts).
+- Courses: Sanity `course` (modules → ordered `lesson` refs) and `lesson` docs (`src/sanity/schemaTypes/courses.ts`; Studio "Learning" group). One query, `getCourses()`, returns every course with its syllabus; lesson bodies come from `getLessonDetails()`. Routes: `/courses/page/[page]`, `/courses/[course]/`, `/courses/[course]/[lesson]/`; helpers in `src/lib/courses.ts`. Courses are public and English-only. Tutorials are blog posts in a "Tutorial" category (linked from the courses page).
+- Course progress is client-side only (`src/scripts/course-progress.ts`, `localStorage` keyed by Sanity `_id`s), driven by `data-*` hooks in `src/components/pages/courses/*`. Progress UI starts `hidden` and is revealed only when storage works. A lesson containing a quiz completes when `Quiz.astro` dispatches `quiz:complete` with `passed: true`.
+- Engagement bits: `ShareBar.astro` (native share + WhatsApp/Facebook/LinkedIn/X/copy) on detail pages; `NewBadge.astro` + `src/scripts/visit-tracker.ts` mark items published since the previous visit; post reading time comes from `READING_MINUTES_FIELD` in GROQ; home shows the next events via `sections/UpcomingEvents.astro`.
 - Social preview cards: `src/pages/og/[...path].png.ts` renders `/og/<section>/<slug>.png` at build time via `src/lib/og.ts` (satori + resvg); detail pages fall back to them when there's no cover image.
 - Structured data: builders in `src/lib/structured-data.ts`, rendered with `<JsonLd slot="head" data={...} />`.
 

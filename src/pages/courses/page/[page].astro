@@ -1,0 +1,151 @@
+---
+import { IconArrowRight, IconSchool } from "@tabler/icons-astro";
+import type { GetStaticPaths } from "astro";
+import Badge from "@/components/astro/Badge.astro";
+import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
+import CourseCard from "@/components/astro/Card/CourseCard.astro";
+import Empty from "@/components/astro/Empty.astro";
+import Pagination from "@/components/astro/Pagination.astro";
+import ContinueLearning from "@/components/pages/courses/ContinueLearning.astro";
+import { COURSE_PAGE_SIZE } from "@/consts";
+import PageLayout from "@/layouts/PageLayout.astro";
+import { categoryPath, summarizeCategories } from "@/lib/categories";
+import { coursePath } from "@/lib/courses";
+import { getCourses } from "@/sanity/lib/queries/courses";
+import { getPosts } from "@/sanity/lib/queries/posts";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const [courses, posts] = await Promise.all([getCourses(), getPosts("blog")]);
+  // Short how-tos live on the blog under a "Tutorial(s)" category.
+  const tutorials = summarizeCategories(posts ?? []).find((category) =>
+    ["tutorial", "tutorials"].includes(category.slug),
+  );
+
+  return paginate(courses, {
+    pageSize: COURSE_PAGE_SIZE,
+    props: { allCourses: courses, tutorials },
+  });
+}) satisfies GetStaticPaths;
+
+const { page, allCourses, tutorials } = Astro.props;
+const pageTitle =
+  page.currentPage === 1 ? "Courses" : `Courses, page ${page.currentPage}`;
+---
+
+<PageLayout
+  title={pageTitle}
+  description="Free self-paced courses from NSAE for agricultural engineers and students: lessons, videos and quizzes, with progress saved in your browser."
+  dataPagefindIgnore="all"
+>
+  <header class="flex flex-col items-center justify-center py-16 md:py-24 text-center">
+    <div class="anim-header-badge opacity-0 scale-50">
+      <Badge
+        variant="secondary"
+        size="sm"
+        class="font-mono uppercase tracking-widest text-xs mb-3 border border-border/50"
+      >
+        Learn with NSAE
+      </Badge>
+    </div>
+    <h1
+      class="anim-header-title invisible font-sans text-5xl md:text-7xl font-medium tracking-tighter pt-4 max-w-4xl leading-tight"
+    >
+      Courses for agricultural engineers
+    </h1>
+    <p class="anim-header-intro mt-6 max-w-2xl text-lg text-muted-foreground opacity-0 translate-y-4">
+      Free, self-paced lessons with videos and quizzes. Your progress is saved
+      in this browser, so you can pick up where you left off.
+    </p>
+  </header>
+
+  <ContinueLearning courses={allCourses} class="mb-10" />
+
+  <section class="mb-16" aria-labelledby="all-courses">
+    <h2
+      id="all-courses"
+      class="anim-section-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
+    >
+      All courses
+    </h2>
+
+    {
+      page.data.length > 0 ? (
+        <ul class="grid gap-6 md:grid-cols-2 lg:grid-cols-3" role="list">
+          {page.data.map((course) => (
+            <li class="anim-card opacity-0 translate-y-4">
+              <ClickableCard
+                href={coursePath(course)}
+                label={course.title}
+                class="h-full rounded-2xl border border-border/60 bg-secondary/30 transition-colors hover:bg-secondary/70"
+              >
+                <CourseCard data={course} />
+              </ClickableCard>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <Empty
+          title="Courses are on the way"
+          description="We're preparing our first courses. Check back soon, or browse our events for upcoming trainings."
+        >
+          <IconSchool slot="icon" class="size-8 text-muted-foreground" />
+          <a
+            href="/events/page/1/"
+            class="mt-4 font-mono text-xs uppercase tracking-widest text-primary hover:underline"
+          >
+            See upcoming events
+          </a>
+        </Empty>
+      )
+    }
+
+    <Pagination url={page.url} />
+  </section>
+
+  {
+    tutorials && (
+      <a
+        href={categoryPath("/blog", tutorials.slug)}
+        class="group mb-16 flex items-center justify-between gap-4 rounded-2xl border border-border/60 p-5 transition-colors hover:border-primary/50 hover:bg-secondary/50"
+      >
+        <span>
+          <span class="block font-medium">Looking for a quick how-to?</span>
+          <span class="block text-sm text-muted-foreground">
+            Browse {tutorials.count} short tutorial{tutorials.count === 1 ? "" : "s"} on the blog.
+          </span>
+        </span>
+        <IconArrowRight class="size-5 shrink-0 text-primary transition-transform group-hover:translate-x-1" />
+      </a>
+    )
+  }
+</PageLayout>
+
+<script>
+  import "@/scripts/course-progress";
+  import { gsap, SplitText } from "@/utils/gsap-init";
+
+  let ctx: gsap.Context | undefined;
+
+  document.addEventListener("astro:page-load", () => {
+    if (!document.querySelector("#all-courses")) return;
+    ctx = gsap.context(() => {
+      const titleSplit = SplitText.create(".anim-header-title", {
+        type: "lines, words",
+        linesClass: "overflow-hidden",
+      });
+      gsap
+        .timeline({ defaults: { ease: "power3.out" } })
+        .to(".anim-header-badge", { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.5)" })
+        .set(".anim-header-title", { autoAlpha: 1 }, "-=0.3")
+        .from(titleSplit.words, { yPercent: 100, opacity: 0, duration: 0.8, stagger: 0.04, ease: "power4.out" }, "<")
+        .to(".anim-header-intro", { y: 0, opacity: 1, duration: 0.6 }, "-=0.4")
+        .to(".anim-section-title", { y: 0, opacity: 1, duration: 0.5 }, "-=0.3")
+        .to(".anim-card", { y: 0, opacity: 1, duration: 0.6, stagger: 0.08 }, "-=0.2");
+    });
+  });
+
+  document.addEventListener("astro:before-swap", () => {
+    ctx?.revert();
+    ctx = undefined;
+  });
+</script>

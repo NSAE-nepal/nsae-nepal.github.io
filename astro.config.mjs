@@ -6,8 +6,20 @@ import sitemap from "@astrojs/sitemap";
 import sanity from "@sanity/astro";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
+import { loadEnv } from "vite";
 
 const isDev = process.argv.includes("dev");
+
+// Same variables as sanity.config.ts (the Studio), so the site and the Studio
+// always talk to the same project. Read from .env locally, secrets in CI.
+const env = loadEnv(isDev ? "development" : "production", process.cwd(), "");
+const sanityProjectId = env.PUBLIC_SANITY_PROJECT_ID;
+const sanityDataset = env.PUBLIC_SANITY_DATASET;
+if (!sanityProjectId || !sanityDataset) {
+	throw new Error(
+		"PUBLIC_SANITY_PROJECT_ID and PUBLIC_SANITY_DATASET must be set (copy .env.example to .env).",
+	);
+}
 
 // https://astro.build/config
 export default defineConfig({
@@ -34,8 +46,8 @@ export default defineConfig({
 		}),
 		react(),
 		sanity({
-			projectId: "zv3un63s",
-			dataset: "production",
+			projectId: sanityProjectId,
+			dataset: sanityDataset,
 			useCdn: false,
 			apiVersion: "2025-02-19",
 			studioBasePath: "/studio",
@@ -75,6 +87,7 @@ export default defineConfig({
 		"/past-committee": "/past-committee/page/1",
 		"/minutes": "/minutes/page/1",
 		"/events": "/events/page/1",
+		"/courses": "/courses/page/1",
 	},
 	devToolbar: {
 		enabled: true,

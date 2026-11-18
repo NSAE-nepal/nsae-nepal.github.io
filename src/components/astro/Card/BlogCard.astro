@@ -3,10 +3,13 @@ import { IconArrowNarrowRight } from "@tabler/icons-astro";
 
 import Categories from "@/components/Categories.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
+import NewBadge from "@/components/NewBadge.astro";
+import { formatReadingTime } from "@/lib/utils";
 import AvatarGroup from "../AvatarGroup.astro";
 
 const { data, href } = Astro.props;
 const { title, subtitle, publishedAt, categories, authors, slug } = data;
+const readingTime = formatReadingTime(data.readingMinutes);
 ---
 
 <article
@@ -24,8 +27,11 @@ const { title, subtitle, publishedAt, categories, authors, slug } = data;
 
     {
       publishedAt && (
-        <p class="font-mono text-xs text-muted-foreground uppercase tracking-wider">
+        <p class="flex flex-wrap items-center justify-end gap-x-2 gap-y-1 font-mono text-xs text-muted-foreground uppercase tracking-wider">
+          <NewBadge date={publishedAt} />
           <FormattedDate date={new Date(publishedAt)} />
+          {readingTime && <span aria-hidden="true">·</span>}
+          {readingTime && <span>{readingTime}</span>}
         </p>
       )
     }

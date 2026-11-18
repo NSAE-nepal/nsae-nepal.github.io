@@ -217,7 +217,7 @@ export const blockContentType = defineType({
 
 		defineArrayMember({
 			name: "videoEmbed",
-			title: "Video / YouTube Embed",
+			title: "Video (YouTube, Vimeo, Loom)",
 			type: "object",
 			fields: [
 				defineField({

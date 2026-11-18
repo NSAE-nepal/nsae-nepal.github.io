@@ -1,0 +1,247 @@
+---
+import {
+  IconArrowRight,
+  IconArrowUpRight,
+  IconCalendarPlus,
+  IconMapPin,
+  IconVideo,
+} from "@tabler/icons-astro";
+import Badge from "@/components/astro/Badge.astro";
+import Button from "@/components/astro/Button/Button.astro";
+import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
+import { getEvents } from "@/sanity/lib/queries/events";
+import { formatDate, formatTime, getEventStatus } from "@/utils/datetime";
+
+/**
+ * Home page: the next few events, soonest first. Evaluated at build time (the
+ * daily deploy keeps it current); the countdown text refreshes in the browser.
+ */
+interface Props {
+  limit?: number;
+}
+
+const { limit = 3 } = Astro.props;
+const now = new Date();
+const upcoming = ((await getEvents()) || [])
+  .filter((event) => !getEventStatus(event, now).hasEnded)
+  .sort(
+    (a, b) => new Date(a.eventStart).getTime() - new Date(b.eventStart).getTime(),
+  )
+  .slice(0, limit);
+
+const TZ = "Asia/Kathmandu";
+const part = (date: Date, options: Intl.DateTimeFormatOptions) =>
+  new Intl.DateTimeFormat("en-US", { timeZone: TZ, ...options }).format(date);
+
+const formatEventType = (type: string) =>
+  type
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
+const locationLabel = (event: (typeof upcoming)[number]) => {
+  const location = event.location;
+  if (!location) return "";
+  if (location.type === "online") return "Online";
+  const venue = [location.venueName, location.city].filter(Boolean).join(", ");
+  return location.type === "hybrid" ? `${venue || "Venue"} + Online` : venue;
+};
+---
+
+{
+  upcoming.length > 0 && (
+    <section
+      class="upcoming-events-section pt-24 md:pt-32"
+      aria-labelledby="upcoming-events-heading"
+    >
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+        <div class="anim-events-header space-y-4 opacity-0 translate-y-8">
+          <Badge
+            variant="secondary"
+            size="sm"
+            class="font-mono text-xs uppercase tracking-widest"
+          >
+            Events
+          </Badge>
+          <h2
+            id="upcoming-events-heading"
+            class="font-sans text-4xl md:text-5xl font-medium tracking-tighter"
+          >
+            Coming up next
+          </h2>
+        </div>
+
+        <a
+          href="/events/page/1"
+          class="anim-events-header group flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors opacity-0 translate-y-8"
+        >
+          View all events
+          <IconArrowRight class="size-4 transition-transform group-hover:translate-x-1" />
+        </a>
+      </div>
+
+      <ul class="grid gap-4 md:grid-cols-2 lg:grid-cols-3" role="list">
+        {upcoming.map((event) => {
+          const start = new Date(event.eventStart);
+          const end = new Date(event.eventEnd ?? event.eventStart);
+          const { isRegistrationOpen } = getEventStatus(event, now);
+          const isOnline = event.location?.type === "online";
+          const where = locationLabel(event);
+          const multiDay = formatDate(end) !== formatDate(start);
+
+          return (
+            <li class="anim-event-card opacity-0 translate-y-12">
+              <ClickableCard
+                href={`/events/${event.slug}/`}
+                label={event.title}
+                class="h-full rounded-2xl border border-border/60 bg-secondary/40 p-5 md:p-6 transition-colors hover:bg-secondary"
+              >
+                <article class="flex h-full flex-col gap-5">
+                  <div class="flex items-start gap-4">
+                    <div
+                      class="flex w-16 shrink-0 flex-col items-center rounded-xl border border-border/60 bg-background py-2"
+                      aria-hidden="true"
+                    >
+                      <span class="font-mono text-xs uppercase tracking-widest text-primary">
+                        {part(start, { month: "short" })}
+                      </span>
+                      <span class="font-sans text-3xl font-medium leading-none tracking-tight">
+                        {part(start, { day: "numeric" })}
+                      </span>
+                    </div>
+                    <div class="min-w-0 space-y-2">
+                      <div class="flex flex-wrap items-center gap-2">
+                        <Badge
+                          variant="outline"
+                          class="font-mono text-[10px] uppercase tracking-widest border-border/50 bg-background/50"
+                        >
+                          {formatEventType(event.eventType)}
+                        </Badge>
+                        <time
+                          datetime={event.eventStart}
+                          data-countdown
+                          data-start={event.eventStart}
+                          data-end={end.toISOString()}
+                          class="font-mono text-xs uppercase tracking-wider text-primary"
+                        />
+                      </div>
+                      <h3 class="font-sans text-xl font-medium leading-snug line-clamp-3">
+                        {event.title}
+                      </h3>
+                    </div>
+                  </div>
+
+                  <dl class="space-y-1 font-mono text-xs text-muted-foreground">
+                    <div>
+                      <dt class="sr-only">When</dt>
+                      <dd>
+                        {formatDate(start)}
+                        {multiDay ? ` – ${formatDate(end)}` : `, ${formatTime(start)}`}
+                      </dd>
+                    </div>
+                    {where && (
+                      <div class="flex items-center gap-1.5">
+                        <dt class="sr-only">Where</dt>
+                        {isOnline ? (
+                          <IconVideo class="size-3.5 shrink-0" aria-hidden="true" />
+                        ) : (
+                          <IconMapPin class="size-3.5 shrink-0" aria-hidden="true" />
+                        )}
+                        <dd class="truncate">{where}</dd>
+                      </div>
+                    )}
+                  </dl>
+
+                  <div class="mt-auto flex flex-wrap items-center gap-2 pt-2">
+                    {isRegistrationOpen && (
+                      <Button
+                        size="sm"
+                        href={event.registrationLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Register
+                        <IconArrowUpRight class="size-4" />
+                      </Button>
+                    )}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      href={`/events/${event.slug}.ics`}
+                      download={`${event.slug}.ics`}
+                      aria-label={`Add ${event.title} to your calendar`}
+                    >
+                      <IconCalendarPlus class="size-4" />
+                      Add to calendar
+                    </Button>
+                  </div>
+                </article>
+              </ClickableCard>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  )
+}
+
+<script>
+  import { gsap } from "@/utils/gsap-init";
+
+  const TZ = "Asia/Kathmandu";
+  const DAY_MS = 24 * 60 * 60 * 1000;
+  // Calendar day in Nepal time, as a day count, so "Tomorrow" means the next date.
+  const dayNumber = (time: number) => {
+    const [y, m, d] = new Intl.DateTimeFormat("en-CA", { timeZone: TZ })
+      .format(time)
+      .split("-")
+      .map(Number);
+    return Date.UTC(y, m - 1, d) / DAY_MS;
+  };
+
+  const countdownText = (start: number, end: number, now = Date.now()) => {
+    if (now >= end) return "Ended";
+    if (now >= start) return "Happening now";
+    const days = dayNumber(start) - dayNumber(now);
+    if (days <= 0) return "Today";
+    if (days === 1) return "Tomorrow";
+    return `In ${days} days`;
+  };
+
+  let ctx: gsap.Context | undefined;
+
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll<HTMLElement>("[data-countdown]").forEach((el) => {
+      const start = Date.parse(el.dataset.start ?? "");
+      const end = Date.parse(el.dataset.end ?? "");
+      if (Number.isFinite(start) && Number.isFinite(end)) {
+        el.textContent = countdownText(start, end);
+      }
+    });
+
+    if (!document.querySelector(".upcoming-events-section")) return;
+    ctx = gsap.context(() => {
+      gsap
+        .timeline({
+          scrollTrigger: { trigger: ".upcoming-events-section", start: "top 75%" },
+        })
+        .to(".anim-events-header", {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "power3.out",
+        })
+        .to(
+          ".anim-event-card",
+          { y: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: "power2.out" },
+          "-=0.4",
+        );
+    });
+  });
+
+  document.addEventListener("astro:before-swap", () => {
+    ctx?.revert();
+    ctx = undefined;
+  });
+</script>

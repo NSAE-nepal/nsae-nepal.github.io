@@ -3,7 +3,8 @@ import { IconArrowNarrowRight } from "@tabler/icons-astro";
 import Image from "astro/components/Image.astro";
 import Categories from "@/components/Categories.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
-import { cn } from "@/lib/utils";
+import NewBadge from "@/components/NewBadge.astro";
+import { cn, formatReadingTime } from "@/lib/utils";
 import type { Post } from "@/sanity/lib/queries/posts";
 import AvatarGroup from "../AvatarGroup.astro";
 import Separator from "../Separator";
@@ -23,6 +24,7 @@ const {
   heroImage,
   heroImageAlt,
 } = data;
+const readingTime = formatReadingTime(data.readingMinutes);
 ---
 
 <article
@@ -45,8 +47,11 @@ const {
 
       {
         publishedAt && (
-          <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+          <p class="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs uppercase tracking-wider text-muted-foreground">
+            <NewBadge date={publishedAt} />
             <FormattedDate date={new Date(publishedAt)} />
+            {readingTime && <span aria-hidden="true">·</span>}
+            {readingTime && <span>{readingTime}</span>}
           </p>
         )
       }
