@@ -136,7 +136,7 @@ const { hasEnded, isRegistrationOpen } = getEventStatus(data);
 
     {
       isRegistrationOpen ? (
-        <div class="pt-2" onclick="event.stopPropagation()">
+        <div class="pt-2">
           <Button
             href={data.registrationLink}
             target="_blank"

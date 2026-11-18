@@ -90,6 +90,7 @@ const pageDescription =
             <ClickableCard
               class="anim-featured-card shrink-0 basis-full lg:basis-[85%] snap-start opacity-0 translate-y-4"
               href={`/blog/${post.slug}/`}
+              label={post.title}
             >
               <BlogFeaturedCard data={post} />
             </ClickableCard>
@@ -113,6 +114,7 @@ const pageDescription =
               <ClickableCard
                 class="anim-regular-card group relative col-span-2 lg:col-span-1 border-b border-border last:border-b-0 lg:[&:nth-last-child(2)]:border-b-0 hover:bg-secondary/60 transition-colors opacity-0 translate-y-4"
                 href={`/blog/${post.slug}/`}
+                label={post.title}
               >
                 <BlogCard data={post} />
                 {post.heroImage && (

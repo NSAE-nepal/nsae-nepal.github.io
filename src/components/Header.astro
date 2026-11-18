@@ -1,8 +1,27 @@
 ---
-import { IconArrowUpRight, IconSearch } from "@tabler/icons-astro";
+import { IconArrowUpRight, IconDots, IconSearch } from "@tabler/icons-astro";
 
 import Button from "./astro/Button/Button.astro";
 import HeaderLink from "./HeaderLink.astro";
+
+// Secondary destinations, reachable at every screen size via "More".
+// `hideFrom` hides an entry once the bar itself shows that link.
+const moreLinks = [
+  { href: "/about", label: "About us", hideFrom: "xs:hidden" },
+  { href: "/blog/page/1", label: "Blog", hideFrom: "lg:hidden" },
+  { href: "/careers/page/1", label: "Careers" },
+  { href: "/minutes/page/1", label: "Minutes" },
+  { href: "/past-committee/page/1", label: "Past Committee" },
+  { href: "/donate", label: "Donate" },
+  { href: "/contact", label: "Contact", hideFrom: "xs:hidden" },
+];
+
+const currentRoot = Astro.url.pathname.split("/")[1] ?? "";
+const isCurrent = (href: string) =>
+  currentRoot !== "" && href.split("/")[1] === currentRoot;
+
+const pillButton =
+  "rounded-full items-center bg-foreground text-background hover:bg-foreground cursor-pointer h-9 px-3 py-2";
 ---
 
 <header
@@ -10,14 +29,25 @@ import HeaderLink from "./HeaderLink.astro";
   data-pagefind-ignore="all"
 >
   <nav
+    aria-label="Main"
     class="flex flex-nowrap whitespace-nowrap gap-1 items-center bg-foreground text-background rounded-full p-2"
   >
     <HeaderLink href="/">Home</HeaderLink>
-    <HeaderLink href="/about">About us</HeaderLink>
+    <HeaderLink class="hidden xs:block" href="/about">About us</HeaderLink>
     <HeaderLink href="/notices/page/1">Notices</HeaderLink>
-    <HeaderLink class={"hidden lg:block"} href="/blog/page/1">Blog</HeaderLink>
+    <HeaderLink class="hidden lg:block" href="/blog/page/1">Blog</HeaderLink>
     <HeaderLink href="/events/page/1">Events</HeaderLink>
   </nav>
+
+  <Button
+    type="button"
+    popovertarget="more-menu"
+    aria-label="More pages"
+    class={`${pillButton} flex`}
+  >
+    <IconDots class="w-4 h-4 shrink-0" />
+  </Button>
+
   <Button
     class="rounded-full items-center pr-2 bg-foreground hover:bg-foreground h-fit hidden xs:flex"
     href={"/contact"}
@@ -33,11 +63,39 @@ import HeaderLink from "./HeaderLink.astro";
     data-search-trigger
     aria-label="Search (Ctrl+K)"
     aria-keyshortcuts="Control+K Meta+K"
-    class="rounded-full items-center bg-foreground hover:bg-foreground hidden xs:flex cursor-pointer h-9 px-3 py-2"
+    class={`${pillButton} flex`}
   >
     <IconSearch class="w-4 h-4 shrink-0" />
   </Button>
 </header>
+
+<!--
+  Native popover: no JS, closes on outside click / Escape. It renders in the
+  top layer, so it is positioned above the fixed bottom bar explicitly.
+-->
+<nav
+  id="more-menu"
+  popover
+  aria-label="More pages"
+  data-pagefind-ignore="all"
+  class="inset-auto bottom-20 left-1/2 -translate-x-1/2 m-0 w-[min(20rem,calc(100vw-2rem))] rounded-2xl border border-border bg-popover p-2 text-popover-foreground shadow-lg"
+>
+  <ul class="grid gap-1">
+    {
+      moreLinks.map(({ href, label, hideFrom }) => (
+        <li class={hideFrom}>
+          <a
+            href={href}
+            aria-current={isCurrent(href) ? "page" : undefined}
+            class="block rounded-xl px-4 py-2.5 text-sm transition-colors hover:bg-secondary aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground"
+          >
+            {label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
 
 <script>
   // The React search dialog is only downloaded when someone actually searches.

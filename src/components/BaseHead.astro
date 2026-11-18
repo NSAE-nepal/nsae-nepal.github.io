@@ -64,6 +64,27 @@ const socialImage =
   crossorigin
 />
 
+<!--
+  Without JavaScript the GSAP entrance animations never run, so reveal
+  everything that starts hidden waiting for them (hover-only reveals and the
+  fixed custom cursor stay hidden).
+-->
+<noscript>
+  <style>
+    .opacity-0:not([class*="hover:opacity"]):not(.fixed),
+    .invisible {
+      opacity: 1 !important;
+      visibility: visible !important;
+      translate: none !important;
+      scale: none !important;
+      transform: none !important;
+    }
+    .faq-content-wrapper {
+      height: auto !important;
+    }
+  </style>
+</noscript>
+
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
 

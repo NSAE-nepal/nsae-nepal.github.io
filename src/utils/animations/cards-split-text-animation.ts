@@ -93,12 +93,21 @@ export function initCardSplitTextAnimation(
       });
     };
 
-    card.addEventListener("mouseenter", handleMouseEnter);
-    card.addEventListener("mouseleave", handleMouseLeave);
+    // Inside a ClickableCard the content ignores pointer events (the card's
+    // stretched link receives them), so listen on the card wrapper instead.
+    // Focus events mirror hover for keyboard users.
+    const hoverTarget = card.closest(".clickable-card") ?? card;
+
+    hoverTarget.addEventListener("mouseenter", handleMouseEnter);
+    hoverTarget.addEventListener("mouseleave", handleMouseLeave);
+    hoverTarget.addEventListener("focusin", handleMouseEnter);
+    hoverTarget.addEventListener("focusout", handleMouseLeave);
 
     cleanupFunctions.push(() => {
-      card.removeEventListener("mouseenter", handleMouseEnter);
-      card.removeEventListener("mouseleave", handleMouseLeave);
+      hoverTarget.removeEventListener("mouseenter", handleMouseEnter);
+      hoverTarget.removeEventListener("mouseleave", handleMouseLeave);
+      hoverTarget.removeEventListener("focusin", handleMouseEnter);
+      hoverTarget.removeEventListener("focusout", handleMouseLeave);
       split.revert();
     });
   });

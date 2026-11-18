@@ -1,62 +1,39 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import { cn } from "@/lib/utils";
 
 interface Props extends HTMLAttributes<"div"> {
   href: string;
-  ariaLabel?: string;
+  /** Accessible name for the card link, usually the item's title. */
+  label: string;
   class?: string;
 }
 
-const { href, ariaLabel, class: className, ...rest } = Astro.props;
+const { href, label, class: className, ...rest } = Astro.props;
 ---
 
+<!--
+  "Stretched link" card: a real <a> covers the whole card, so middle-click,
+  Ctrl/Cmd-click, prefetch and view transitions all work, and screen readers
+  announce one link named after the item. Card content ignores the pointer so
+  clicks fall through to the link, except nested links/buttons, which are
+  raised above it and keep working on their own.
+-->
 <div
-  role="link"
-  tabindex="0"
-  class:list={["clickable-card", className]}
-  data-href={href}
-  aria-label={ariaLabel || `Read more at ${href}`}
+  class={cn(
+    "clickable-card group relative",
+    "[&>*:not(.card-link)]:pointer-events-none",
+    "[&_a:not(.card-link)]:pointer-events-auto [&_a:not(.card-link)]:relative [&_a:not(.card-link)]:z-[2]",
+    "[&_button]:pointer-events-auto [&_button]:relative [&_button]:z-[2]",
+    className,
+  )}
   {...rest}
 >
+  <a
+    href={href}
+    class="card-link absolute inset-0 z-[1] rounded-[inherit] outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+  >
+    <span class="sr-only">{label}</span>
+  </a>
   <slot />
 </div>
-
-<script>
-  import { prefetch } from "astro:prefetch";
-
-  function initClickableCards() {
-    document
-      .querySelectorAll<HTMLElement>(".clickable-card")
-      .forEach((card) => {
-        if (card.dataset.clickableInit === "true") return;
-        card.dataset.clickableInit = "true";
-
-        const href = card.dataset.href;
-        if (!href) return;
-
-        card.addEventListener("click", () => {
-          window.location.href = href;
-        });
-
-        card.addEventListener("keypress", (e) => {
-          if ((e as KeyboardEvent).key === "Enter") {
-            window.location.href = href;
-          }
-        });
-
-        card.addEventListener("mouseenter", () => {
-          prefetch(href);
-        });
-      });
-  }
-
-  document.addEventListener("DOMContentLoaded", initClickableCards);
-
-  document.addEventListener("astro:page-load", initClickableCards);
-</script>
-
-<style>
-  .clickable-card {
-    cursor: pointer;
-  }
-</style>
