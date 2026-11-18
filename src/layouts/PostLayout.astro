@@ -49,7 +49,7 @@ const structuredData = [
 <PageLayout
   title={title}
   description={description || subtitle || title}
-  image={heroImage || undefined}
+  image={heroImage || `/og/${section}/${Astro.props.slug}.png`}
   type="article"
 >
   <JsonLd slot="head" data={structuredData} />

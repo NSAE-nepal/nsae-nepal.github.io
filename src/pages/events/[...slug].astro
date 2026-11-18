@@ -33,7 +33,7 @@ const site = Astro.site!;
 <PageLayout
   title={event.title}
   description={event.subtitle || SITE_DESCRIPTION}
-  image={event.coverImage || undefined}
+  image={event.coverImage || `/og/events/${event.slug}.png`}
 >
   <JsonLd
     slot="head"

@@ -40,6 +40,8 @@ Package manager is **bun** (`bun.lock`).
 - `src/layouts/PageLayout.astro` (props: `title`, `description`, `image` = local import or Sanity URL for social previews, `type` = `website`|`article`; named slot `head`). `BaseHead.astro` appends ` | NSAE` to titles. `PostLayout.astro` wraps blog/notice pages.
 - Portable Text rendering: `src/components/PortableText.astro` maps block types to `Portable*.astro` components.
 - RSS: `src/pages/rss.xml.ts` (Sanity posts).
+- Social preview cards: `src/pages/og/[...path].png.ts` renders `/og/<section>/<slug>.png` at build time via `src/lib/og.ts` (satori + resvg); detail pages fall back to them when there's no cover image.
+- Structured data: builders in `src/lib/structured-data.ts`, rendered with `<JsonLd slot="head" data={...} />`.
 
 ### Components
 - Astro components in `src/components/astro/` (Button, Badge, Card/*, Avatar, Pagination, …), page sections in `src/components/sections/`, shadcn/React UI in `src/components/ui/`.
@@ -54,7 +56,7 @@ Package manager is **bun** (`bun.lock`).
 
 ### Styling
 - Tailwind CSS 4 (`src/styles/global.css`, theme tokens as CSS variables, dark mode via `.dark` class), `class-variance-authority` for variants, `cn()` in `src/lib/utils.ts`.
-- Font: Source Sans 3 variable woff2 subsets in `public/fonts/` (TTF sources in `src/assets/fonts/`).
+- Font: Source Sans 3 variable woff2 subsets in `public/fonts/`; static TTF instances for OG image generation in `src/assets/fonts/og/` (satori can't use variable fonts).
 
 ### Conventions
 - `@/*` path alias → `src/*`; strict TypeScript (TypeScript 6 until `astro check` supports 7).
