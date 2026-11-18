@@ -11,6 +11,7 @@ import { PAGE_SIZE } from "@/consts";
 import PageLayout from "@/layouts/PageLayout.astro";
 import type { Post } from "@/sanity/lib/queries/posts";
 import { getPosts } from "@/sanity/lib/queries/posts";
+import { sanityImage } from "@/sanity/lib/url-for-image";
 
 export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
   const allPublishedPosts = (await getPosts("blog")) || [];
@@ -120,7 +121,7 @@ const pageDescription =
                     class={
                       "absolute top-0 right-0 h-full w-1/4 object-cover z-0 hidden group-hover:block opacity-40 grayscale group-hover:grayscale-0 transition-all duration-500"
                     }
-                    src={post.heroImage}
+                    src={sanityImage(post.heroImage, { width: 480 })}
                     alt={post.heroImageAlt ?? ""}
                   />
                 )}

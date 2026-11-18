@@ -7,6 +7,7 @@ import {
 } from "@tabler/icons-astro";
 import Badge from "../astro/Badge.astro";
 import Button from "../astro/Button/Button.astro";
+import { sanityImage } from "@/sanity/lib/url-for-image";
 
 export interface HeroSlide {
   image: string;
@@ -147,7 +148,9 @@ const {
             class="hero-image-anim absolute inset-0 h-full w-full object-cover rounded-2xl scale-110 will-change-transform"
             alt={slide.alt}
             inferSize
-            src={slide.image}
+            src={sanityImage(slide.image, { width: 2000 })}
+            widths={[640, 1024, 1600, 2000]}
+            sizes="100vw"
             loading={index === 0 ? "eager" : "lazy"}
             fetchpriority={index === 0 ? "high" : "auto"}
             decoding="async"

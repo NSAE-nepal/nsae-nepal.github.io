@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import type { Post } from "@/sanity/lib/queries/posts";
 import AvatarGroup from "../AvatarGroup.astro";
 import Separator from "../Separator";
+import { sanityImage } from "@/sanity/lib/url-for-image";
 
 type Props = {
   data: Post;
@@ -82,7 +83,9 @@ const {
         <Image
           inferSize
           class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out"
-          src={heroImage}
+          src={sanityImage(heroImage, { width: 1200 })}
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 1024px) 50vw, 100vw"
           alt={heroImageAlt ?? ""}
         />
       </div>

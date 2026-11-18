@@ -12,6 +12,7 @@ import Button from "@/components/astro/Button/Button.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
 import type { Event } from "@/sanity/lib/queries/events";
 import { getEventStatus } from "@/utils/datetime";
+import { sanityImage } from "@/sanity/lib/url-for-image";
 
 type Props = {
   data: Event;
@@ -167,7 +168,9 @@ const { hasEnded, isRegistrationOpen } = getEventStatus(data);
         <Image
           inferSize
           class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-          src={data.coverImage}
+          src={sanityImage(data.coverImage, { width: 1200 })}
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 1024px) 50vw, 100vw"
           alt={data.title ?? ""}
         />
       </div>

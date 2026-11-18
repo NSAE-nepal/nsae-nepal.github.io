@@ -4,29 +4,48 @@
 import "../styles/global.css";
 import "@/utils/animations/cards-split-text-animation.css";
 import type { ImageMetadata } from "astro";
+import { getImage } from "astro:assets";
+import { sanityImage } from "@/sanity/lib/url-for-image";
 import FallbackImage from "../assets/nsae-logo.png";
 import { SITE_TITLE } from "../consts";
 
 interface Props {
   title: string;
   description: string;
-  image?: ImageMetadata;
+  /** Local image, or a remote (Sanity CDN) image URL such as a post's hero image. */
+  image?: ImageMetadata | string;
+  type?: "website" | "article";
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-const { title: pageTitle, description, image = FallbackImage } = Astro.props;
+const {
+  title: pageTitle,
+  description,
+  image = FallbackImage,
+  type = "website",
+} = Astro.props;
 
 const title =
   pageTitle === SITE_TITLE || pageTitle.endsWith(`| ${SITE_TITLE}`)
     ? pageTitle
     : `${pageTitle} | ${SITE_TITLE}`;
+
+// Social previews: crop remote images to the 1.91:1 card size; downscale local ones.
+const socialImage =
+  typeof image === "string"
+    ? new URL(sanityImage(image, { width: 1200, height: 630 }), Astro.url)
+    : new URL(
+        (await getImage({ src: image, width: 600, format: "png" })).src,
+        Astro.url,
+      );
 ---
 
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<link rel="icon" type="image/png" href="/nsae-logo.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="sitemap" href="/sitemap-index.xml" />
 <link
   rel="alternate"
@@ -36,19 +55,12 @@ const title =
 />
 <meta name="generator" content={Astro.generator} />
 
-<!-- Font preloads -->
+<!-- Font preload (regular only; italic is rarely above the fold) -->
 <link
   rel="preload"
-  href="/fonts/SourceSans3-Italic-VariableFont_wght.ttf"
+  href="/fonts/SourceSans3-VariableFont_wght.woff2"
   as="font"
-  type="font/ttf"
-  crossorigin
-/>
-<link
-  rel="preload"
-  href="/fonts/SourceSans3-VariableFont_wght.ttf"
-  as="font"
-  type="font/ttf"
+  type="font/woff2"
   crossorigin
 />
 
@@ -61,18 +73,18 @@ const title =
 <meta name="description" content={description} />
 
 <!-- Open Graph / Facebook -->
-<meta property="og:type" content="website" />
-<meta property="og:url" content={Astro.url} />
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={SITE_TITLE} />
+<meta property="og:url" content={canonicalURL} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
-<meta property="og:image" content={new URL(image.src, Astro.url)} />
+<meta property="og:image" content={socialImage} />
 
 <!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:url" content={Astro.url} />
-<meta property="twitter:title" content={title} />
-<meta property="twitter:description" content={description} />
-<meta property="twitter:image" content={new URL(image.src, Astro.url)} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={socialImage} />
 
 <script>
   import Lenis from "lenis";

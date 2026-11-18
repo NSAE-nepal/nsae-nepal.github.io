@@ -5,6 +5,7 @@ import Categories from "@/components/Categories.astro";
 import type { PostDetails } from "@/sanity/lib/queries/posts";
 import FormattedDate from "../components/FormattedDate.astro";
 import PageLayout from "./PageLayout.astro";
+import { sanityImage } from "@/sanity/lib/url-for-image";
 
 type Props = PostDetails;
 
@@ -29,7 +30,12 @@ const { href: backHref, label: backLabel } =
   backLinkConfig[type] || backLinkConfig.blog;
 ---
 
-<PageLayout title={title} description={description ?? title}>
+<PageLayout
+  title={title}
+  description={description || subtitle || title}
+  image={heroImage || undefined}
+  type="article"
+>
   <article class="py-8 space-y-10" data-pagefind-body>
     <header class="space-y-8 border-b border-border pb-10">
       <a
@@ -89,7 +95,10 @@ const { href: backHref, label: backLabel } =
             data-pagefind-meta="image[src], image_alt[alt]"
             inferSize
             class="object-cover rounded-xl max-h-1/2"
-            src={heroImage}
+            src={sanityImage(heroImage, { width: 1600 })}
+            widths={[640, 1024, 1600]}
+            sizes="(min-width: 1280px) 1280px, 100vw"
+            loading="eager"
             alt={heroImageAlt ?? ""}
           />
         </div>

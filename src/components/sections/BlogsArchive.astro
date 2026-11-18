@@ -6,6 +6,7 @@ import Badge from "../astro/Badge.astro";
 import BlogCard from "../astro/Card/BlogCard.astro";
 import BlogFeaturedCard from "../astro/Card/BlogFeaturedCard.astro";
 import ClickableCard from "../astro/Card/ClickableCard.astro";
+import { sanityImage } from "@/sanity/lib/url-for-image";
 
 const allPublishedPosts = (await getPosts("blog")) || [];
 
@@ -80,7 +81,7 @@ if (featuredPosts.length > 0) {
                   class={
                     "absolute top-0 right-0 h-full w-1/4 object-cover z-0 hidden group-hover:block opacity-40 grayscale group-hover:grayscale-0 transition-opacity duration-500"
                   }
-                  src={post.heroImage}
+                  src={sanityImage(post.heroImage, { width: 480 })}
                   alt={post.heroImageAlt ?? ""}
                 />
               )}

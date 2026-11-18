@@ -1,9 +1,8 @@
 ---
-import { IconArrowUpRight } from "@tabler/icons-astro";
+import { IconArrowUpRight, IconSearch } from "@tabler/icons-astro";
 
 import Button from "./astro/Button/Button.astro";
 import HeaderLink from "./HeaderLink.astro";
-import { SearchCommand } from "./sections/SearchCommand";
 ---
 
 <header
@@ -29,5 +28,42 @@ import { SearchCommand } from "./sections/SearchCommand";
     </span>
   </Button>
 
-  <SearchCommand client:idle />
+  <Button
+    type="button"
+    data-search-trigger
+    aria-label="Search (Ctrl+K)"
+    aria-keyshortcuts="Control+K Meta+K"
+    class="rounded-full items-center bg-foreground hover:bg-foreground hidden xs:flex cursor-pointer h-9 px-3 py-2"
+  >
+    <IconSearch class="w-4 h-4 shrink-0" />
+  </Button>
 </header>
+
+<script>
+  // The React search dialog is only downloaded when someone actually searches.
+  // These listeners live on `document`, so they survive client-side navigation.
+  const loadSearch = () => import("@/components/search/mount");
+  const openSearch = () => loadSearch().then((m) => m.openSearch());
+
+  document.addEventListener("click", (event) => {
+    if ((event.target as Element).closest("[data-search-trigger]")) {
+      openSearch();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key.toLowerCase() === "k" && (event.metaKey || event.ctrlKey)) {
+      event.preventDefault();
+      openSearch();
+    }
+  });
+
+  // Warm the chunk as soon as intent is likely (hover or keyboard focus).
+  for (const type of ["pointerover", "focusin"]) {
+    document.addEventListener(type, (event) => {
+      if ((event.target as Element).closest?.("[data-search-trigger]")) {
+        loadSearch();
+      }
+    });
+  }
+</script>

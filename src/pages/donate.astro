@@ -13,6 +13,7 @@ import Badge from "@/components/astro/Badge.astro";
 import Button from "@/components/astro/Button/Button.astro";
 import PageLayout from "@/layouts/PageLayout.astro";
 import { getDonateDetails } from "@/sanity/lib/queries/donate";
+import { sanityImage } from "@/sanity/lib/url-for-image";
 
 const impactAreas = [
   {
@@ -284,7 +285,7 @@ const iconMap: Record<string, any> = {
             class="bg-white p-4 rounded-xl border border-border shadow-sm max-w-[250px] w-full aspect-square flex items-center justify-center"
           >
             <Image
-              src={data.bankDetails?.accountQRCode}
+              src={sanityImage(data.bankDetails?.accountQRCode, { width: 500 })}
               alt="Donation QR Code"
               class="w-full h-full object-contain"
               inferSize

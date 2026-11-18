@@ -7,6 +7,7 @@ import type {
   Instructor,
   Representative,
 } from "@/sanity/lib/queries/events";
+import { sanityImage } from "@/sanity/lib/url-for-image";
 
 interface Props {
   instructors: EventDetails["instructors"];
@@ -85,7 +86,7 @@ const displayProfiles: DisplayProfile[] = instructors.map((inst, index) => {
                     <div class="relative h-12 w-12 shrink-0 overflow-hidden rounded-full flex items-center justify-center border border-border/50 bg-background">
                       {profile.image ? (
                         <Image
-                          src={profile.image}
+                          src={sanityImage(profile.image, { width: 96, height: 96 })}
                           alt={profile.name}
                           inferSize
                           class="h-full w-full object-contain p-1.5 transition-transform duration-300 group-hover:scale-110"
@@ -134,7 +135,7 @@ const displayProfiles: DisplayProfile[] = instructors.map((inst, index) => {
                             <div class="relative h-8 w-8 shrink-0 overflow-hidden rounded-full flex items-center justify-center border border-border/50 bg-background">
                               {rep.profileImage ? (
                                 <Image
-                                  src={rep.profileImage}
+                                  src={sanityImage(rep.profileImage, { width: 64, height: 64 })}
                                   alt={rep.name}
                                   inferSize
                                   class="h-full w-full object-cover transition-transform duration-300 group-hover/rep:scale-110"
@@ -172,7 +173,7 @@ const displayProfiles: DisplayProfile[] = instructors.map((inst, index) => {
                 <div class="relative h-12 w-12 shrink-0 overflow-hidden rounded-full bg-muted flex items-center justify-center border border-border/50">
                   {profile.image ? (
                     <Image
-                      src={profile.image}
+                      src={sanityImage(profile.image, { width: 96, height: 96 })}
                       alt={profile.name}
                       inferSize
                       class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"

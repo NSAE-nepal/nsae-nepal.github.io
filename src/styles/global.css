@@ -7,7 +7,7 @@
 
 @font-face {
   font-family: "Source Sans 3";
-  src: url("/fonts/SourceSans3-Italic-VariableFont_wght.ttf") format("truetype");
+  src: url("/fonts/SourceSans3-Italic-VariableFont_wght.woff2") format("woff2");
   font-weight: 1 900;
   font-style: italic;
   font-display: swap;
@@ -15,7 +15,7 @@
 
 @font-face {
   font-family: "Source Sans 3";
-  src: url("/fonts/SourceSans3-VariableFont_wght.ttf") format("truetype");
+  src: url("/fonts/SourceSans3-VariableFont_wght.woff2") format("woff2");
   font-weight: 1 900;
   font-style: normal;
   font-display: swap;
