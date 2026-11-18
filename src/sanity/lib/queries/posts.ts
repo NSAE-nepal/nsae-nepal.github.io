@@ -78,7 +78,7 @@ export async function getPosts(type?: PostType): Promise<Post[]> {
 	const { data } = await loadQuery<Post[]>({
 		query: POSTS_QUERY,
 		// GROQ needs $type declared even when unused; null makes `!defined($type)` true.
-		params: { type: type ?? null },
+		params: { type: (type ?? null) as unknown as string },
 	});
 
 	return data;

@@ -11,6 +11,7 @@ import Badge from "@/components/astro/Badge.astro";
 import Button from "@/components/astro/Button/Button.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
 import type { Event } from "@/sanity/lib/queries/events";
+import { getEventStatus } from "@/utils/datetime";
 
 type Props = {
   data: Event;
@@ -26,6 +27,7 @@ const formatEventType = (type: string) => {
 };
 const isOnline =
   data.location?.type === "online" || data.location?.type === "hybrid";
+const { hasEnded, isRegistrationOpen } = getEventStatus(data);
 ---
 
 <article
@@ -132,7 +134,7 @@ const isOnline =
     </div>
 
     {
-      data.registrationLink && (
+      isRegistrationOpen ? (
         <div class="pt-2" onclick="event.stopPropagation()">
           <Button
             href={data.registrationLink}
@@ -144,6 +146,17 @@ const isOnline =
             <IconArrowUpRight class={"ml-2 size-4"} />
           </Button>
         </div>
+      ) : (
+        (hasEnded || data.registrationLink) && (
+          <div class="pt-2">
+            <Badge
+              variant="outline"
+              class="font-mono text-xs uppercase tracking-widest text-muted-foreground"
+            >
+              {hasEnded ? "Event ended" : "Registration closed"}
+            </Badge>
+          </div>
+        )
       )
     }
   </div>

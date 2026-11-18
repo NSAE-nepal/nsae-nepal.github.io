@@ -19,7 +19,9 @@ const { data } = Papa.parse<string[]>(csvData, {
   skipEmptyLines: true,
 });
 
-const rows = data.map((row) => row.map((cell) => (cell ?? "").trim()));
+const rows: string[][] = data.map((row) =>
+  row.map((cell) => (cell ?? "").trim()),
+);
 
 if (rows.length === 0) {
   return null;
