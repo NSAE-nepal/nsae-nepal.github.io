@@ -2,6 +2,7 @@
 import type { HTMLAttributes } from "astro/types";
 import { Image } from "astro:assets";
 import { cva } from "class-variance-authority";
+import { sanityImage } from "@/sanity/lib/url-for-image";
 
 export const avatarImage = cva("relative z-1 h-full w-full object-cover");
 
@@ -32,7 +33,9 @@ if (!src && !image) {
   src && (
     // eslint-disable-next-line astro/jsx-a11y/no-noninteractive-element-interactions
     <img
-      src={src}
+      src={sanityImage(src, { width: 128, height: 128 })}
+      loading="lazy"
+      decoding="async"
       alt={alt}
       class={avatarImage({ class: className })}
       width={64}

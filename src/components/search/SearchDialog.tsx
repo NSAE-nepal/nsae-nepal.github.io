@@ -9,7 +9,7 @@ import {
 	IconPhoto,
 } from "@tabler/icons-react";
 import { navigate } from "astro:transitions/client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
 	Command,
 	CommandDialog,
@@ -41,7 +41,11 @@ interface PagefindResult {
 }
 
 interface Pagefind {
-	search: (query: string) => Promise<{ results: PagefindResult[] }>;
+	search: (
+		query: string | null,
+		options?: { filters?: Record<string, string> },
+	) => Promise<{ results: PagefindResult[] }>;
+	filters?: () => Promise<Record<string, Record<string, number>>>;
 	init?: () => Promise<void>;
 }
 
@@ -108,6 +112,11 @@ export function SearchDialog({ defaultOpen = false }: { defaultOpen?: boolean })
 	const [results, setResults] = useState<SearchResultItem[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [pagefind, setPagefind] = useState<Pagefind | null>(null);
+	// Content types from `data-pagefind-filter="type:…"` on detail pages.
+	const [types, setTypes] = useState<string[]>([]);
+	const [typeFilter, setTypeFilter] = useState<string | null>(null);
+	const isSearching = Boolean(search || typeFilter);
+	const inputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
 		const handleOpen = () => setOpen(true);
@@ -118,12 +127,16 @@ export function SearchDialog({ defaultOpen = false }: { defaultOpen?: boolean })
 	useEffect(() => {
 		if (!open || pagefind) return;
 		loadPagefind()
-			.then(setPagefind)
+			.then(async (pf) => {
+				setPagefind(pf);
+				const filters = (await pf.filters?.()) ?? {};
+				setTypes(Object.keys(filters.type ?? {}).sort());
+			})
 			.catch((err) => console.error("Failed to load Pagefind", err));
 	}, [open, pagefind]);
 
 	useEffect(() => {
-		if (!search || !pagefind) {
+		if (!isSearching || !pagefind) {
 			setResults([]);
 			return;
 		}
@@ -132,7 +145,11 @@ export function SearchDialog({ defaultOpen = false }: { defaultOpen?: boolean })
 		const debounce = setTimeout(async () => {
 			setIsLoading(true);
 			try {
-				const searchResults = await pagefind.search(search);
+				// A type filter with no text lists everything of that type.
+				const searchResults = await pagefind.search(
+					search || null,
+					typeFilter ? { filters: { type: typeFilter } } : undefined,
+				);
 				const data = await Promise.all(
 					searchResults.results.slice(0, 10).map(async (result) => {
 						const resultData = await result.data();
@@ -175,7 +192,7 @@ export function SearchDialog({ defaultOpen = false }: { defaultOpen?: boolean })
 			cancelled = true;
 			clearTimeout(debounce);
 		};
-	}, [search, pagefind]);
+	}, [search, typeFilter, isSearching, pagefind]);
 
 	const handleSelect = (url: string) => {
 		setOpen(false);
@@ -192,15 +209,46 @@ export function SearchDialog({ defaultOpen = false }: { defaultOpen?: boolean })
 		>
 			<Command shouldFilter={false}>
 				<CommandInput
+					ref={inputRef}
 					placeholder="Search pages, blogs, events..."
 					value={search}
 					onValueChange={setSearch}
 				/>
+				{types.length > 1 && (
+					<div
+						role="group"
+						aria-label="Filter by type"
+						className="flex flex-wrap gap-1.5 border-b px-3 py-2"
+					>
+						{types.map((type) => {
+							const active = typeFilter === type;
+							return (
+								<button
+									key={type}
+									type="button"
+									aria-pressed={active}
+									onClick={() => {
+										setTypeFilter(active ? null : type);
+										// Keep typing in the search box after picking a filter.
+										inputRef.current?.focus();
+									}}
+									className={`rounded-full border px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-wider transition-colors cursor-pointer ${
+										active
+											? "border-primary bg-primary text-primary-foreground"
+											: "border-border text-muted-foreground hover:border-primary hover:text-primary"
+									}`}
+								>
+									{type}
+								</button>
+							);
+						})}
+					</div>
+				)}
 				<CommandList
 					className="max-h-[60vh] overflow-y-auto"
 					data-lenis-prevent
 				>
-					{!search && (
+					{!isSearching && (
 						<>
 							<CommandGroup heading="Suggestions">
 								<div className="grid grid-cols-2 gap-1 p-1">
@@ -234,7 +282,7 @@ export function SearchDialog({ defaultOpen = false }: { defaultOpen?: boolean })
 						</>
 					)}
 
-					{search && (
+					{isSearching && (
 						<>
 							{(isLoading || !pagefind) && (
 								<CommandEmpty>Searching...</CommandEmpty>

@@ -2,13 +2,17 @@
 import { Image } from "astro:assets";
 import {
   IconArrowUpRight,
+  IconBrandGoogle,
+  IconCalendarPlus,
   IconCalendarWeek,
+  IconDownload,
   IconMapPin,
   IconWorld,
 } from "@tabler/icons-astro";
 import Badge from "@/components/astro/Badge.astro";
 import Button from "@/components/astro/Button/Button.astro";
 import type { EventDetails } from "@/sanity/lib/queries/events";
+import { googleCalendarUrl } from "@/utils/calendar";
 import { formatDate, formatTime, getEventStatus } from "@/utils/datetime";
 import { sanityImage } from "@/sanity/lib/url-for-image";
 
@@ -18,6 +22,7 @@ interface Props {
 
 const { data } = Astro.props;
 const { hasEnded, isRegistrationOpen } = getEventStatus(data);
+const site = Astro.site ?? "https://www.nsae.org.np";
 
 let dateDisplay = "";
 let durationDisplay = "";
@@ -193,6 +198,41 @@ if (data.location) {
         )
       }
     </div>
+
+    {
+      !hasEnded && (
+        <div
+          class="flex flex-wrap items-center gap-3"
+          role="group"
+          aria-labelledby="add-to-calendar"
+          data-pagefind-ignore
+        >
+          <span
+            id="add-to-calendar"
+            class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground"
+          >
+            <IconCalendarPlus class="size-4" /> Add to calendar
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            href={`/events/${data.slug}.ics`}
+            download={`${data.slug}.ics`}
+          >
+            <IconDownload class="size-4" /> Apple / Outlook (.ics)
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            href={googleCalendarUrl(data, site)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <IconBrandGoogle class="size-4" /> Google Calendar
+          </Button>
+        </div>
+      )
+    }
   </div>
 
   {

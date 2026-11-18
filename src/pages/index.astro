@@ -8,7 +8,10 @@ import Faq from "@/components/sections/Faq.astro";
 import HeroCarousel from "@/components/sections/HeroCarousel.astro";
 import Memberships from "@/components/sections/Memberships.astro";
 import MissionBrief from "@/components/sections/MissionBrief.astro";
+import JsonLd from "@/components/seo/JsonLd.astro";
 import PageLayout from "@/layouts/PageLayout.astro";
+import { organizationLd } from "@/lib/structured-data";
+import { getContactsDetails } from "@/sanity/lib/queries/contacts";
 import { getHomePage } from "@/sanity/lib/queries/home";
 import { getPosts } from "@/sanity/lib/queries/posts";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
@@ -20,6 +23,7 @@ const featuredNotices = allNotices.filter(
   (post) => post.featured && post._id !== latestNotice?._id,
 );
 const homePage = await getHomePage();
+const contacts = await getContactsDetails();
 
 const announcements: Announcement[] = [
   ...(latestNotice
@@ -46,6 +50,7 @@ const announcements: Announcement[] = [
   description={SITE_DESCRIPTION}
   dataPagefindIgnore="all"
 >
+  <JsonLd slot="head" data={organizationLd(Astro.site!, contacts)} />
   {
     announcements.length > 0 && (
       <AnnouncementRibbon

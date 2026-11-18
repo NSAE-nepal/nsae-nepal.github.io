@@ -5,7 +5,7 @@ import {
   IconPoint,
 } from "@tabler/icons-astro";
 import FormattedDate from "@/components/FormattedDate.astro";
-import type { Minutes } from "@/sanity/lib/queries/minutes";
+import { type Minutes, minutesTypeLabel } from "@/sanity/lib/queries/minutes";
 import Badge from "../Badge.astro";
 
 type Props = {
@@ -14,10 +14,7 @@ type Props = {
 };
 const { data, class: className } = Astro.props;
 
-const formatType = (type: string) => {
-  if (type === "agm") return "AGM";
-  return type.charAt(0).toUpperCase() + type.slice(1).replace("-", " ");
-};
+const formatType = minutesTypeLabel;
 ---
 
 <article

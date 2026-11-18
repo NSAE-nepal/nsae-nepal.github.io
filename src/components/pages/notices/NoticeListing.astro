@@ -1,0 +1,208 @@
+---
+import { Image } from "astro:assets";
+import type { Page } from "astro";
+import Badge from "@/components/astro/Badge.astro";
+import BlogCard from "@/components/astro/Card/BlogCard.astro";
+import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
+import Empty from "@/components/astro/Empty.astro";
+import Pagination from "@/components/astro/Pagination.astro";
+import FilterChips from "@/components/FilterChips.astro";
+import PageLayout from "@/layouts/PageLayout.astro";
+import { type CategorySummary, categoryPath } from "@/lib/categories";
+import type { Post } from "@/sanity/lib/queries/posts";
+import { sanityImage } from "@/sanity/lib/url-for-image";
+
+/**
+ * Notices listing, shared by /notices/page/[page] and
+ * /notices/category/[category]/page/[page].
+ */
+interface Props {
+  page: Page<Post>;
+  categories: CategorySummary[];
+  activeCategory?: CategorySummary;
+}
+
+const { page, categories, activeCategory } = Astro.props;
+const pageTitle = activeCategory ? `${activeCategory.title} – Notices` : "Notices";
+const pageDescription = activeCategory
+  ? `NSAE notices about ${activeCategory.title}.`
+  : "Updates, announcements, and official notices.";
+---
+
+<PageLayout
+  title={pageTitle}
+  description={pageDescription}
+  dataPagefindIgnore="all"
+>
+  <header class="flex flex-col items-center justify-center py-16 md:py-24">
+    <div class="anim-header-badge opacity-0 scale-50">
+      <Badge
+        variant={"secondary"}
+        size={"sm"}
+        class="font-mono uppercase tracking-widest text-xs mb-3 border border-border/50"
+      >
+        Announcements
+      </Badge>
+    </div>
+    <h1
+      class="anim-header-title invisible font-sans text-5xl md:text-7xl font-medium tracking-tighter pt-4 text-center max-w-4xl leading-tight"
+    >
+      Notices & Updates
+    </h1>
+  </header>
+
+  <section class="mb-12" data-manual-card-anim>
+    <h2
+      class="anim-section-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
+    >
+      {activeCategory ? activeCategory.title : "Latest Notices"}
+    </h2>
+    <FilterChips
+      label="Filter notices by category"
+      allHref={categoryPath("/notices")}
+      options={categories.map((category) => ({
+        href: categoryPath("/notices", category.slug),
+        label: category.title,
+        count: category.count,
+        active: category.slug === activeCategory?.slug,
+      }))}
+    />
+
+    {
+      page.data.length > 0 ? (
+        <>
+          <div class="grid grid-cols-2">
+            {page.data.map((post: Post, index) => (
+              <>
+                <ClickableCard
+                  class="anim-card group relative col-span-2 hover:bg-secondary/60 transition-colors opacity-0 translate-y-4"
+                  href={`/notices/${post.slug}/`}
+                  label={post.title}
+                >
+                  <BlogCard data={post} href={`/notices/${post.slug}/`} />
+
+                  {post.heroImage && (
+                    <Image
+                      inferSize
+                      class="absolute top-0 right-0 h-full w-1/4 object-cover z-0 hidden group-hover:block opacity-40 grayscale group-hover:grayscale-0 transition-all duration-500"
+                      src={sanityImage(post.heroImage, { width: 480 })}
+                      alt={post.heroImageAlt ?? ""}
+                    />
+                  )}
+                </ClickableCard>
+                {index < page.data.length - 1 && (
+                  <div class="anim-divider col-span-2 my-6 border-b-2 border-dashed border-secondary-foreground opacity-0 translate-y-4" />
+                )}
+              </>
+            ))}
+          </div>
+          <div class="anim-pagination flex justify-center mt-16 opacity-0">
+            <Pagination
+              url={page.url}
+              class="font-mono text-sm uppercase tracking-widest"
+            />
+          </div>
+        </>
+      ) : (
+        <div class="anim-empty-state opacity-0 scale-95">
+          <Empty
+            description="We haven't published any official notices yet. Please check back later."
+            title="No notices found"
+          />
+        </div>
+      )
+    }
+  </section>
+</PageLayout>
+<script>
+  import { gsap, SplitText } from "@/utils/gsap-init";
+  import { initCardSplitTextAnimation } from "@/utils/animations/cards-split-text-animation";
+  let ctx: gsap.Context | undefined;
+  function initNoticePage() {
+    ctx = gsap.context(() => {
+      const mainTl = gsap.timeline({
+        defaults: { ease: "power3.out" },
+      });
+
+      const titleSplit = SplitText.create(".anim-header-title", {
+        type: "lines, words",
+        linesClass: "overflow-hidden",
+      });
+
+      mainTl
+        .to(".anim-header-badge", {
+          scale: 1,
+          opacity: 1,
+          duration: 0.6,
+          ease: "back.out(1.5)",
+        })
+        .set(".anim-header-title", { autoAlpha: 1 }, "-=0.3")
+        .from(
+          titleSplit.words,
+          {
+            yPercent: 100,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.04,
+            ease: "power4.out",
+          },
+          "<",
+        )
+
+        .to(
+          ".anim-section-title",
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.5,
+            ease: "power2.out",
+          },
+          "-=0.7",
+        );
+
+      if (document.querySelector(".anim-card")) {
+        mainTl
+          .to(
+            ".anim-card, .anim-divider",
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.5,
+              stagger: 0.08,
+              ease: "power2.out",
+            },
+            "-=0.4",
+          )
+          .add(() => {
+            initCardSplitTextAnimation();
+          }, "<");
+      }
+
+      if (document.querySelector(".anim-pagination")) {
+        mainTl.to(
+          ".anim-pagination",
+          {
+            opacity: 1,
+            duration: 0.5,
+          },
+          "-=0.2",
+        );
+      }
+
+      if (document.querySelector(".anim-empty-state")) {
+        mainTl.to(
+          ".anim-empty-state",
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 0.6,
+            ease: "back.out(1.2)",
+          },
+          "-=0.3",
+        );
+      }
+    });
+  }
+  document.addEventListener("astro:page-load", initNoticePage);
+  document.addEventListener("astro:before-swap", () => ctx?.revert());
+</script>

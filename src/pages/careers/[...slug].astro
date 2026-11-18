@@ -9,7 +9,9 @@ import {
 import Badge from "@/components/astro/Badge.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
 import PortableText from "@/components/PortableText.astro";
+import JsonLd from "@/components/seo/JsonLd.astro";
 import PageLayout from "@/layouts/PageLayout.astro";
+import { breadcrumbLd, jobPostingLd } from "@/lib/structured-data";
 import { getVacancies, getVacancyDetails } from "@/sanity/lib/queries/careers";
 
 export async function getStaticPaths() {
@@ -46,10 +48,29 @@ vacancyClosingDate?.setHours(0, 0, 0, 0);
 const hasExpired = vacancyClosingDate ? vacancyClosingDate < today : false;
 
 const isClosed = status === "closed" || hasExpired;
+const site = Astro.site!;
+
+// Only advertise open positions to job search engines.
+const structuredData = [
+  ...(isClosed ? [] : [jobPostingLd(vacancy, site)]),
+  breadcrumbLd(
+    [
+      { name: "Home", path: "/" },
+      { name: "Careers", path: "/careers/page/1/" },
+      { name: title, path: `/careers/${vacancy.slug}/` },
+    ],
+    site,
+  ),
+];
 ---
 
-<PageLayout title={title} description={description ?? title}>
-  <article class="py-8 space-y-10" data-pagefind-body>
+<PageLayout
+  title={title}
+  description={description ?? title}
+  image={`/og/careers/${vacancy.slug}.png`}
+>
+  <JsonLd slot="head" data={structuredData} />
+  <article class="py-8 space-y-10" data-pagefind-body data-pagefind-filter="type:Careers">
     <a
       data-pagefind-ignore
       href="/careers/page/1"

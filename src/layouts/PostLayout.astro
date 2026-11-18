@@ -1,13 +1,22 @@
 ---
 import { Image } from "astro:assets";
 import { IconArrowLeft } from "@tabler/icons-astro";
+import AvatarGroup from "@/components/astro/AvatarGroup.astro";
+import BlogCard from "@/components/astro/Card/BlogCard.astro";
+import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
 import Categories from "@/components/Categories.astro";
-import type { PostDetails } from "@/sanity/lib/queries/posts";
+import { formatName } from "@/lib/utils";
+import type { Post, PostDetails } from "@/sanity/lib/queries/posts";
 import FormattedDate from "../components/FormattedDate.astro";
+import JsonLd from "@/components/seo/JsonLd.astro";
+import { articleLd, breadcrumbLd } from "@/lib/structured-data";
 import PageLayout from "./PageLayout.astro";
 import { sanityImage } from "@/sanity/lib/url-for-image";
 
-type Props = PostDetails;
+type Props = PostDetails & {
+  /** Suggested posts for the "Keep reading" section (see getRelatedPosts). */
+  related?: Post[];
+};
 
 const {
   title,
@@ -19,7 +28,11 @@ const {
   heroImageAlt,
   type,
   showToc,
+  related = [],
 } = Astro.props;
+
+const relatedHref = (post: Post) =>
+  `/${post.type === "notice" ? "notices" : "blog"}/${post.slug}/`;
 
 const backLinkConfig: Record<string, { href: string; label: string }> = {
   blog: { href: "/blog/page/1", label: "Back to All Blogs" },
@@ -28,15 +41,42 @@ const backLinkConfig: Record<string, { href: string; label: string }> = {
 
 const { href: backHref, label: backLabel } =
   backLinkConfig[type] || backLinkConfig.blog;
+
+const site = Astro.site!;
+// Skip dangling references (deleted authors come back as null).
+const bylineAuthors = (Astro.props.authors ?? []).filter(Boolean);
+const section = type === "notice" ? "notices" : "blog";
+const structuredData = [
+  articleLd(Astro.props, site),
+  breadcrumbLd(
+    [
+      { name: "Home", path: "/" },
+      { name: type === "notice" ? "Notices" : "Blog", path: `/${section}/page/1/` },
+      { name: title, path: `/${section}/${Astro.props.slug}/` },
+    ],
+    site,
+  ),
+];
 ---
 
 <PageLayout
   title={title}
   description={description || subtitle || title}
-  image={heroImage || undefined}
+  image={heroImage || `/og/${section}/${Astro.props.slug}.png`}
   type="article"
 >
-  <article class="py-8 space-y-10" data-pagefind-body>
+  <JsonLd slot="head" data={structuredData} />
+  <article
+    class="py-8 space-y-10"
+    data-pagefind-body
+    data-pagefind-filter={`type:${type === "notice" ? "Notice" : "Blog"}`}
+  >
+    {/* Category filters for search (no visible content). */}
+    {(categories ?? [])
+      .filter((category) => category?.title)
+      .map((category) => (
+        <span data-pagefind-filter={`category:${category.title}`} hidden />
+      ))}
     <header class="space-y-8 border-b border-border pb-10">
       <a
         data-pagefind-ignore
@@ -63,12 +103,43 @@ const { href: backHref, label: backLabel } =
             </p>
           )
         }
+        {
+          bylineAuthors.length > 0 && (
+            <div
+              class="flex flex-wrap items-center justify-center gap-3 pt-2"
+              data-pagefind-ignore
+            >
+              <AvatarGroup data={bylineAuthors} />
+              <p class="font-sans text-sm text-muted-foreground">
+                By{" "}
+                {bylineAuthors.map((author, index) => (
+                  <>
+                    {index > 0 &&
+                      (index === bylineAuthors.length - 1 ? " and " : ", ")}
+                    {author.slug ? (
+                      <a
+                        href={`/authors/${author.slug}/`}
+                        class="font-medium text-foreground underline-offset-4 hover:text-primary hover:underline"
+                      >
+                        {formatName(author.name, author.prefix)}
+                      </a>
+                    ) : (
+                      <span class="font-medium text-foreground">
+                        {formatName(author.name, author.prefix)}
+                      </span>
+                    )}
+                  </>
+                ))}
+              </p>
+            </div>
+          )
+        }
       </div>
 
       <div class="flex flex-row justify-around items-center text-xs">
         {
           categories?.length > 0 ? (
-            <Categories categories={categories} />
+            <Categories categories={categories} basePath={`/${section}`} />
           ) : (
             <div />
           )
@@ -121,22 +192,38 @@ const { href: backHref, label: backLabel } =
       }
     </div>
 
-    {/* TODO:Content for related posts grid */}
-    <!-- {
-      relatedPosts && relatedPosts.length > 0 && (
-        <div class="border-t border-border/50 pt-12 space-y-8">
+    {
+      related.length > 0 && (
+        <section
+          class="border-t border-border/50 pt-12 space-y-8"
+          aria-labelledby="keep-reading"
+          data-pagefind-ignore
+        >
           <div class="flex flex-col text-center gap-2">
-            <h3 class="font-sans text-2xl font-medium tracking-tight">
-              If You Liked This...
-            </h3>
+            <h2
+              id="keep-reading"
+              class="font-sans text-2xl font-medium tracking-tight"
+            >
+              Keep reading
+            </h2>
             <p class="font-sans text-muted-foreground">
-              Explore similar topics
+              More from NSAE on similar topics
             </p>
           </div>
 
-          <div class="grid gap-8">TO:DO</div> 
-        </div>
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {related.map((post) => (
+              <ClickableCard
+                href={relatedHref(post)}
+                label={post.title}
+                class="group relative rounded-xl border border-border/60 hover:bg-secondary/60 transition-colors"
+              >
+                <BlogCard data={post} href={relatedHref(post)} />
+              </ClickableCard>
+            ))}
+          </div>
+        </section>
       )
-    } -->
+    }
   </article>
 </PageLayout>

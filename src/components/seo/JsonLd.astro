@@ -1,0 +1,14 @@
+---
+/**
+ * Renders schema.org structured data. Pass the result of a builder from
+ * `@/lib/structured-data`, typically via `<JsonLd slot="head" data={...} />`.
+ */
+interface Props {
+  data: object | object[];
+}
+
+// Escape "<" so content can never close the script tag early.
+const json = JSON.stringify(Astro.props.data).replace(/</g, "\\u003c");
+---
+
+<script is:inline type="application/ld+json" set:html={json} />

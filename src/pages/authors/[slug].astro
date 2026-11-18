@@ -1,0 +1,250 @@
+---
+import { Image } from "astro:assets";
+import {
+  IconArrowLeft,
+  IconArrowUpRight,
+  IconBrandBluesky,
+  IconBrandFacebook,
+  IconBrandLinkedin,
+  IconBrandX,
+  IconBrandYoutube,
+  IconId,
+} from "@tabler/icons-astro";
+import Badge from "@/components/astro/Badge.astro";
+import PostGrid from "@/components/astro/PostGrid.astro";
+import JsonLd from "@/components/seo/JsonLd.astro";
+import PageLayout from "@/layouts/PageLayout.astro";
+import { breadcrumbLd, personLd } from "@/lib/structured-data";
+import { formatName } from "@/lib/utils";
+import {
+  type AuthorDetails,
+  getAuthorsWithPosts,
+} from "@/sanity/lib/queries/authors";
+import { sanityImage } from "@/sanity/lib/url-for-image";
+
+export async function getStaticPaths() {
+  const authors = await getAuthorsWithPosts();
+  return authors.map((author) => ({
+    params: { slug: author.slug },
+    props: { author },
+  }));
+}
+
+const { author } = Astro.props as { author: AuthorDetails };
+const site = Astro.site!;
+
+const displayName = formatName(author.name, author.prefix);
+const role = [author.position, author.company].filter(Boolean).join(" · ");
+const initials =
+  author.name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase() || "?";
+
+const socialIcons = {
+  linkedin: { Icon: IconBrandLinkedin, label: "LinkedIn" },
+  x: { Icon: IconBrandX, label: "X" },
+  facebook: { Icon: IconBrandFacebook, label: "Facebook" },
+  youtube: { Icon: IconBrandYoutube, label: "YouTube" },
+  bluesky: { Icon: IconBrandBluesky, label: "Bluesky" },
+} as const;
+
+const socials = Object.entries(author.socials ?? {}).flatMap(([platform, social]) => {
+  const meta = socialIcons[platform as keyof typeof socialIcons];
+  return meta && social?.link ? [{ ...meta, link: social.link, handle: social.handle }] : [];
+});
+
+const description =
+  author.bio?.slice(0, 160) ||
+  `Articles and notices by ${displayName}${role ? `, ${role}` : ""}, on the NSAE website.`;
+---
+
+<PageLayout title={displayName} description={description} type="profile">
+  <JsonLd
+    slot="head"
+    data={[
+      personLd(author, site),
+      breadcrumbLd(
+        [
+          { name: "Home", path: "/" },
+          { name: "Blog", path: "/blog/page/1/" },
+          { name: author.name, path: `/authors/${author.slug}/` },
+        ],
+        site,
+      ),
+    ]}
+  />
+
+  <article class="py-8 space-y-12" data-pagefind-body data-pagefind-filter="type:Author">
+    <a
+      data-pagefind-ignore
+      href="/blog/page/1"
+      class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors px-4"
+    >
+      <IconArrowLeft class="size-4" /> Back to Blog
+    </a>
+
+    <header
+      class="flex flex-col items-center gap-6 border-b border-border pb-12 text-center md:flex-row md:items-start md:text-left"
+    >
+      <div
+        class="size-32 shrink-0 overflow-hidden rounded-full border-2 border-border bg-muted md:size-40"
+      >
+        {
+          author.profileImage ? (
+            <Image
+              src={sanityImage(author.profileImage, { width: 320, height: 320 })}
+              inferSize
+              alt={author.profileImageAlt || `Portrait of ${author.name}`}
+              class="size-full object-cover"
+              loading="eager"
+              data-pagefind-meta="image[src], image_alt[alt]"
+            />
+          ) : (
+            <span
+              class="flex size-full items-center justify-center font-sans text-4xl font-medium text-muted-foreground"
+              aria-hidden="true"
+            >
+              {initials}
+            </span>
+          )
+        }
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <div class="space-y-2">
+          <Badge
+            variant="secondary"
+            size="sm"
+            class="font-mono text-xs uppercase tracking-widest"
+          >
+            Author
+          </Badge>
+          <h1
+            class="font-sans text-4xl font-medium tracking-tighter md:text-5xl"
+            data-pagefind-meta="title"
+          >
+            {displayName}
+          </h1>
+          {
+            role && (
+              <p class="font-sans text-lg text-muted-foreground" data-pagefind-meta="sub_title">
+                {role}
+              </p>
+            )
+          }
+        </div>
+
+        {
+          (author.neaRegNo || author.necRegNo) && (
+            <dl class="flex flex-wrap justify-center gap-2 md:justify-start">
+              {author.neaRegNo && (
+                <div class="flex items-center gap-2 rounded-full border border-border px-3 py-1 font-mono text-xs">
+                  <IconId class="size-4 text-muted-foreground" aria-hidden="true" />
+                  <dt class="uppercase tracking-wider text-muted-foreground">NEA Reg. No.</dt>
+                  <dd>{author.neaRegNo}</dd>
+                </div>
+              )}
+              {author.necRegNo && (
+                <div class="flex items-center gap-2 rounded-full border border-border px-3 py-1 font-mono text-xs">
+                  <IconId class="size-4 text-muted-foreground" aria-hidden="true" />
+                  <dt class="uppercase tracking-wider text-muted-foreground">NEC Reg. No.</dt>
+                  <dd>{author.necRegNo}</dd>
+                </div>
+              )}
+            </dl>
+          )
+        }
+
+        {
+          author.bio && (
+            <p class="max-w-2xl font-sans text-base leading-relaxed text-foreground/90 whitespace-pre-line">
+              {author.bio}
+            </p>
+          )
+        }
+
+        {
+          (socials.length > 0 || author.portfolio) && (
+            <ul class="flex flex-wrap justify-center gap-2 md:justify-start" data-pagefind-ignore>
+              {socials.map(({ Icon, label, link, handle }) => (
+                <li>
+                  <a
+                    href={link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="flex items-center justify-center rounded-full border border-border bg-background p-2.5 transition-colors hover:border-primary hover:text-primary"
+                    aria-label={`${author.name} on ${label}`}
+                    title={handle ? `@${handle}` : label}
+                  >
+                    <Icon class="size-5" />
+                  </a>
+                </li>
+              ))}
+              {author.portfolio && (
+                <li>
+                  <a
+                    href={author.portfolio}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="flex items-center gap-1.5 rounded-full border border-border bg-background px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary"
+                  >
+                    Portfolio <IconArrowUpRight class="size-4" />
+                  </a>
+                </li>
+              )}
+            </ul>
+          )
+        }
+      </div>
+    </header>
+
+    <!-- Same post grid and reveal animation as the blog listing. -->
+    <section
+      class="mb-12"
+      aria-labelledby="author-posts"
+      data-manual-card-anim
+      data-pagefind-ignore
+    >
+      <h2
+        id="author-posts"
+        class="anim-all-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
+      >
+        Posts by {author.name}
+        <span class="ml-2 font-mono text-sm text-muted-foreground">({author.posts.length})</span>
+      </h2>
+      <PostGrid
+        posts={author.posts}
+        cardClass="anim-regular-card opacity-0 translate-y-4"
+      />
+    </section>
+  </article>
+</PageLayout>
+
+<script>
+  import { gsap } from "@/utils/gsap-init";
+  import { initCardSplitTextAnimation } from "@/utils/animations/cards-split-text-animation";
+
+  // Mirrors the blog listing's entrance animation for the post grid.
+  let ctx: gsap.Context | undefined;
+  function initAuthorPage() {
+    if (!document.querySelector("[aria-labelledby='author-posts']")) return;
+    ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      tl.to(".anim-all-title", { y: 0, opacity: 1, duration: 0.5 });
+      if (document.querySelector(".anim-regular-card")) {
+        tl.to(
+          ".anim-regular-card",
+          { y: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: "power2.out" },
+          "-=0.3",
+        ).add(() => {
+          initCardSplitTextAnimation({ cardSelector: ".anim-regular-card" });
+        }, "<");
+      }
+    });
+  }
+  document.addEventListener("astro:page-load", initAuthorPage);
+  document.addEventListener("astro:before-swap", () => ctx?.revert());
+</script>
