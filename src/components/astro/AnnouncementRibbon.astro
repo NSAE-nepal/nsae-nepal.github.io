@@ -46,7 +46,9 @@ const storageKey = `announcement-dismissed-${id}-${hashContent(contentSignature)
 {
   items.length > 0 && (
     <div
-      role="alert"
+      role="region"
+      aria-label="Announcements"
+      aria-roledescription="carousel"
       id={id}
       data-storage-key={storageKey}
       data-rotation-interval={rotationInterval}
@@ -204,8 +206,13 @@ const storageKey = `announcement-dismissed-${id}-${hashContent(contentSignature)
       }, 300);
     }
 
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    let isPaused = false;
+
     function startRotation() {
-      if (items.length <= 1) return;
+      if (items.length <= 1 || reduceMotion || isPaused) return;
       stopRotation();
       timer = setInterval(() => {
         goTo((currentIndex + 1) % items.length, "next");
@@ -233,6 +240,22 @@ const storageKey = `announcement-dismissed-${id}-${hashContent(contentSignature)
         ribbon.remove();
       });
     }
+
+    // Pause auto-rotation while the user is reading or interacting with it.
+    const pause = () => {
+      isPaused = true;
+      stopRotation();
+    };
+    const resume = () => {
+      isPaused = false;
+      startRotation();
+    };
+    ribbon.addEventListener("mouseenter", pause);
+    ribbon.addEventListener("mouseleave", resume);
+    ribbon.addEventListener("focusin", pause);
+    ribbon.addEventListener("focusout", (event) => {
+      if (!ribbon.contains(event.relatedTarget)) resume();
+    });
 
     startRotation();
   }

@@ -38,7 +38,7 @@ const impactAreas = [
 const data = await getDonateDetails();
 
 if (!data) {
-  throw new Error("Donate page data not found in src/content/donate.json");
+  throw new Error('Donate page data not found: publish the "donate" document in Sanity.');
 }
 
 const iconMap: Record<string, any> = {
@@ -49,8 +49,8 @@ const iconMap: Record<string, any> = {
 ---
 
 <PageLayout
-  title="Donate - NSAE"
-  description="Support the mission of the Nepal Society of Agricultural Engineers."
+  title="Donate"
+  description="Support the mission of the Nepalese Society of Agricultural Engineers."
   dataPagefindIgnore="all"
 >
   <section

@@ -58,30 +58,46 @@ const headings = (blocks as PortableTextBlock[])
 }
 
 <script>
-  const links = [...document.querySelectorAll(".toc-link")];
+  let observer: IntersectionObserver | null = null;
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        const link = document.querySelector(
-          `.toc-link[href="#${entry.target.id}"]`,
-        );
+  function initTableOfContents() {
+    observer?.disconnect();
+    observer = null;
 
-        if (!link || !entry.isIntersecting) return;
+    const links = [...document.querySelectorAll(".toc-link")];
+    if (links.length === 0) return;
 
-        links.forEach((l) => l.classList.remove("active"));
-        link.classList.add("active");
-      });
-    },
-    {
-      rootMargin: "-48px 0px -70% 0px",
-      threshold: 0,
-    },
-  );
+    observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
 
-  document
-    .querySelectorAll(
-      "article h1, article h2, article h3, article h4, article h5, article h6",
-    )
-    .forEach((heading) => observer.observe(heading));
+          const link = document.querySelector(
+            `.toc-link[href="#${CSS.escape(entry.target.id)}"]`,
+          );
+          if (!link) return;
+
+          links.forEach((l) => l.classList.remove("active"));
+          link.classList.add("active");
+        });
+      },
+      {
+        rootMargin: "-48px 0px -70% 0px",
+        threshold: 0,
+      },
+    );
+
+    document
+      .querySelectorAll(
+        "article h1[id], article h2[id], article h3[id], article h4[id], article h5[id], article h6[id]",
+      )
+      .forEach((heading) => observer?.observe(heading));
+  }
+
+  // Re-run on every client-side navigation, not just the first page load.
+  document.addEventListener("astro:page-load", initTableOfContents);
+  document.addEventListener("astro:before-swap", () => {
+    observer?.disconnect();
+    observer = null;
+  });
 </script>

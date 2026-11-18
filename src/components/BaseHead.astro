@@ -15,7 +15,12 @@ interface Props {
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-const { title, description, image = FallbackImage } = Astro.props;
+const { title: pageTitle, description, image = FallbackImage } = Astro.props;
+
+const title =
+  pageTitle === SITE_TITLE || pageTitle.endsWith(`| ${SITE_TITLE}`)
+    ? pageTitle
+    : `${pageTitle} | ${SITE_TITLE}`;
 ---
 
 <!-- Global Metadata -->
@@ -75,24 +80,25 @@ const { title, description, image = FallbackImage } = Astro.props;
 
   let lenis: Lenis | null = null;
 
+  // A single, stable callback so it can actually be removed again.
+  // GSAP's ticker reports seconds; Lenis expects milliseconds.
+  const raf = (time: number) => lenis?.raf(time * 1000);
+
   function lenisScroll() {
+    if (lenis) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     lenis = new Lenis();
     lenis.on("scroll", ScrollTrigger.update);
-    gsap.ticker.add((time) => {
-      lenis!.raf(time * 700);
-    });
+    gsap.ticker.add(raf);
     gsap.ticker.lagSmoothing(0);
   }
 
   function cleanup() {
     ScrollTrigger.getAll().forEach((t) => t.kill());
-    if (lenis) {
-      lenis.destroy();
-      lenis = null;
-    }
-    gsap.ticker.remove((time) => {
-      lenis?.raf(time * 700);
-    });
+    gsap.ticker.remove(raf);
+    lenis?.destroy();
+    lenis = null;
   }
 
   lenisScroll();
