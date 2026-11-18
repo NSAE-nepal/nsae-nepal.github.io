@@ -75,6 +75,7 @@ export default defineConfig({
 		"/past-committee": "/past-committee/page/1",
 		"/minutes": "/minutes/page/1",
 		"/events": "/events/page/1",
+		"/courses": "/courses/page/1",
 	},
 	devToolbar: {
 		enabled: true,

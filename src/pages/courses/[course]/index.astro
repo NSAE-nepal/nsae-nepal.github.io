@@ -1,0 +1,283 @@
+---
+import { Image } from "astro:assets";
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconBook2,
+  IconCalendarEvent,
+  IconCircleCheck,
+  IconClock,
+  IconListCheck,
+  IconStairs,
+} from "@tabler/icons-astro";
+import Badge from "@/components/astro/Badge.astro";
+import AvatarGroup from "@/components/astro/AvatarGroup.astro";
+import Button from "@/components/astro/Button/Button.astro";
+import Categories from "@/components/Categories.astro";
+import FormattedDate from "@/components/FormattedDate.astro";
+import CourseProgress from "@/components/pages/courses/CourseProgress.astro";
+import CourseSyllabus from "@/components/pages/courses/CourseSyllabus.astro";
+import ResourceList from "@/components/pages/courses/ResourceList.astro";
+import PortableText from "@/components/PortableText.astro";
+import JsonLd from "@/components/seo/JsonLd.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import PageLayout from "@/layouts/PageLayout.astro";
+import {
+  courseLessons,
+  coursePath,
+  courseStats,
+  formatDuration,
+  LEVEL_LABELS,
+  lessonPath,
+} from "@/lib/courses";
+import { breadcrumbLd, courseLd } from "@/lib/structured-data";
+import { formatName } from "@/lib/utils";
+import { getAuthorsWithPosts } from "@/sanity/lib/queries/authors";
+import { type Course, getCourses } from "@/sanity/lib/queries/courses";
+import { sanityImage } from "@/sanity/lib/url-for-image";
+import { getEventStatus } from "@/utils/datetime";
+
+export async function getStaticPaths() {
+  const [courses, authors] = await Promise.all([getCourses(), getAuthorsWithPosts()]);
+  // Only authors with posts have a page; don't link the rest.
+  const authorSlugs = authors.map((author) => author.slug).filter(Boolean) as string[];
+  return courses.map((course) => ({
+    params: { course: course.slug },
+    props: { course, authorSlugs },
+  }));
+}
+
+interface Props {
+  course: Course;
+  authorSlugs: string[];
+}
+
+const { course, authorSlugs } = Astro.props;
+const site = Astro.site!;
+const authorPages = new Set(authorSlugs);
+const lessons = courseLessons(course);
+const lessonIds = lessons.map((lesson) => lesson._id);
+const { lessonCount, moduleCount, quizCount, totalMinutes } = courseStats(course);
+const firstLesson = lessons[0];
+const upcomingEvents = course.relatedEvents.filter(
+  (event) => !getEventStatus(event).hasEnded,
+);
+
+const stats = [
+  { icon: IconStairs, label: LEVEL_LABELS[course.level] ?? course.level },
+  { icon: IconBook2, label: `${moduleCount} module${moduleCount === 1 ? "" : "s"} · ${lessonCount} lesson${lessonCount === 1 ? "" : "s"}` },
+  { icon: IconClock, label: formatDuration(totalMinutes) },
+  ...(quizCount > 0
+    ? [{ icon: IconListCheck, label: `${quizCount} quiz${quizCount === 1 ? "" : "zes"}` }]
+    : []),
+];
+---
+
+<PageLayout
+  title={course.title}
+  description={course.summary}
+  image={course.coverImage || `/og/courses/${course.slug}.png`}
+>
+  <JsonLd
+    slot="head"
+    data={[
+      courseLd(course, site, { totalMinutes, authorSlugs: authorPages }),
+      breadcrumbLd(
+        [
+          { name: "Home", path: "/" },
+          { name: "Courses", path: "/courses/page/1/" },
+          { name: course.title, path: coursePath(course) },
+        ],
+        site,
+      ),
+    ]}
+  />
+
+  <article class="py-8 space-y-12" data-pagefind-body data-pagefind-filter="type:Course">
+    <a
+      data-pagefind-ignore
+      href="/courses/page/1/"
+      class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors px-4"
+    >
+      <IconArrowLeft class="size-4" /> All courses
+    </a>
+
+    <header class="grid gap-8 lg:grid-cols-[3fr_2fr] lg:items-center">
+      <div class="space-y-6">
+        <div class="flex flex-wrap items-center gap-2">
+          <Badge class="font-mono text-xs uppercase tracking-widest">Course</Badge>
+          {course.categories.length > 0 && (
+            <Categories categories={course.categories} />
+          )}
+        </div>
+        <h1
+          class="font-sans text-4xl md:text-6xl font-medium tracking-tighter leading-tight"
+          data-pagefind-meta="title"
+        >
+          {course.title}
+        </h1>
+        <p class="text-lg text-muted-foreground max-w-2xl">{course.summary}</p>
+
+        <ul class="flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs uppercase tracking-wider text-muted-foreground" data-pagefind-ignore>
+          {stats.map(({ icon: Icon, label }) => (
+            <li class="inline-flex items-center gap-1.5">
+              <Icon class="size-4 text-primary" aria-hidden="true" />
+              {label}
+            </li>
+          ))}
+        </ul>
+
+        {course.instructors.length > 0 && (
+          <div class="flex flex-wrap items-center gap-3" data-pagefind-ignore>
+            <AvatarGroup data={course.instructors} />
+            <p class="text-sm text-muted-foreground">
+              Taught by{" "}
+              {course.instructors.map((instructor, index) => (
+                <>
+                  {index > 0 && (index === course.instructors.length - 1 ? " and " : ", ")}
+                  {instructor.slug && authorPages.has(instructor.slug) ? (
+                    <a
+                      href={`/authors/${instructor.slug}/`}
+                      class="font-medium text-foreground underline-offset-4 hover:text-primary hover:underline"
+                    >
+                      {formatName(instructor.name, instructor.prefix)}
+                    </a>
+                  ) : (
+                    <span class="font-medium text-foreground">
+                      {formatName(instructor.name, instructor.prefix)}
+                    </span>
+                  )}
+                </>
+              ))}
+            </p>
+          </div>
+        )}
+
+        <div class="max-w-md space-y-4" data-pagefind-ignore>
+          {firstLesson && (
+            <Button
+              href={lessonPath(course, firstLesson)}
+              size="lg"
+              data-course-cta
+              data-course-id={course._id}
+              data-lesson-ids={lessonIds.join(",")}
+            >
+              <span data-cta-label>Start the course</span>
+              <IconArrowRight class="size-4" />
+            </Button>
+          )}
+          <CourseProgress courseId={course._id} lessonIds={lessonIds} />
+        </div>
+      </div>
+
+      {course.coverImage && (
+        <div class="overflow-hidden rounded-2xl">
+          <Image
+            inferSize
+            src={sanityImage(course.coverImage, { width: 1200, height: 900 })}
+            widths={[600, 900, 1200]}
+            sizes="(min-width: 1024px) 40vw, 100vw"
+            alt={course.coverImageAlt ?? ""}
+            loading="eager"
+            class="aspect-[4/3] w-full object-cover"
+          />
+        </div>
+      )}
+    </header>
+
+    <div class="grid grid-cols-1 gap-12 lg:grid-cols-[3fr_1.5fr]">
+      <div class="space-y-12 min-w-0">
+        {(course.outcomes?.length ?? 0) > 0 && (
+          <section aria-labelledby="outcomes" class="rounded-2xl border border-border/60 p-6 md:p-8">
+            <h2 id="outcomes" class="font-sans text-2xl font-medium tracking-tight mb-5">
+              What you'll learn
+            </h2>
+            <ul class="grid gap-3 md:grid-cols-2">
+              {course.outcomes!.map((outcome) => (
+                <li class="flex items-start gap-2.5">
+                  <IconCircleCheck class="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
+                  <span>{outcome}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {course.description && course.description.length > 0 && (
+          <section aria-labelledby="about-course">
+            <h2 id="about-course" class="font-sans text-2xl font-medium tracking-tight mb-4">
+              About this course
+            </h2>
+            <div class="prose prose-lg max-w-none dark:prose-invert">
+              <PortableText portableText={course.description} />
+            </div>
+          </section>
+        )}
+
+        <section aria-labelledby="course-content">
+          <div class="mb-5 flex flex-wrap items-end justify-between gap-2">
+            <h2 id="course-content" class="font-sans text-2xl font-medium tracking-tight">
+              Course content
+            </h2>
+            <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+              {lessonCount} lessons · {formatDuration(totalMinutes)}
+            </p>
+          </div>
+          <CourseSyllabus course={course} />
+        </section>
+      </div>
+
+      <aside class="flex flex-col gap-8 lg:sticky lg:top-24 h-fit" data-pagefind-ignore>
+        {(course.prerequisites?.length ?? 0) > 0 && (
+          <section class="space-y-3">
+            <h2 class="font-sans text-lg font-medium tracking-tight">Before you start</h2>
+            <ul class="list-disc space-y-1.5 pl-5 text-sm text-muted-foreground marker:text-primary">
+              {course.prerequisites!.map((item) => <li>{item}</li>)}
+            </ul>
+          </section>
+        )}
+
+        {upcomingEvents.length > 0 && (
+          <section class="space-y-3">
+            <h2 class="font-sans text-lg font-medium tracking-tight">Join a live session</h2>
+            <ul class="space-y-2">
+              {upcomingEvents.map((event) => (
+                <li>
+                  <a
+                    href={`/events/${event.slug}/`}
+                    class="group flex items-start gap-3 rounded-xl border border-border/60 p-3 transition-colors hover:border-primary/50 hover:bg-secondary/50"
+                  >
+                    <span class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-secondary">
+                      <IconCalendarEvent class="size-4 text-primary" aria-hidden="true" />
+                    </span>
+                    <span class="min-w-0">
+                      <span class="block text-sm font-medium leading-snug group-hover:text-primary">
+                        {event.title}
+                      </span>
+                      <span class="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
+                        <FormattedDate date={new Date(event.eventStart)} />
+                      </span>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <ResourceList resources={course.resources} title="Course resources" />
+
+        <ShareBar
+          label="Share this course"
+          title={course.title}
+          text={course.summary}
+          url={coursePath(course)}
+        />
+      </aside>
+    </div>
+  </article>
+</PageLayout>
+
+<script>
+  import "@/scripts/course-progress";
+</script>

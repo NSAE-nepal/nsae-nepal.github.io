@@ -1,6 +1,8 @@
 import type { APIContext, GetStaticPaths } from "astro";
 import { type OgCard, renderOgPng } from "@/lib/og";
+import { courseStats, formatDuration, LEVEL_LABELS } from "@/lib/courses";
 import { getVacancies } from "@/sanity/lib/queries/careers";
+import { getCourses } from "@/sanity/lib/queries/courses";
 import { getEvents } from "@/sanity/lib/queries/events";
 import { getPosts } from "@/sanity/lib/queries/posts";
 import { formatDate } from "@/utils/datetime";
@@ -10,10 +12,11 @@ import { formatDate } from "@/utils/datetime";
  * use these when they have no cover image of their own (see `ogImagePath`).
  */
 export const getStaticPaths: GetStaticPaths = async () => {
-  const [posts, events, vacancies] = await Promise.all([
+  const [posts, events, vacancies, courses] = await Promise.all([
     getPosts(),
     getEvents(),
     getVacancies(),
+    getCourses(),
   ]);
 
   const date = (value?: string) =>
@@ -44,6 +47,23 @@ export const getStaticPaths: GetStaticPaths = async () => {
         meta: [vacancy.company?.name, vacancy.type].filter(Boolean).join(" · "),
       },
     })),
+    ...(courses ?? []).map((course) => {
+      const { lessonCount, totalMinutes } = courseStats(course);
+      return {
+        path: `courses/${course.slug}`,
+        card: {
+          kicker: "Course",
+          title: course.title,
+          meta: [
+            LEVEL_LABELS[course.level],
+            `${lessonCount} lesson${lessonCount === 1 ? "" : "s"}`,
+            formatDuration(totalMinutes),
+          ]
+            .filter(Boolean)
+            .join(" · "),
+        },
+      };
+    }),
   ];
 
   return cards

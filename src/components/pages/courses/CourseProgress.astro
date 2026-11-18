@@ -1,0 +1,44 @@
+---
+import { cn } from "@/lib/utils";
+
+/**
+ * Progress bar for one course, filled in by src/scripts/course-progress.ts.
+ * Hidden until the script confirms storage works.
+ */
+interface Props {
+  courseId: string;
+  lessonIds: string[];
+  /** Show nothing until at least one lesson is done (course cards). */
+  hideUntilStarted?: boolean;
+  class?: string;
+}
+
+const { courseId, lessonIds, hideUntilStarted = false, class: className } = Astro.props;
+---
+
+<div
+  hidden
+  data-progress-ui
+  data-course-progress
+  data-course-id={courseId}
+  data-lesson-ids={lessonIds.join(",")}
+  data-started="false"
+  class={cn("space-y-1.5", hideUntilStarted && "data-[started=false]:hidden", className)}
+  data-pagefind-ignore
+>
+  <div
+    role="progressbar"
+    aria-label="Course progress"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow="0"
+    class="h-1.5 w-full overflow-hidden rounded-full bg-border/60"
+  >
+    <div
+      data-progress-bar
+      class="h-full w-full origin-left scale-x-0 rounded-full bg-primary transition-transform duration-500 motion-reduce:transition-none"
+    >
+    </div>
+  </div>
+  <p data-progress-label class="font-mono text-[11px] uppercase tracking-wider text-muted-foreground"></p>
+</div>

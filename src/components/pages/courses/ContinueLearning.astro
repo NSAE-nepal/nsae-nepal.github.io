@@ -1,0 +1,46 @@
+---
+import { IconArrowRight, IconPlayerPlay } from "@tabler/icons-astro";
+import { courseLessons } from "@/lib/courses";
+import { cn } from "@/lib/utils";
+import type { Course } from "@/sanity/lib/queries/courses";
+
+/**
+ * "Continue where you left off" link for the most recently opened unfinished
+ * course. Filled in (and unhidden) by src/scripts/course-progress.ts.
+ */
+interface Props {
+  /** Every published course, so progress for deleted courses is ignored. */
+  courses: Pick<Course, "_id" | "modules">[];
+  class?: string;
+}
+
+const { courses, class: className } = Astro.props;
+const known = Object.fromEntries(
+  courses.map((course) => [course._id, courseLessons(course).map((lesson) => lesson._id)]),
+);
+---
+
+<a
+  hidden
+  data-continue-learning
+  data-continue-link
+  data-courses={JSON.stringify(known)}
+  href="/courses/page/1/"
+  class:list={["group flex items-center gap-4 rounded-2xl border border-primary/30 bg-primary/5 p-4 transition-colors hover:bg-primary/10 md:p-5", className]}
+  data-pagefind-ignore
+>
+  <span class="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+    <IconPlayerPlay class="size-5" aria-hidden="true" />
+  </span>
+  <span class="min-w-0 flex-1">
+    <span class="block font-mono text-[11px] uppercase tracking-widest text-primary">
+      Continue where you left off
+    </span>
+    <span class="block truncate font-medium" data-continue-lesson></span>
+    <span class="block truncate text-sm text-muted-foreground" data-continue-course></span>
+  </span>
+  <IconArrowRight
+    class="size-5 shrink-0 text-primary transition-transform group-hover:translate-x-1"
+    aria-hidden="true"
+  />
+</a>
