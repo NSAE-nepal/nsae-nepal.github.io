@@ -1,0 +1,33 @@
+---
+import { cn } from "@/lib/utils";
+
+/**
+ * "New" pill for items published since the visitor's previous visit.
+ * Rendered hidden; src/scripts/visit-tracker.ts reveals it in the browser
+ * (first-time visitors and no-JS visitors never see it).
+ */
+interface Props {
+  date?: string | null;
+  class?: string;
+}
+
+const { date, class: className } = Astro.props;
+---
+
+{
+  date && (
+    <span
+      hidden
+      data-new-badge
+      data-published={date}
+      data-pagefind-ignore
+      class={cn(
+        "inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-widest text-primary-foreground",
+        className,
+      )}
+    >
+      <span class="size-1.5 rounded-full bg-primary-foreground/90" aria-hidden="true" />
+      New
+    </span>
+  )
+}

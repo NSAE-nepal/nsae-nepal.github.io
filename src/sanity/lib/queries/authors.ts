@@ -1,5 +1,5 @@
 import { loadQuery } from "../load-query";
-import type { Post } from "./posts";
+import { type Post, READING_MINUTES_FIELD } from "./posts";
 
 export type SocialLink = {
 	handle?: string;
@@ -36,6 +36,7 @@ const POST_FIELDS = `
   publishedAt,
   featured,
   showToc,
+  ${READING_MINUTES_FIELD},
   "heroImage": heroImage.asset->url,
   "heroImageAlt": heroImage.alt,
   "authors": authors[]->{

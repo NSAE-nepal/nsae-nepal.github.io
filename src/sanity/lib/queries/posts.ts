@@ -3,6 +3,12 @@ import { loadQuery } from "../load-query";
 
 export type PostType = "blog" | "notice";
 
+/**
+ * Estimated reading time in whole minutes: plain text of the body at
+ * ~1000 characters (≈200 words) per minute. Null when there's no body.
+ */
+export const READING_MINUTES_FIELD = `"readingMinutes": round(length(pt::text(body)) / 1000)`;
+
 export type Category = {
 	_id: string;
 	title: string;
@@ -32,6 +38,7 @@ export type Post = {
 	authors: Authors[];
 	categories: Category[];
 	showToc: boolean;
+	readingMinutes?: number | null;
 };
 
 export type PostDetails = {
@@ -47,6 +54,7 @@ export type PostDetails = {
 	heroImage?: string;
 	heroImageAlt?: string;
 	body: PortableTextBlock[];
+	readingMinutes?: number | null;
 	authors: Authors[];
 	categories: Category[];
 };
@@ -66,6 +74,7 @@ export async function getPosts(type?: PostType): Promise<Post[]> {
     publishedAt,
     featured,
 	showToc,
+    ${READING_MINUTES_FIELD},
     "heroImage": heroImage.asset->url,
     "heroImageAlt": heroImage.alt,
 	"authors": authors[]->{
@@ -108,6 +117,7 @@ export async function getPostsDetails(slug: string): Promise<PostDetails> {
   publishedAt,
   featured,
   showToc,
+  ${READING_MINUTES_FIELD},
   body[] {
     ...,
     _type == "quizReference" => {

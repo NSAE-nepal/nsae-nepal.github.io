@@ -5,6 +5,7 @@ import {
   IconPoint,
 } from "@tabler/icons-astro";
 import FormattedDate from "@/components/FormattedDate.astro";
+import NewBadge from "@/components/NewBadge.astro";
 import type { Vacancy } from "@/sanity/lib/queries/careers";
 import Badge from "../Badge.astro";
 
@@ -41,6 +42,7 @@ const isClosed = data.status === "closed" || hasExpired;
       <Badge variant="outline">
         {data.company.name}
       </Badge>
+      {!isClosed && <NewBadge date={data.postedDate} />}
     </div>
     {
       closingDate && !isClosed && (

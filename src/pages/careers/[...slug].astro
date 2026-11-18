@@ -11,6 +11,7 @@ import FormattedDate from "@/components/FormattedDate.astro";
 import PortableText from "@/components/PortableText.astro";
 import JsonLd from "@/components/seo/JsonLd.astro";
 import PageLayout from "@/layouts/PageLayout.astro";
+import ShareBar from "@/components/ShareBar.astro";
 import { breadcrumbLd, jobPostingLd } from "@/lib/structured-data";
 import { getVacancies, getVacancyDetails } from "@/sanity/lib/queries/careers";
 
@@ -153,6 +154,13 @@ const structuredData = [
     <div class="prose max-w-6xl mx-auto dark:prose-invert">
       <PortableText portableText={vacancy.body} />
     </div>
+
+    <ShareBar
+      class="justify-center"
+      label="Share this vacancy"
+      title={vacancy.title}
+      url={`/careers/${vacancy.slug}/`}
+    />
 
     <div class="border-t pt-8 space-y-4" data-pagefind-ignore>
       {
