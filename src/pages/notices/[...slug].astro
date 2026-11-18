@@ -1,24 +1,29 @@
 ---
 import PortableText from "@/components/PortableText.astro";
 import TableOfContents from "@/components/TableOfContents.astro";
-import { getPosts, getPostsDetails } from "@/sanity/lib/queries/posts";
+import { getRelatedPosts } from "@/lib/related-posts";
+import { getPosts, getPostsDetails, type Post } from "@/sanity/lib/queries/posts";
 import PostLayout from "../../layouts/PostLayout.astro";
 
 export async function getStaticPaths() {
-  const posts = await getPosts("notice");
+  // Fetch every post once: related suggestions may come from either type.
+  const allPosts = (await getPosts()) ?? [];
 
-  return posts.map((post) => ({
-    params: {
-      slug: post.slug,
-    },
-  }));
+  return allPosts
+    .filter((post) => post.type === "notice")
+    .map((post) => ({
+      params: { slug: post.slug },
+      props: { related: getRelatedPosts(post, allPosts, 3) },
+    }));
 }
+
 const { slug } = Astro.params;
+const { related } = Astro.props as { related: Post[] };
 
 const post = await getPostsDetails(slug!);
 ---
 
-<PostLayout {...post}>
+<PostLayout {...post} related={related}>
   {
     post.body && (
       <Fragment slot="toc">
