@@ -31,6 +31,7 @@ const totalPoints = quiz.questions
 
 <div
   class="quiz"
+  data-quiz-slug={quiz.slug}
   data-passing-score={quiz.settings.passingScore}
   data-shuffle-questions={quiz.settings.shuffleQuestions}
   data-shuffle-options={quiz.settings.shuffleOptions}
@@ -282,7 +283,13 @@ const totalPoints = quiz.questions
     ...FILL_INCORRECT,
   ];
 
-  document.querySelectorAll<HTMLElement>(".quiz").forEach((container) => {
+  // Runs on every page load (view transitions keep this module alive), but
+  // each quiz is wired up only once.
+  const initQuizzes = () =>
+    document
+      .querySelectorAll<HTMLElement>(".quiz:not([data-quiz-ready])")
+      .forEach((container) => {
+    container.dataset.quizReady = "true";
     const form = container.querySelector<HTMLFormElement>(".quiz-form")!;
     const resultEl = container.querySelector<HTMLElement>(".quiz-result")!;
     const submitBtn =
@@ -607,6 +614,14 @@ const totalPoints = quiz.questions
         totalPoints === 0 ? 0 : (earnedPoints / totalPoints) * 100;
       const clampedPercentage = Math.min(Math.max(percentage, 0), 100);
 
+      // Lets course pages record a passed quiz (see course-progress.ts).
+      container.dispatchEvent(
+        new CustomEvent("quiz:complete", {
+          bubbles: true,
+          detail: { slug: container.dataset.quizSlug, passed, percentage },
+        }),
+      );
+
       const thresholdPercentage =
         totalPoints === 0 ? 0 : (passingScore / totalPoints) * 100;
       const clampedThreshold = Math.min(Math.max(thresholdPercentage, 0), 100);
@@ -693,4 +708,6 @@ const totalPoints = quiz.questions
       form.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   });
+
+  document.addEventListener("astro:page-load", initQuizzes);
 </script>
