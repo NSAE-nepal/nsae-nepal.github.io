@@ -20,6 +20,7 @@ export type MembershipStatus =
 export type NamePrefix = "er" | "dr" | "prof_dr" | "mr" | "ms";
 
 export type CommitteeMember = {
+	_key: string;
 	name: string;
 	position: CommitteePosition;
 	membership?: MembershipStatus;
@@ -53,11 +54,19 @@ export const positionLabel = (position: string) =>
 		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
 		.join(" ");
 
+const isOfficeBearer = (position?: string) =>
+	(OFFICE_BEARER_POSITIONS as readonly string[]).includes(position ?? "");
+
 /** The committee's office bearers, most senior first. */
-export function officeBearers(members: CommitteeMemberPreview[]) {
+export function officeBearers<T extends { position?: string }>(members: T[]) {
 	return OFFICE_BEARER_POSITIONS.flatMap((position) =>
 		members.filter((member) => member.position === position),
 	);
+}
+
+/** Everyone else (members, corporate members), in Studio order. */
+export function otherMembers<T extends { position?: string }>(members: T[]) {
+	return members.filter((member) => !isOfficeBearer(member.position));
 }
 
 export type Committee = {
@@ -118,6 +127,7 @@ export async function getCommitteeDetails(
   title,
   committeeIteration,
   committeeMembers[] {
+    _key,
     name,
     position,
     membership,
@@ -150,6 +160,7 @@ export async function getLatestCommitteeDetails(): Promise<CommitteeDetails> {
   title,
   committeeIteration,
   committeeMembers[] {
+    _key,
     name,
     position,
     membership,
