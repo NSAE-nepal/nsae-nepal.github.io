@@ -1,102 +1,197 @@
 ---
-import { formatPrefix } from "@/lib/utils";
-import { Image } from "astro:assets";
-import { IconArrowLeft, IconUsersGroup } from "@tabler/icons-astro";
+import {
+  IconArrowLeft,
+  IconArrowNarrowLeft,
+  IconArrowNarrowRight,
+  IconUsersGroup,
+} from "@tabler/icons-astro";
+import type { GetStaticPaths } from "astro";
 import Badge from "@/components/astro/Badge.astro";
+import CommitteeMemberCard from "@/components/pages/committee/CommitteeMemberCard.astro";
+import JsonLd from "@/components/seo/JsonLd.astro";
 import PageLayout from "@/layouts/PageLayout.astro";
+import { breadcrumbLd } from "@/lib/structured-data";
+import { formatName, ordinal } from "@/lib/utils";
 import {
   getCommitteeDetails,
   getCommittees,
+  officeBearers,
+  otherMembers,
 } from "@/sanity/lib/queries/committee";
-import { SITE_TITLE } from "../../consts";
-import { sanityImage } from "@/sanity/lib/url-for-image";
 
-export async function getStaticPaths() {
+export const getStaticPaths = (async () => {
+  // Newest first: index 0 is the sitting committee.
   const committees = await getCommittees();
+  const neighbour = (index: number) => {
+    const committee = committees[index];
+    return committee
+      ? { title: committee.title, iteration: committee.committeeIteration }
+      : undefined;
+  };
 
-  return committees.map((committee) => ({
-    params: {
-      slug: String(committee.committeeIteration),
+  return committees.map((committee, index) => ({
+    params: { slug: String(committee.committeeIteration) },
+    props: {
+      isCurrent: index === 0,
+      newer: neighbour(index - 1),
+      older: neighbour(index + 1),
     },
   }));
-}
+}) satisfies GetStaticPaths;
 
-const { slug } = Astro.params;
+const { isCurrent, newer, older } = Astro.props;
+const committee = await getCommitteeDetails(Number(Astro.params.slug));
+const members = committee.committeeMembers ?? [];
+const bearers = officeBearers(members);
+const others = otherMembers(members);
+const president = bearers.find((member) => member.position === "president");
+const term = `${ordinal(committee.committeeIteration)} committee`;
+const path = `/past-committee/${committee.committeeIteration}/`;
 
-const committee = await getCommitteeDetails(Number(slug!));
-
-function formatPosition(position: string) {
-  return position
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
+const summary = [
+  president &&
+    `${isCurrent ? "Led" : "Was led"} by ${formatName(president.name, president.prefix)} as President`,
+  `${members.length} member${members.length === 1 ? "" : "s"}`,
+]
+  .filter(Boolean)
+  .join(", with ");
+const description = `${committee.title}: ${summary}.`;
+const site = Astro.site!;
+const committeeHref = (iteration: number) => `/past-committee/${iteration}/`;
 ---
 
-<PageLayout
-  title={`${committee.title} | ${SITE_TITLE}`}
-  description={`Meet the members of the ${committee.title}`}
-  dataPagefindIgnore="all"
->
-  <article class="py-8 space-y-10">
-    <a
-      href="/past-committee/page/1"
-      class="px-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors mb-4"
-    >
-      <IconArrowLeft class="size-4" /> Back to Committees
-    </a>
-    <header class="flex flex-col text-center gap-6 mb-16">
-      <div class="space-y-4 items-center">
-        <Badge
-          variant={"secondary"}
-          size={"sm"}
-          class="font-mono text-xs uppercase tracking-widest"
-        >
-          Committee
-        </Badge>
+<PageLayout title={committee.title} description={description}>
+  <JsonLd
+    slot="head"
+    data={breadcrumbLd(
+      [
+        { name: "Home", path: "/" },
+        { name: "Past Committees", path: "/past-committee/page/1/" },
+        { name: committee.title, path },
+      ],
+      site,
+    )}
+  />
+
+  <article class="py-8 space-y-16" data-pagefind-body data-pagefind-filter="type:Committee">
+    <header class="space-y-8 border-b border-border pb-10">
+      <a
+        data-pagefind-ignore
+        href="/past-committee/page/1/"
+        class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors px-4"
+      >
+        <IconArrowLeft class="size-4" />
+        Back to All Committees
+      </a>
+
+      <div class="space-y-4 text-center">
+        <div class="flex items-center justify-center gap-3" data-pagefind-ignore>
+          <span class="font-sans text-5xl md:text-6xl font-medium leading-none tracking-tighter text-primary">
+            {ordinal(committee.committeeIteration)}
+          </span>
+          {
+            isCurrent && (
+              <Badge size="xs" class="font-mono uppercase tracking-widest">
+                Current
+              </Badge>
+            )
+          }
+        </div>
         <h1
-          class="font-sans text-4xl md:text-6xl font-medium tracking-tighter text-balance"
+          class="font-sans text-3xl md:text-5xl font-medium tracking-tighter"
+          data-pagefind-meta="title"
         >
           {committee.title}
         </h1>
-        <div
-          class="flex items-center justify-center gap-2 text-muted-foreground"
+        <p
+          class="font-sans text-lg text-muted-foreground leading-relaxed max-w-3xl mx-auto"
+          data-pagefind-meta="sub_title"
         >
-          <IconUsersGroup class="size-5" />
-          <span class="font-mono text-xs uppercase tracking-widest">
-            {committee.committeeMembers.length} Members
-          </span>
-        </div>
+          {summary}.
+        </p>
+      </div>
+
+      <div
+        class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-mono text-xs uppercase tracking-widest text-muted-foreground"
+        data-pagefind-ignore
+      >
+        <span>{term}</span>
+        <span class="flex items-center gap-1.5 border-l border-border/50 pl-6">
+          <IconUsersGroup class="size-4" aria-hidden="true" />
+          {members.length} member{members.length === 1 ? "" : "s"}
+        </span>
       </div>
     </header>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-      {
-        committee.committeeMembers.map((member) => (
-          <div class="relative overflow-hidden rounded-lg shadow-lg group">
-            {member.profileImage ? (
-              <Image
-                src={sanityImage(member.profileImage, { width: 600 })}
-                inferSize
-                alt={`Profile picture of ${member.name}`}
-                class="aspect-3/4 w-full object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-            ) : (
-              <div class="aspect-3/4 w-full bg-secondary flex items-center justify-center" />
-            )}
+    {
+      bearers.length > 0 && (
+        <section aria-labelledby="office-bearers" class="space-y-8">
+          <h2 id="office-bearers" class="text-center font-sans text-2xl font-medium tracking-tight">
+            Office bearers
+          </h2>
+          <ul class="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-5" role="list">
+            {bearers.map((member) => (
+              <li>
+                <CommitteeMemberCard member={member} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
 
-            <div class="absolute bottom-4 right-4 bg-black/70 p-3 rounded-md text-white">
-              <span class="block text-sm font-semibold capitalize">
-                {member.prefix?.length ? `${formatPrefix(member.prefix)} ` : null}
-                {member.name}
+    {
+      others.length > 0 && (
+        <section aria-labelledby="committee-members" class="space-y-8">
+          <h2 id="committee-members" class="text-center font-sans text-2xl font-medium tracking-tight">
+            Committee members
+          </h2>
+          <ul class="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-5" role="list">
+            {others.map((member) => (
+              <li>
+                <CommitteeMemberCard member={member} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      (newer || older) && (
+        <nav
+          aria-label="Other committees"
+          class="grid gap-4 border-t border-border/50 pt-10 sm:grid-cols-2"
+          data-pagefind-ignore
+        >
+          {older ? (
+            <a
+              href={committeeHref(older.iteration)}
+              class="group flex flex-col gap-1 rounded-2xl border border-border/60 p-5 transition-colors hover:border-primary/50 hover:bg-secondary/50"
+            >
+              <span class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+                <IconArrowNarrowLeft class="size-4 transition-transform group-hover:-translate-x-1" />
+                Previous committee
               </span>
-              <span class="block text-xs">
-                {formatPosition(member.position)}
+              <span class="font-medium">{older.title}</span>
+            </a>
+          ) : (
+            <span class="hidden sm:block" />
+          )}
+          {newer && (
+            <a
+              href={committeeHref(newer.iteration)}
+              class="group flex flex-col items-end gap-1 rounded-2xl border border-border/60 p-5 text-right transition-colors hover:border-primary/50 hover:bg-secondary/50"
+            >
+              <span class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+                Next committee
+                <IconArrowNarrowRight class="size-4 transition-transform group-hover:translate-x-1" />
               </span>
-            </div>
-          </div>
-        ))
-      }
-    </div>
+              <span class="font-medium">{newer.title}</span>
+            </a>
+          )}
+        </nav>
+      )
+    }
   </article>
 </PageLayout>

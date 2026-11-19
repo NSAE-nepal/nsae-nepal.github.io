@@ -25,6 +25,14 @@ export function formatName(name: string, prefix?: string[] | string | null) {
   return formatted ? `${formatted} ${name}` : name;
 }
 
+/** English ordinal: 1 → "1st", 12 → "12th", 22 → "22nd". */
+export function ordinal(n: number) {
+  const tens = n % 100;
+  const suffix =
+    tens >= 11 && tens <= 13 ? "th" : ({ 1: "st", 2: "nd", 3: "rd" } as Record<number, string>)[n % 10] ?? "th";
+  return `${n}${suffix}`;
+}
+
 /** "6 min read" for a reading-time estimate; empty when unknown. */
 export function formatReadingTime(minutes?: number | null) {
   if (minutes == null) return "";
