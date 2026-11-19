@@ -26,3 +26,5 @@ pnpm-debug.log*
 .history
 .vscode
 public/pagefind/
+# Local planning notes
+plans/

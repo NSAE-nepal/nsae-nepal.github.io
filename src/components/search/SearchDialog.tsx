@@ -63,7 +63,7 @@ const SUGGESTIONS = [
 	{ href: "/notices/page/1", label: "Notices", Icon: IconFileText },
 	{ href: "/events/page/1", label: "Events", Icon: IconCalendar },
 	{ href: "/minutes/page/1", label: "Minutes", Icon: IconFileText },
-	{ href: "/careers/page/1", label: "Careers", Icon: IconBriefcase },
+	{ href: "/careers/page/1", label: "Opportunities", Icon: IconBriefcase },
 ];
 
 const ABOUT_LINKS = [

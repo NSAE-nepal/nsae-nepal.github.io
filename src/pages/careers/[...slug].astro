@@ -1,19 +1,28 @@
 ---
 import {
   IconArrowLeft,
+  IconArrowUpRight,
   IconBuilding,
   IconCalendarWeek,
+  IconCoin,
   IconMapPin,
   IconPoint,
 } from "@tabler/icons-astro";
 import Badge from "@/components/astro/Badge.astro";
+import Button from "@/components/astro/Button/Button.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
 import PortableText from "@/components/PortableText.astro";
 import JsonLd from "@/components/seo/JsonLd.astro";
 import PageLayout from "@/layouts/PageLayout.astro";
 import ShareBar from "@/components/ShareBar.astro";
+import {
+  opportunitiesPath,
+  opportunityPath,
+  opportunityTypeLabel,
+} from "@/lib/opportunities";
 import { breadcrumbLd, jobPostingLd } from "@/lib/structured-data";
 import { getVacancies, getVacancyDetails } from "@/sanity/lib/queries/careers";
+import { getOpportunityStatus } from "@/utils/datetime";
 
 export async function getStaticPaths() {
   const allVacancies = await getVacancies();
@@ -33,32 +42,28 @@ const {
   title,
   description,
   type,
-  status,
+  opportunityType,
   company,
   location,
   postedDate,
   closingDate,
+  value,
+  applyUrl,
 } = vacancy;
 
-const today = new Date();
-today.setHours(0, 0, 0, 0);
-
-const vacancyClosingDate = closingDate ? new Date(closingDate) : null;
-vacancyClosingDate?.setHours(0, 0, 0, 0);
-
-const hasExpired = vacancyClosingDate ? vacancyClosingDate < today : false;
-
-const isClosed = status === "closed" || hasExpired;
+const { isClosed, isClosingSoon } = getOpportunityStatus(vacancy);
+const isJob = opportunityType === "job";
+const kindLabel = opportunityTypeLabel(opportunityType);
 const site = Astro.site!;
 
-// Only advertise open positions to job search engines.
+// Only advertise open jobs to job search engines (JobPosting is jobs-only).
 const structuredData = [
-  ...(isClosed ? [] : [jobPostingLd(vacancy, site)]),
+  ...(isJob && !isClosed ? [jobPostingLd(vacancy, site)] : []),
   breadcrumbLd(
     [
       { name: "Home", path: "/" },
-      { name: "Careers", path: "/careers/page/1/" },
-      { name: title, path: `/careers/${vacancy.slug}/` },
+      { name: "Opportunities", path: opportunitiesPath() },
+      { name: title, path: opportunityPath(vacancy) },
     ],
     site,
   ),
@@ -71,18 +76,28 @@ const structuredData = [
   image={`/og/careers/${vacancy.slug}.png`}
 >
   <JsonLd slot="head" data={structuredData} />
-  <article class="py-8 space-y-10" data-pagefind-body data-pagefind-filter="type:Careers">
+  <article class="py-8 space-y-10" data-pagefind-body data-pagefind-filter="type:Opportunity">
     <a
       data-pagefind-ignore
-      href="/careers/page/1"
+      href={opportunitiesPath()}
       class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors px-4"
     >
-      <IconArrowLeft class="size-4" /> Back to All Vacancies
+      <IconArrowLeft class="size-4" /> Back to all opportunities
     </a>
     <header class="space-y-6 text-center border-b pb-8">
       <div class="flex flex-wrap justify-center gap-2">
-        {isClosed && <Badge variant={"destructive"}>Position Closed</Badge>}
-        <Badge variant={"secondary"}> {type} </Badge>
+        {isClosed && <Badge variant={"destructive"}>Closed</Badge>}
+        {
+          isClosingSoon && (
+            <Badge variant="outline" class="border-destructive/50 text-destructive">
+              Closing soon
+            </Badge>
+          )
+        }
+        <a href={opportunitiesPath(opportunityType)} data-pagefind-ignore>
+          <Badge variant={"secondary"} class="hover:bg-secondary/80">{kindLabel}</Badge>
+        </a>
+        {isJob && type && <Badge variant={"secondary"}>{type}</Badge>}
         {
           company?.name && (
             <Badge variant="outline" data-pagefind-meta="sub_title">
@@ -122,10 +137,23 @@ const structuredData = [
           )
         }
 
-        <div data-pagefind-ignore class="flex items-center gap-1.5">
-          <IconMapPin class="size-4" />
-          <span>{location}</span>
-        </div>
+        {
+          location && (
+            <div data-pagefind-ignore class="flex items-center gap-1.5">
+              <IconMapPin class="size-4" />
+              <span>{location}</span>
+            </div>
+          )
+        }
+
+        {
+          value && (
+            <div class="flex items-center gap-1.5">
+              <IconCoin class="size-4" />
+              <span>{value}</span>
+            </div>
+          )
+        }
 
         <div class="flex items-center gap-1.5">
           <IconCalendarWeek class="size-4" />
@@ -157,24 +185,43 @@ const structuredData = [
 
     <ShareBar
       class="justify-center"
-      label="Share this vacancy"
+      label="Share this opportunity"
       title={vacancy.title}
-      url={`/careers/${vacancy.slug}/`}
+      url={opportunityPath(vacancy)}
     />
 
     <div class="border-t pt-8 space-y-4" data-pagefind-ignore>
       {
         isClosed ? (
           <div class="p-4 bg-destructive/10 text-destructive rounded-lg text-center">
-            <p class="font-medium">This position is currently closed.</p>
+            <p class="font-medium">This {isJob ? "position" : "opportunity"} is closed.</p>
           </div>
         ) : (
           <div class="flex flex-col items-center text-center gap-4">
-            <h3 class="text-xl font-semibold">Interested in this role?</h3>
+            <h3 class="text-xl font-semibold">
+              Interested in this {isJob ? "role" : kindLabel.toLowerCase()}?
+            </h3>
             <p class="text-muted-foreground text-sm">
-              Please review the requirements above and apply via the provided
-              method.
+              {
+                applyUrl
+                  ? "Review the details above, then apply before the deadline."
+                  : "Please review the details above and apply via the method described."
+              }
             </p>
+            {
+              applyUrl && (
+                <Button
+                  href={applyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="lg"
+                  class="rounded-full"
+                >
+                  {isJob ? "Apply now" : "Apply / learn more"}
+                  <IconArrowUpRight />
+                </Button>
+              )
+            }
           </div>
         )
       }

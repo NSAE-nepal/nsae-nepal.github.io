@@ -1,3 +1,5 @@
+import { CLOSING_SOON_DAYS } from "@/lib/opportunities";
+
 export const formatDate = (
   date: Date | undefined,
   options: Intl.DateTimeFormatOptions = {},
@@ -43,5 +45,39 @@ export const getEventStatus = (event: EventDates, now = new Date()) => {
     hasEnded: endsAt < now,
     isRegistrationOpen:
       Boolean(event.registrationLink) && now < registrationClosesAt,
+  };
+};
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** Midnight UTC of the calendar day `date` falls on in Nepal, for day maths. */
+const nepalDay = (date: Date) =>
+  Date.parse(date.toLocaleDateString("en-CA", { timeZone: "Asia/Kathmandu" }));
+
+type OpportunityDates = {
+  status?: "open" | "closed";
+  closingDate?: string;
+};
+
+/**
+ * Open/closed state of a careers item, evaluated at build time (the daily
+ * deploy keeps it current). An item stays open through its whole closing day
+ * in Nepal time.
+ */
+export const getOpportunityStatus = (
+  item: OpportunityDates,
+  now = new Date(),
+  closingSoonDays = CLOSING_SOON_DAYS,
+) => {
+  const today = nepalDay(now);
+  const closesOn = item.closingDate ? nepalDay(new Date(item.closingDate)) : null;
+  const hasExpired = closesOn !== null && closesOn < today;
+  const isClosed = item.status === "closed" || hasExpired;
+  const daysLeft =
+    closesOn !== null && !isClosed ? Math.round((closesOn - today) / DAY_MS) : null;
+
+  return {
+    isClosed,
+    isClosingSoon: daysLeft !== null && daysLeft <= closingSoonDays,
   };
 };

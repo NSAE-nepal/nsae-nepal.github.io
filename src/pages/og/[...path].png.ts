@@ -1,5 +1,6 @@
 import type { APIContext, GetStaticPaths } from "astro";
 import { type OgCard, renderOgPng } from "@/lib/og";
+import { opportunityTypeLabel } from "@/lib/opportunities";
 import { courseStats, formatDuration, LEVEL_LABELS } from "@/lib/courses";
 import { getVacancies } from "@/sanity/lib/queries/careers";
 import { getCourses } from "@/sanity/lib/queries/courses";
@@ -42,9 +43,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
     ...(vacancies ?? []).map((vacancy) => ({
       path: `careers/${vacancy.slug}`,
       card: {
-        kicker: "Careers",
+        kicker: opportunityTypeLabel(vacancy.opportunityType),
         title: vacancy.title,
-        meta: [vacancy.company?.name, vacancy.type].filter(Boolean).join(" · "),
+        meta: [vacancy.company?.name, vacancy.value ?? vacancy.type]
+          .filter(Boolean)
+          .join(" · "),
       },
     })),
     ...(courses ?? []).map((course) => {

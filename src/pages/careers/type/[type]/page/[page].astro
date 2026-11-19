@@ -1,0 +1,28 @@
+---
+import type { GetStaticPaths } from "astro";
+import CareersListing from "@/components/pages/careers/CareersListing.astro";
+import { PAGE_SIZE } from "@/consts";
+import { summarizeOpportunityTypes } from "@/lib/opportunities";
+import { getVacancies } from "@/sanity/lib/queries/careers";
+
+// One paginated listing per opportunity type that has items.
+export const getStaticPaths = (async ({ paginate }) => {
+  const opportunities = (await getVacancies()) ?? [];
+  const types = summarizeOpportunityTypes(opportunities);
+
+  return types.flatMap((type) =>
+    paginate(
+      opportunities.filter((item) => item.opportunityType === type.value),
+      {
+        pageSize: PAGE_SIZE,
+        params: { type: type.value },
+        props: { types, activeType: type },
+      },
+    ),
+  );
+}) satisfies GetStaticPaths;
+
+const { page, types, activeType } = Astro.props;
+---
+
+<CareersListing page={page} types={types} activeType={activeType} />

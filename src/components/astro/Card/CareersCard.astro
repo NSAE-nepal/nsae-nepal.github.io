@@ -1,12 +1,15 @@
 ---
 import {
   IconArrowNarrowRight,
+  IconCoin,
   IconMapPin,
   IconPoint,
 } from "@tabler/icons-astro";
 import FormattedDate from "@/components/FormattedDate.astro";
 import NewBadge from "@/components/NewBadge.astro";
+import { opportunityPath, opportunityTypeLabel } from "@/lib/opportunities";
 import type { Vacancy } from "@/sanity/lib/queries/careers";
+import { getOpportunityStatus } from "@/utils/datetime";
 import Badge from "../Badge.astro";
 
 type Props = {
@@ -14,17 +17,14 @@ type Props = {
   class?: string;
 };
 
-const { data, class: className } = Astro.props;
-
-const today = new Date();
-today.setHours(0, 0, 0, 0);
-
+const { data } = Astro.props;
+const { isClosed, isClosingSoon } = getOpportunityStatus(data);
 const closingDate = data.closingDate ? new Date(data.closingDate) : null;
-closingDate?.setHours(0, 0, 0, 0);
-
-const hasExpired = closingDate ? closingDate < today : false;
-
-const isClosed = data.status === "closed" || hasExpired;
+// Jobs show their employment type ("Full-time"); everything else its kind.
+const kind =
+  data.opportunityType === "job" && data.type
+    ? data.type
+    : opportunityTypeLabel(data.opportunityType);
 ---
 
 <article
@@ -37,11 +37,16 @@ const isClosed = data.status === "closed" || hasExpired;
         variant={"secondary"}
         class={"tracking-wide first-letter:capitalize"}
       >
-        {data.type}
+        {kind}
       </Badge>
       <Badge variant="outline">
         {data.company.name}
       </Badge>
+      {isClosingSoon && (
+        <Badge variant="outline" class="border-destructive/50 text-destructive">
+          Closing soon
+        </Badge>
+      )}
       {!isClosed && <NewBadge date={data.postedDate} />}
     </div>
     {
@@ -52,7 +57,7 @@ const isClosed = data.status === "closed" || hasExpired;
         </span>
       )
     }
-    {isClosed && <Badge variant={"destructive"}>Position Closed</Badge>}
+    {isClosed && <Badge variant={"destructive"}>Closed</Badge>}
   </div>
 
   <h3
@@ -62,13 +67,27 @@ const isClosed = data.status === "closed" || hasExpired;
   </h3>
 
   <div class="flex flex-row items-center justify-between">
-    <div class="flex items-center gap-1.5 text-sm text-muted-foreground">
-      <IconMapPin class="size-4" />
-      <span>{data.location}</span>
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+      {
+        data.location && (
+          <span class="flex items-center gap-1.5">
+            <IconMapPin class="size-4" />
+            {data.location}
+          </span>
+        )
+      }
+      {
+        data.value && (
+          <span class="flex items-center gap-1.5">
+            <IconCoin class="size-4" />
+            {data.value}
+          </span>
+        )
+      }
     </div>
     <a
       class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest hover:text-primary transition-colors leading-none"
-      href={`/careers/${data.slug}/`}
+      href={opportunityPath(data)}
     >
       <span class="translate-y-[1px]">Learn more</span>
       <IconArrowNarrowRight class="w-4 h-4 shrink-0" />

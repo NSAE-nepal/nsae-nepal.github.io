@@ -1,4 +1,6 @@
 import type { PortableTextBlock } from "sanity";
+import type { OpportunityType } from "@/lib/opportunities";
+import { getOpportunityStatus } from "@/utils/datetime";
 import { loadQuery } from "../load-query";
 
 export type EmploymentType =
@@ -19,11 +21,15 @@ export type Vacancy = {
 	_id: string;
 	title: string;
 	slug: string;
+	opportunityType: OpportunityType;
 	location?: string;
-	type: EmploymentType;
+	/** Employment type; only set for jobs. */
+	type?: EmploymentType;
 	status: VacancyStatus;
 	postedDate: string;
 	closingDate?: string;
+	value?: string;
+	applyUrl?: string;
 	description?: string;
 	company: Company;
 };
@@ -32,16 +38,24 @@ export type VacancyDetails = {
 	_id: string;
 	title: string;
 	slug: string;
+	opportunityType: OpportunityType;
 	location?: string;
-	type: EmploymentType;
+	/** Employment type; only set for jobs. */
+	type?: EmploymentType;
 	status: VacancyStatus;
 	postedDate: string;
 	closingDate?: string;
+	value?: string;
+	applyUrl?: string;
 	description?: string;
 	company: Company;
 	body?: PortableTextBlock[];
 };
 
+/**
+ * Every opportunity, newest first, with the ones still open (as of the build)
+ * ahead of closed and expired ones.
+ */
 export async function getVacancies(status?: VacancyStatus): Promise<Vacancy[]> {
 	const VACANCIES_QUERY = `*[
     _type == "careers" &&
@@ -51,11 +65,14 @@ export async function getVacancies(status?: VacancyStatus): Promise<Vacancy[]> {
     _id,
     title,
     "slug": slug.current,
+    "opportunityType": coalesce(opportunityType, "job"),
     location,
     type,
     status,
     postedDate,
     closingDate,
+    value,
+    applyUrl,
     description,
     "company": {
       "name": company.name,
@@ -69,7 +86,8 @@ export async function getVacancies(status?: VacancyStatus): Promise<Vacancy[]> {
 		params: { status: (status ?? null) as unknown as string },
 	});
 
-	return data;
+	const isClosed = (vacancy: Vacancy) => getOpportunityStatus(vacancy).isClosed;
+	return [...(data ?? [])].sort((a, b) => Number(isClosed(a)) - Number(isClosed(b)));
 }
 
 export async function getVacancyDetails(slug: string): Promise<VacancyDetails> {
@@ -82,11 +100,14 @@ export async function getVacancyDetails(slug: string): Promise<VacancyDetails> {
   _id,
   title,
   "slug": slug.current,
+  "opportunityType": coalesce(opportunityType, "job"),
   location,
   type,
   status,
   postedDate,
   closingDate,
+  value,
+  applyUrl,
   description,
   body,
   "company": {
