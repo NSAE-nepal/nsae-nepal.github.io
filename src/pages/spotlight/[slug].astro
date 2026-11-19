@@ -13,8 +13,8 @@ import type { GetStaticPaths } from "astro";
 import Avatar from "@/components/astro/Avatar/Avatar.astro";
 import AvatarFallback from "@/components/astro/Avatar/AvatarFallback.astro";
 import AvatarImage from "@/components/astro/Avatar/AvatarImage.astro";
-import Badge from "@/components/astro/Badge.astro";
 import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
+import Categories from "@/components/Categories.astro";
 import SpotlightCard from "@/components/astro/Card/SpotlightCard.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
 import PortableText from "@/components/PortableText.astro";
@@ -28,6 +28,7 @@ import {
   getSpotlightDetails,
   getSpotlights,
   SPOTLIGHTS_PATH,
+  specializationTags,
   spotlightPath,
 } from "@/sanity/lib/queries/spotlight";
 import { sanityImage } from "@/sanity/lib/url-for-image";
@@ -143,13 +144,7 @@ const socials = Object.entries(member.socials ?? {}).flatMap(([platform, social]
 
   {
     spotlight.specializations.length > 0 ? (
-      <div slot="meta-start" class="flex flex-wrap items-center gap-2" data-pagefind-ignore>
-        {spotlight.specializations.map((tag) => (
-          <Badge size="xs" variant="secondary" class="tracking-wide">
-            {tag}
-          </Badge>
-        ))}
-      </div>
+      <Categories slot="meta-start" categories={specializationTags(spotlight)} showAll />
     ) : (
       <div slot="meta-start" />
     )

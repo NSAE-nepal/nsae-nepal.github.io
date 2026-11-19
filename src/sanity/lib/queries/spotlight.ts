@@ -46,6 +46,10 @@ export type SpotlightDetails = Spotlight & {
 };
 
 export const spotlightPath = (spotlight: { slug: string }) => `/spotlight/${spotlight.slug}/`;
+
+/** Specialization tags in the shape the shared `Categories` badges expect. */
+export const specializationTags = (spotlight: { specializations: string[] }) =>
+	spotlight.specializations.map((title) => ({ _id: title, title }));
 export const SPOTLIGHTS_PATH = "/spotlight/page/1/";
 
 const SPOTLIGHT_FIELDS = `
