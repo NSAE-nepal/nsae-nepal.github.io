@@ -1,4 +1,5 @@
 import type { PortableTextBlock } from "sanity";
+import type { CourseResource } from "./courses";
 import { loadQuery } from "../load-query";
 
 export type ScheduleItem = {
@@ -112,6 +113,23 @@ export type Event = {
 	registrationLink?: string;
 	registrationDeadline?: string;
 	publishedAt?: string;
+	/** Has recap content (summary, photos, recordings or materials). */
+	hasRecap: boolean;
+};
+
+export type GalleryImage = {
+	_key: string;
+	url: string;
+	alt?: string;
+	caption?: string;
+	width?: number;
+	height?: number;
+};
+
+export type Recording = {
+	_key: string;
+	url: string;
+	caption?: string;
 };
 
 export type EventDetails = Event & {
@@ -119,7 +137,38 @@ export type EventDetails = Event & {
 	instructors?: Instructor[];
 	contactPersons?: ContactPerson[];
 	body?: PortableTextBlock[];
+	recapSummary?: PortableTextBlock[];
+	attendance?: number;
+	gallery: GalleryImage[];
+	recordings: Recording[];
+	materials: CourseResource[];
 };
+
+const HAS_RECAP_FIELD = `"hasRecap": count(recapSummary) > 0 ||
+    count(gallery[defined(asset)]) > 0 ||
+    count(recordings[defined(url)]) > 0 ||
+    count(materials[defined(file.asset)]) > 0`;
+
+const RECAP_FIELDS = `
+  recapSummary,
+  attendance,
+  "gallery": gallery[defined(asset)]{
+    _key,
+    "url": asset->url,
+    alt,
+    caption,
+    "width": asset->metadata.dimensions.width,
+    "height": asset->metadata.dimensions.height
+  },
+  "recordings": recordings[defined(url)]{ _key, url, caption },
+  "materials": materials[defined(file.asset)]{
+    _key,
+    title,
+    "url": file.asset->url,
+    "filename": file.asset->originalFilename,
+    "size": file.asset->size
+  }
+`;
 
 export async function getEvents(): Promise<Event[]> {
 	const EVENTS_QUERY = `*[
@@ -138,14 +187,15 @@ export async function getEvents(): Promise<Event[]> {
     location,
     registrationLink,
     registrationDeadline,
-    publishedAt
+    publishedAt,
+    ${HAS_RECAP_FIELD}
   }`;
 
 	const { data } = await loadQuery<Event[]>({
 		query: EVENTS_QUERY,
 	});
 
-	return data;
+	return (data ?? []).map((event) => ({ ...event, hasRecap: Boolean(event.hasRecap) }));
 }
 
 export async function getEventDetails(slug: string): Promise<EventDetails> {
@@ -171,6 +221,8 @@ export async function getEventDetails(slug: string): Promise<EventDetails> {
   registrationDeadline,
   publishedAt,
   body,
+  ${HAS_RECAP_FIELD},
+  ${RECAP_FIELDS},
   instructors[] {
     _type,
     _key,
@@ -215,5 +267,11 @@ export async function getEventDetails(slug: string): Promise<EventDetails> {
 		},
 	});
 
-	return data;
+	return {
+		...data,
+		hasRecap: Boolean(data.hasRecap),
+		gallery: data.gallery ?? [],
+		recordings: data.recordings ?? [],
+		materials: data.materials ?? [],
+	};
 }

@@ -6,15 +6,16 @@ import type { CourseResource } from "@/sanity/lib/queries/courses";
 interface Props {
   resources: CourseResource[];
   title?: string;
+  headingLevel?: "h2" | "h3";
 }
 
-const { resources, title = "Resources" } = Astro.props;
+const { resources, title = "Resources", headingLevel: Heading = "h2" } = Astro.props;
 ---
 
 {
   resources.length > 0 && (
     <section class="space-y-3" data-pagefind-ignore>
-      <h2 class="font-sans text-lg font-medium tracking-tight">{title}</h2>
+      <Heading class="font-sans text-lg font-medium tracking-tight">{title}</Heading>
       <ul class="space-y-2">
         {resources.map((resource) => (
           <li>
