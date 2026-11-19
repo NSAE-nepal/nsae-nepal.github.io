@@ -44,13 +44,13 @@ const {
 ---
 
 <section
-  class="home-hero-section invisible relative flex min-h-[85vh] items-center overflow-hidden rounded-2xl px-6 py-20 md:px-12 md:py-32"
+  class="home-hero-section relative flex min-h-[85vh] items-center overflow-hidden rounded-2xl px-6 py-20 md:px-12 md:py-32 js:invisible"
   data-hero-carousel
   data-section="hero"
   data-autoplay-delay={autoplayDelay}
 >
   <div
-    class="home-hero-redg-text absolute top-42 left-6 z-20 hidden -translate-y-4 opacity-0 md:left-12 md:block"
+    class="home-hero-redg-text absolute top-42 left-6 z-20 hidden md:left-12 md:block js:-translate-y-4 js:opacity-0"
   >
     <span
       class="vertical-lr font-mono text-sm tracking-widest text-white/60 uppercase"
@@ -68,13 +68,13 @@ const {
       <div class="relative inline-block">
         <div class="inline-block overflow-hidden pb-4 align-bottom">
           <span
-            class="engineering-text-anim invisible inline-block font-bold italic underline decoration-white/30 decoration-2 underline-offset-12"
+            class="engineering-text-anim inline-block font-bold italic underline decoration-white/30 decoration-2 underline-offset-12 js:invisible"
           >
             {title}
           </span>
         </div>
         <Badge
-          class="badge-anim-wrapper absolute -top-8 -right-24 rotate-12 border-white/40 font-mono text-xs tracking-wide opacity-0"
+          class="badge-anim-wrapper absolute -top-8 -right-24 rotate-12 border-white/40 font-mono text-xs tracking-wide js:opacity-0"
           size="sm"
         >
           {badgeLabel}
@@ -85,7 +85,7 @@ const {
         subtitleLines.map((line) => (
           <>
             <br />
-            <span class="subtitle-lines invisible inline-block pb-3 text-white/80">
+            <span class="subtitle-lines inline-block pb-3 text-white/80 js:invisible">
               {line}
             </span>
           </>
@@ -94,13 +94,13 @@ const {
     </h2>
 
     <p
-      class="hero-desc-anim max-w-xl translate-y-4 font-sans text-lg leading-relaxed text-white/70 opacity-0"
+      class="hero-desc-anim max-w-xl font-sans text-lg leading-relaxed text-white/70 js:translate-y-4 js:opacity-0"
     >
       {description}
     </p>
 
     <div
-      class="hero-actions-anim dark mt-4 flex translate-y-4 items-center gap-6 opacity-0"
+      class="hero-actions-anim dark mt-4 flex items-center gap-6 js:translate-y-4 js:opacity-0"
     >
       <Button
         href={ctaHref}
@@ -120,7 +120,7 @@ const {
   </div>
 
   <div
-    class="scroll-indicator absolute right-12 bottom-10 z-20 hidden items-center gap-4 opacity-0 md:flex"
+    class="scroll-indicator absolute right-12 bottom-10 z-20 hidden items-center gap-4 md:flex js:opacity-0"
   >
     <span class="font-mono text-sm text-white/50 uppercase">
       Scroll to explore

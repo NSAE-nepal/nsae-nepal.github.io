@@ -5,6 +5,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Hidden until a GSAP entrance animation reveals it: `js:opacity-0`,
+   `js:invisible`, `js:translate-y-4`, … These only apply once BaseHead's
+   inline script marks <html class="js">, and stop applying when animations
+   never started (html.no-anim), so content is never stuck hidden. */
+@custom-variant js (&:is(html.js:not(.no-anim) *));
+
 @font-face {
   font-family: "Source Sans 3";
   src: url("/fonts/SourceSans3-Italic-VariableFont_wght.woff2") format("woff2");
@@ -143,6 +149,16 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Fallback when animations never started: also undo inline styles a
+   half-run script may have left on js:-hidden elements. */
+html.no-anim [class*="js:"] {
+  opacity: 1 !important;
+  visibility: visible !important;
+  translate: none !important;
+  scale: none !important;
+  transform: none !important;
 }
 
 /* Respect "reduce motion" for CSS transitions/animations too (GSAP is handled

@@ -31,7 +31,7 @@ const sideListPosts = [...featuredPosts.slice(1), ...nonFeaturedPosts].slice(
       data-manual-card-anim
     >
       <div class="mb-12 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
-        <div class="anim-blog-header translate-y-8 space-y-4 opacity-0">
+        <div class="anim-blog-header space-y-4 js:translate-y-8 js:opacity-0">
           <Badge
             variant="secondary"
             size="sm"
@@ -46,7 +46,7 @@ const sideListPosts = [...featuredPosts.slice(1), ...nonFeaturedPosts].slice(
 
         <a
           href="/blog/page/1"
-          class="anim-blog-header group flex translate-y-8 items-center gap-2 font-mono text-xs tracking-widest text-muted-foreground uppercase opacity-0 transition-colors hover:text-primary"
+          class="anim-blog-header group flex items-center gap-2 font-mono text-xs tracking-widest text-muted-foreground uppercase transition-colors hover:text-primary js:translate-y-8 js:opacity-0"
         >
           View All Archives
           <IconArrowRight class="size-4 transition-transform group-hover:translate-x-1" />
@@ -54,7 +54,7 @@ const sideListPosts = [...featuredPosts.slice(1), ...nonFeaturedPosts].slice(
       </div>
       <div class="grid grid-cols-2 gap-4">
         {mainFeature && (
-          <div class="anim-blog-card col-span-2 translate-y-12 rounded-2xl border border-border/50 bg-secondary p-4 opacity-0 lg:col-span-1">
+          <div class="anim-blog-card col-span-2 rounded-2xl border border-border/50 bg-secondary p-4 lg:col-span-1 js:translate-y-12 js:opacity-0">
             <ClickableCard
               href={`/blog/${mainFeature.slug}/`}
               label={mainFeature.title}
@@ -66,7 +66,7 @@ const sideListPosts = [...featuredPosts.slice(1), ...nonFeaturedPosts].slice(
 
         <div
           class:list={[
-            "anim-blog-card translate-y-12 opacity-0",
+            "anim-blog-card js:translate-y-12 js:opacity-0",
             "col-span-2",
             mainFeature ? "lg:col-span-1" : "grid grid-cols-1 gap-4",
           ]}

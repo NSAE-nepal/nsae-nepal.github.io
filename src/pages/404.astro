@@ -16,21 +16,21 @@ import PageLayout from "@/layouts/PageLayout.astro";
         class="text-8xl font-bold tracking-tighter text-foreground sm:text-9xl"
         aria-label="404 Error"
       >
-        <span class="digit invisible inline-block">4</span>
-        <span class="digit invisible inline-block">0</span>
-        <span class="digit invisible inline-block">4</span>
+        <span class="digit inline-block js:invisible">4</span>
+        <span class="digit inline-block js:invisible">0</span>
+        <span class="digit inline-block js:invisible">4</span>
       </h1>
 
       <h2
-        class="invisible mt-4 text-2xl font-semibold text-foreground/80 fade-in sm:text-3xl"
+        class="mt-4 text-2xl font-semibold text-foreground/80 fade-in sm:text-3xl js:invisible"
       >
         Page Not Found
       </h2>
-      <p class="invisible mt-2 text-foreground/60 fade-in">
+      <p class="mt-2 text-foreground/60 fade-in js:invisible">
         Sorry, the page you are looking for seems to have taken a wrong turn.
       </p>
 
-      <div class="invisible mt-8 fade-in">
+      <div class="mt-8 fade-in js:invisible">
         <a
           href="/"
           class="rounded-full bg-primary px-8 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"

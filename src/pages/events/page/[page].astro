@@ -55,7 +55,7 @@ const pageDescription =
   page="events-listing"
 >
   <header class="flex flex-col items-center justify-center py-16 md:py-24">
-    <div class="anim-header-badge scale-50 opacity-0">
+    <div class="anim-header-badge js:scale-50 js:opacity-0">
       <Badge
         variant={"secondary"}
         size={"sm"}
@@ -65,7 +65,7 @@ const pageDescription =
       </Badge>
     </div>
     <h1
-      class="anim-header-title invisible max-w-4xl pt-4 text-center font-sans text-5xl leading-tight font-medium tracking-tighter md:text-7xl"
+      class="anim-header-title max-w-4xl pt-4 text-center font-sans text-5xl leading-tight font-medium tracking-tighter md:text-7xl js:invisible"
     >
       Explore our latest events
     </h1>
@@ -73,7 +73,7 @@ const pageDescription =
 
   {
     !hasAnyEvents && (
-      <div class="anim-empty-state mb-24 flex scale-95 flex-col items-center justify-center rounded-xl border border-dashed border-border/60 bg-secondary/5 py-16 text-center opacity-0">
+      <div class="anim-empty-state mb-24 flex flex-col items-center justify-center rounded-xl border border-dashed border-border/60 bg-secondary/5 py-16 text-center js:scale-95 js:opacity-0">
         <div class="mb-4 rounded-full bg-secondary p-4">
           <IconMoodEmpty class="size-8 text-muted-foreground" />
         </div>
@@ -94,7 +94,7 @@ const pageDescription =
       >
         <h2
           id="upcoming-events"
-          class="anim-all-title mb-8 translate-y-4 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase opacity-0 md:text-2xl"
+          class="anim-all-title mb-8 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase md:text-2xl js:translate-y-4 js:opacity-0"
         >
           Upcoming Events
         </h2>
@@ -104,14 +104,14 @@ const pageDescription =
               <ClickableCard
                 href={`/events/${event.slug}/`}
                 label={event.title}
-                class="anim-event-card group translate-y-4 overflow-hidden rounded-2xl bg-secondary text-secondary-foreground opacity-0 transition-colors"
+                class="anim-event-card group overflow-hidden rounded-2xl bg-secondary text-secondary-foreground transition-colors js:translate-y-4 js:opacity-0"
               >
                 <EventCard data={event} />
               </ClickableCard>
             ))}
           </div>
         ) : (
-          <div class="anim-all-title flex translate-y-4 items-center gap-4 rounded-2xl border border-dashed border-border/60 p-6 text-muted-foreground opacity-0">
+          <div class="anim-all-title flex items-center gap-4 rounded-2xl border border-dashed border-border/60 p-6 text-muted-foreground js:translate-y-4 js:opacity-0">
             <IconCalendarOff class="size-6 shrink-0" />
             <p>
               No upcoming events are scheduled right now. Follow our{" "}
@@ -138,7 +138,7 @@ const pageDescription =
       >
         <h2
           id="past-events"
-          class="anim-all-title mb-8 translate-y-4 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase opacity-0 md:text-2xl"
+          class="anim-all-title mb-8 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase md:text-2xl js:translate-y-4 js:opacity-0"
         >
           Past Events
         </h2>
@@ -147,13 +147,13 @@ const pageDescription =
             <ClickableCard
               href={`/events/${event.slug}/`}
               label={event.title}
-              class="anim-event-card group translate-y-4 overflow-hidden rounded-2xl bg-secondary text-secondary-foreground opacity-0 transition-colors"
+              class="anim-event-card group overflow-hidden rounded-2xl bg-secondary text-secondary-foreground transition-colors js:translate-y-4 js:opacity-0"
             >
               <EventCard data={event} />
             </ClickableCard>
           ))}
         </div>
-        <div class="anim-pagination mt-16 flex justify-center opacity-0">
+        <div class="anim-pagination mt-16 flex justify-center js:opacity-0">
           <Pagination
             url={page.url}
             class="font-mono text-sm tracking-widest uppercase"

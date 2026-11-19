@@ -12,13 +12,13 @@ const faqItems = data?.items ?? [];
     <Badge
       variant="secondary"
       size="sm"
-      class={"font-mono text-xs uppercase tracking-widest faq-badge opacity-0 translate-y-8"}
+      class={"font-mono text-xs uppercase tracking-widest faq-badge js:opacity-0 js:translate-y-8"}
     >
       FAQ
     </Badge>
 
     <h1
-      class="translate-y-8 font-sans text-4xl font-medium tracking-tighter text-balance opacity-0 md:text-5xl"
+      class="font-sans text-4xl font-medium tracking-tighter text-balance md:text-5xl js:translate-y-8 js:opacity-0"
     >
       Frequently Asked Questions
     </h1>
@@ -29,7 +29,7 @@ const faqItems = data?.items ?? [];
       <div class="space-y-4">
         {faqItems.map((faq) => (
           <details
-            class="group translate-y-8 overflow-hidden rounded-xl border border-border/50 bg-secondary/50 p-6 opacity-0 [&_summary::-webkit-details-marker]:hidden"
+            class="group overflow-hidden rounded-xl border border-border/50 bg-secondary/50 p-6 js:translate-y-8 js:opacity-0 [&_summary::-webkit-details-marker]:hidden"
             name="faq-accordion"
           >
             <summary class="faq-summary relative z-10 flex cursor-pointer items-center justify-between gap-4 font-sans text-lg font-medium text-foreground select-none marker:content-none">
@@ -58,7 +58,7 @@ const faqItems = data?.items ?? [];
   }
 
   <div
-    class="cta-content mt-12 flex translate-y-8 flex-col items-center gap-3 text-center opacity-0"
+    class="cta-content mt-12 flex flex-col items-center gap-3 text-center js:translate-y-8 js:opacity-0"
   >
     <p class="font-sans text-lg text-balance text-muted-foreground">
       Need a personalized answer?

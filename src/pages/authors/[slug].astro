@@ -269,7 +269,7 @@ const description =
     >
       <h2
         id="author-posts"
-        class="anim-all-title mb-8 translate-y-4 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase opacity-0 md:text-2xl"
+        class="anim-all-title mb-8 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase md:text-2xl js:translate-y-4 js:opacity-0"
       >
         Posts by {author.name}
         <span class="ml-2 font-mono text-sm text-muted-foreground"
@@ -278,7 +278,7 @@ const description =
       </h2>
       <PostGrid
         posts={author.posts}
-        cardClass="anim-regular-card opacity-0 translate-y-4"
+        cardClass="anim-regular-card js:opacity-0 js:translate-y-4"
       />
     </section>
   </article>
