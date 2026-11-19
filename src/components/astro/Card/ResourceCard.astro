@@ -1,5 +1,9 @@
 ---
-import { IconArrowNarrowRight, IconDownload, IconExternalLink } from "@tabler/icons-astro";
+import {
+  IconArrowNarrowRight,
+  IconDownload,
+  IconExternalLink,
+} from "@tabler/icons-astro";
 import Badge from "@/components/astro/Badge.astro";
 import NewBadge from "@/components/NewBadge.astro";
 import ResourceIcon from "@/components/pages/resources/ResourceIcon.astro";
@@ -20,27 +24,40 @@ const { data, class: className } = Astro.props;
 const byline = [data.publisher, data.year].filter(Boolean).join(" · ");
 // One item: act on it straight from the card. Several: open the page.
 const only = data.attachments.length === 1 ? data.attachments[0] : undefined;
-const action = "inline-flex shrink-0 items-center gap-1.5 text-primary hover:underline";
+const action =
+  "inline-flex shrink-0 items-center gap-1.5 text-primary hover:underline";
 ---
 
 <article class={cn("flex h-full flex-col gap-4 p-5", className)}>
   <div class="flex items-start gap-4">
-    <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+    <span
+      class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"
+    >
       <ResourceIcon type={data.resourceType} class="size-5" />
     </span>
     <div class="min-w-0 flex-1 space-y-2">
       <div class="flex flex-wrap items-center gap-2">
-        <Badge variant="secondary" size="xs" class="font-mono uppercase tracking-wider">
+        <Badge
+          variant="secondary"
+          size="xs"
+          class="font-mono tracking-wider uppercase"
+        >
           {resourceTypeLabel(data.resourceType)}
         </Badge>
         <NewBadge date={data.publishedAt} />
       </div>
-      <h3 class="font-sans text-lg font-medium leading-snug">{data.title}</h3>
+      <h3 class="font-sans text-lg leading-snug font-medium">{data.title}</h3>
       {byline && <p class="text-sm text-muted-foreground">{byline}</p>}
     </div>
   </div>
 
-  {data.description && <p class="line-clamp-3 text-sm text-muted-foreground">{data.description}</p>}
+  {
+    data.description && (
+      <p class="line-clamp-3 text-sm text-muted-foreground">
+        {data.description}
+      </p>
+    )
+  }
 
   {
     data.categories.length > 0 && (
@@ -54,7 +71,9 @@ const action = "inline-flex shrink-0 items-center gap-1.5 text-primary hover:und
     )
   }
 
-  <div class="mt-auto flex items-center justify-between gap-3 border-t border-border/50 pt-4 font-mono text-xs uppercase tracking-wider">
+  <div
+    class="mt-auto flex items-center justify-between gap-3 border-t border-border/50 pt-4 font-mono text-xs tracking-wider uppercase"
+  >
     <span class="text-muted-foreground">{resourceFormat(data)}</span>
     {
       only?._type === "resourceFile" ? (
@@ -63,12 +82,20 @@ const action = "inline-flex shrink-0 items-center gap-1.5 text-primary hover:und
           Download<span class="sr-only">: {data.title}</span>
         </a>
       ) : only ? (
-        <a href={only.url} target="_blank" rel="noopener noreferrer" class={action}>
+        <a
+          href={only.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class={action}
+        >
           <IconExternalLink class="size-4" aria-hidden="true" />
           Open<span class="sr-only">: {data.title} (opens in a new tab)</span>
         </a>
       ) : (
-        <span class="inline-flex shrink-0 items-center gap-1.5 text-primary" aria-hidden="true">
+        <span
+          class="inline-flex shrink-0 items-center gap-1.5 text-primary"
+          aria-hidden="true"
+        >
           View all
           <IconArrowNarrowRight class="size-4" />
         </span>

@@ -45,7 +45,8 @@ export type SpotlightDetails = Spotlight & {
 	body?: PortableTextBlock[];
 };
 
-export const spotlightPath = (spotlight: { slug: string }) => `/spotlight/${spotlight.slug}/`;
+export const spotlightPath = (spotlight: { slug: string }) =>
+	`/spotlight/${spotlight.slug}/`;
 
 /** Specialization tags in the shape the shared `Categories` badges expect. */
 export const specializationTags = (spotlight: { specializations: string[] }) =>
@@ -89,7 +90,9 @@ export async function getSpotlights(): Promise<Spotlight[]> {
 	return (data ?? []).filter((spotlight) => spotlight.member?.name);
 }
 
-export async function getSpotlightDetails(slug: string): Promise<SpotlightDetails> {
+export async function getSpotlightDetails(
+	slug: string,
+): Promise<SpotlightDetails> {
 	const { data } = await loadQuery<SpotlightDetails>({
 		query: `*[${PUBLISHED} && slug.current == $slug][0]{
       ${SPOTLIGHT_FIELDS},

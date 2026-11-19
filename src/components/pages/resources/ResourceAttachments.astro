@@ -1,5 +1,10 @@
 ---
-import { IconDownload, IconExternalLink, IconFile, IconLink } from "@tabler/icons-astro";
+import {
+  IconDownload,
+  IconExternalLink,
+  IconFile,
+  IconLink,
+} from "@tabler/icons-astro";
 import Button from "@/components/astro/Button/Button.astro";
 import { downloadUrl } from "@/lib/resources";
 import { cn } from "@/lib/utils";
@@ -39,8 +44,8 @@ const { attachments, class: className } = Astro.props;
             )}
           </span>
           <div class="min-w-0 flex-1">
-            <p class="break-words font-medium">{title}</p>
-            <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+            <p class="font-medium break-words">{title}</p>
+            <p class="font-mono text-xs tracking-wider text-muted-foreground uppercase">
               {attachmentMeta(item)}
             </p>
           </div>

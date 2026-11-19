@@ -4,7 +4,10 @@ import { IconMapPin, IconUserCircle } from "@tabler/icons-astro";
 import Categories from "@/components/Categories.astro";
 import NewBadge from "@/components/NewBadge.astro";
 import { cn, formatName } from "@/lib/utils";
-import { type Spotlight, specializationTags } from "@/sanity/lib/queries/spotlight";
+import {
+  type Spotlight,
+  specializationTags,
+} from "@/sanity/lib/queries/spotlight";
 import { sanityImage } from "@/sanity/lib/url-for-image";
 
 /** Member spotlight card: photo, member, headline, specializations. */
@@ -34,12 +37,15 @@ const role = [member.position, member.company].filter(Boolean).join(" · ");
           class="size-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
         />
       ) : (
-        <div class="flex size-full items-center justify-center" aria-hidden="true">
+        <div
+          class="flex size-full items-center justify-center"
+          aria-hidden="true"
+        >
           <IconUserCircle class="size-16 text-muted-foreground/40" />
         </div>
       )
     }
-    <NewBadge date={data.publishedAt} class="absolute left-3 top-3" />
+    <NewBadge date={data.publishedAt} class="absolute top-3 left-3" />
   </div>
 
   <div class="flex flex-1 flex-col gap-3 p-5">
@@ -47,16 +53,22 @@ const role = [member.position, member.company].filter(Boolean).join(" · ");
       <p class="font-medium">{formatName(member.name, member.prefix)}</p>
       {role && <p class="text-sm text-muted-foreground">{role}</p>}
     </div>
-    <h3 class="font-sans text-xl font-medium leading-snug tracking-tight transition-colors group-hover:text-primary">
+    <h3
+      class="font-sans text-xl leading-snug font-medium tracking-tight transition-colors group-hover:text-primary"
+    >
       {data.headline}
     </h3>
     <p class="line-clamp-3 text-sm text-muted-foreground">{data.summary}</p>
 
     <div class="mt-auto flex flex-wrap items-center justify-between gap-2 pt-2">
-      {data.specializations.length > 0 && <Categories categories={specializationTags(data)} />}
+      {
+        data.specializations.length > 0 && (
+          <Categories categories={specializationTags(data)} />
+        )
+      }
       {
         data.location && (
-          <span class="flex items-center gap-1 font-mono text-xs uppercase tracking-wider text-muted-foreground">
+          <span class="flex items-center gap-1 font-mono text-xs tracking-wider text-muted-foreground uppercase">
             <IconMapPin class="size-3.5" aria-hidden="true" />
             {data.location}
           </span>

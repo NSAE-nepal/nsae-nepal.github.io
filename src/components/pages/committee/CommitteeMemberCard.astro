@@ -2,7 +2,10 @@
 import { Image } from "astro:assets";
 import { IconArrowUpRight, IconUserCircle } from "@tabler/icons-astro";
 import { cn, formatName } from "@/lib/utils";
-import { type CommitteeMember, positionLabel } from "@/sanity/lib/queries/committee";
+import {
+  type CommitteeMember,
+  positionLabel,
+} from "@/sanity/lib/queries/committee";
 import { sanityImage } from "@/sanity/lib/url-for-image";
 
 /** One committee member: photo, role, name, membership and registration. */
@@ -38,7 +41,10 @@ const registrations = [
           class="size-full object-cover"
         />
       ) : (
-        <div class="flex size-full items-center justify-center" aria-hidden="true">
+        <div
+          class="flex size-full items-center justify-center"
+          aria-hidden="true"
+        >
           <IconUserCircle class="size-16 text-muted-foreground/50" />
         </div>
       )
@@ -46,18 +52,23 @@ const registrations = [
   </div>
 
   <div class="flex flex-1 flex-col gap-1 p-4">
-    <p class="font-mono text-[11px] uppercase tracking-wider text-primary">
+    <p class="font-mono text-[11px] tracking-wider text-primary uppercase">
       {positionLabel(member.position)}
     </p>
-    <h3 class="font-sans font-medium leading-snug">{name}</h3>
+    <h3 class="font-sans leading-snug font-medium">{name}</h3>
     {
       member.membership && member.membership !== member.position && (
-        <p class="text-xs text-muted-foreground">{positionLabel(member.membership)}</p>
+        <p class="text-xs text-muted-foreground">
+          {positionLabel(member.membership)}
+        </p>
       )
     }
     {
       registrations.length > 0 && (
-        <p class="font-mono text-[11px] uppercase tracking-wider text-muted-foreground" data-pagefind-ignore>
+        <p
+          class="font-mono text-[11px] tracking-wider text-muted-foreground uppercase"
+          data-pagefind-ignore
+        >
           {registrations.join(" · ")}
         </p>
       )
@@ -68,7 +79,7 @@ const registrations = [
           href={member.portfolio}
           target="_blank"
           rel="noopener noreferrer"
-          class="mt-auto inline-flex items-center gap-1 pt-2 font-mono text-xs uppercase tracking-wider text-primary hover:underline"
+          class="mt-auto inline-flex items-center gap-1 pt-2 font-mono text-xs tracking-wider text-primary uppercase hover:underline"
           data-pagefind-ignore
         >
           Profile <IconArrowUpRight class="size-3.5" aria-hidden="true" />

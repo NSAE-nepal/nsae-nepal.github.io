@@ -79,7 +79,7 @@ if (data.location) {
 import ShareBar from "@/components/ShareBar.astro";
 ---
 
-<header class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8 lg:gap-12 mb-12">
+<header class="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-[2fr_1fr] lg:gap-12">
   <div class="flex flex-col justify-between gap-6">
     <div class="flex flex-col gap-4">
       <div class="flex flex-row items-center gap-4">
@@ -98,7 +98,7 @@ import ShareBar from "@/components/ShareBar.astro";
           <span class="font-sans text-lg font-medium tracking-tight"
             >{dateDisplay}</span
           >
-          <span class="font-sans text-md text-muted-foreground"
+          <span class="text-md font-sans text-muted-foreground"
             >{locationDisplay}</span
           >
         </div>
@@ -107,7 +107,7 @@ import ShareBar from "@/components/ShareBar.astro";
       <div class="flex flex-col gap-2">
         <h1
           data-pagefind-meta="title"
-          class="font-sans text-3xl md:text-4xl font-medium tracking-tighter"
+          class="font-sans text-3xl font-medium tracking-tighter md:text-4xl"
         >
           {data.title}
         </h1>
@@ -125,14 +125,14 @@ import ShareBar from "@/components/ShareBar.astro";
     </div>
 
     <div
-      class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between w-full"
+      class="flex w-full flex-col gap-6 md:flex-row md:items-center md:justify-between"
     >
       <div
-        class="flex w-full md:w-fit flex-row items-center justify-between gap-6 rounded-lg border bg-card p-4 text-card-foreground"
+        class="flex w-full flex-row items-center justify-between gap-6 rounded-lg border bg-card p-4 text-card-foreground md:w-fit"
       >
         <div class="text-center">
           <span
-            class="font-mono text-xs text-muted-foreground uppercase tracking-wider block mb-0.5"
+            class="mb-0.5 block font-mono text-xs tracking-wider text-muted-foreground uppercase"
             >Start</span
           >
           <p
@@ -148,9 +148,9 @@ import ShareBar from "@/components/ShareBar.astro";
           durationDisplay && (
             <Badge
               size={"lg"}
-              class="flex font-mono text-xs uppercase tracking-wider flex-row items-center shrink-0"
+              class="flex shrink-0 flex-row items-center font-mono text-xs tracking-wider uppercase"
             >
-              <IconCalendarWeek class="h-4 w-4 mr-2" />
+              <IconCalendarWeek class="mr-2 h-4 w-4" />
               {durationDisplay}
             </Badge>
           )
@@ -158,7 +158,7 @@ import ShareBar from "@/components/ShareBar.astro";
 
         <div class="text-center">
           <span
-            class="font-mono text-xs text-muted-foreground uppercase tracking-wider block mb-0.5"
+            class="mb-0.5 block font-mono text-xs tracking-wider text-muted-foreground uppercase"
             >End</span
           >
           <p class="font-sans font-medium whitespace-nowrap">
@@ -174,12 +174,12 @@ import ShareBar from "@/components/ShareBar.astro";
               href={data.registrationLink}
               target="_blank"
               rel="noopener noreferrer"
-              class="w-full md:w-auto font-sans font-medium"
+              class="w-full font-sans font-medium md:w-auto"
             >
               Register Now <IconArrowUpRight class="ml-2 size-4" />
             </Button>
             {data.registrationDeadline && (
-              <div class="flex items-center justify-center md:justify-end gap-2 font-mono text-xs text-muted-foreground uppercase tracking-wider">
+              <div class="flex items-center justify-center gap-2 font-mono text-xs tracking-wider text-muted-foreground uppercase md:justify-end">
                 <IconCalendarWeek class="h-4 w-4 shrink-0" />
                 <span>
                   Deadline: {formatDate(new Date(data.registrationDeadline))}
@@ -193,12 +193,15 @@ import ShareBar from "@/components/ShareBar.astro";
               <Badge
                 variant="outline"
                 size={"lg"}
-                class="font-mono text-xs uppercase tracking-widest text-muted-foreground"
+                class="font-mono text-xs tracking-widest text-muted-foreground uppercase"
               >
                 {hasEnded ? "Event ended" : "Registration closed"}
               </Badge>
               {hasEnded && data.hasRecap && (
-                <Button href="#event-recap" class="w-full md:w-auto font-sans font-medium">
+                <Button
+                  href="#event-recap"
+                  class="w-full font-sans font-medium md:w-auto"
+                >
                   <IconPhoto class="size-4" /> View recap
                 </Button>
               )}
@@ -218,7 +221,7 @@ import ShareBar from "@/components/ShareBar.astro";
         >
           <span
             id="add-to-calendar"
-            class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground"
+            class="flex items-center gap-2 font-mono text-xs tracking-widest text-muted-foreground uppercase"
           >
             <IconCalendarPlus class="size-4" /> Add to calendar
           </span>
@@ -243,12 +246,16 @@ import ShareBar from "@/components/ShareBar.astro";
       )
     }
 
-    <ShareBar title={data.title} text={data.subtitle || data.title} url={`/events/${data.slug}/`} />
+    <ShareBar
+      title={data.title}
+      text={data.subtitle || data.title}
+      url={`/events/${data.slug}/`}
+    />
   </div>
 
   {
     data.coverImage && (
-      <div class="relative w-full aspect-video lg:aspect-[4/3] overflow-hidden rounded-lg shadow-md">
+      <div class="relative aspect-video w-full overflow-hidden rounded-lg shadow-md lg:aspect-[4/3]">
         <Image
           inferSize
           src={sanityImage(data.coverImage, { width: 1000 })}
@@ -256,7 +263,7 @@ import ShareBar from "@/components/ShareBar.astro";
           sizes="(min-width: 1024px) 33vw, 100vw"
           alt={data.title}
           loading="eager"
-          class="object-cover w-full h-full"
+          class="h-full w-full object-cover"
         />
       </div>
     )

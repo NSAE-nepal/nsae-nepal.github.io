@@ -1,5 +1,9 @@
 ---
-import { IconExternalLink, IconPlayerPlayFilled, IconVideo } from "@tabler/icons-astro";
+import {
+  IconExternalLink,
+  IconPlayerPlayFilled,
+  IconVideo,
+} from "@tabler/icons-astro";
 import { parseVideoUrl } from "@/lib/video";
 
 /**
@@ -36,20 +40,26 @@ const title = caption || (video ? `${video.providerName} video` : "Video");
             decoding="async"
           />
         ) : (
-          <div class="flex size-full items-center justify-center" aria-hidden="true">
+          <div
+            class="flex size-full items-center justify-center"
+            aria-hidden="true"
+          >
             <IconVideo class="size-16 text-background/30" />
           </div>
         )}
         <button
           type="button"
-          class="absolute inset-0 grid cursor-pointer place-items-center focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-primary"
+          class="absolute inset-0 grid cursor-pointer place-items-center focus-visible:ring-4 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-inset"
           aria-label={`Play video: ${title}`}
         >
           <span class="flex size-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform duration-300 group-hover:scale-110">
-            <IconPlayerPlayFilled class="size-7 translate-x-0.5" aria-hidden="true" />
+            <IconPlayerPlayFilled
+              class="size-7 translate-x-0.5"
+              aria-hidden="true"
+            />
           </span>
         </button>
-        <span class="pointer-events-none absolute bottom-3 left-3 rounded-full bg-black/60 px-2.5 py-1 font-mono text-[11px] uppercase tracking-wider text-white">
+        <span class="pointer-events-none absolute bottom-3 left-3 rounded-full bg-black/60 px-2.5 py-1 font-mono text-[11px] tracking-wider text-white uppercase">
           {video.providerName}
         </span>
       </div>
@@ -59,7 +69,9 @@ const title = caption || (video ? `${video.providerName} video` : "Video");
         </a>
       </noscript>
       {caption && (
-        <figcaption class="mt-2 text-center text-sm text-muted-foreground">{caption}</figcaption>
+        <figcaption class="mt-2 text-center text-sm text-muted-foreground">
+          {caption}
+        </figcaption>
       )}
     </figure>
   ) : (
@@ -73,7 +85,10 @@ const title = caption || (video ? `${video.providerName} video` : "Video");
         >
           <IconVideo class="size-4" aria-hidden="true" />
           {caption || "Watch the video"}
-          <IconExternalLink class="size-4 text-muted-foreground" aria-hidden="true" />
+          <IconExternalLink
+            class="size-4 text-muted-foreground"
+            aria-hidden="true"
+          />
         </a>
       </p>
     )

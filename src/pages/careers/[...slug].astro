@@ -76,26 +76,35 @@ const structuredData = [
   image={`/og/careers/${vacancy.slug}.png`}
 >
   <JsonLd slot="head" data={structuredData} />
-  <article class="py-8 space-y-10" data-pagefind-body data-pagefind-filter="type:Opportunity">
+  <article
+    class="space-y-10 py-8"
+    data-pagefind-body
+    data-pagefind-filter="type:Opportunity"
+  >
     <a
       data-pagefind-ignore
       href={opportunitiesPath()}
-      class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors px-4"
+      class="inline-flex items-center gap-2 px-4 font-mono text-xs tracking-widest text-muted-foreground uppercase transition-colors hover:text-primary"
     >
       <IconArrowLeft class="size-4" /> Back to all opportunities
     </a>
-    <header class="space-y-6 text-center border-b pb-8">
+    <header class="space-y-6 border-b pb-8 text-center">
       <div class="flex flex-wrap justify-center gap-2">
         {isClosed && <Badge variant={"destructive"}>Closed</Badge>}
         {
           isClosingSoon && (
-            <Badge variant="outline" class="border-destructive/50 text-destructive">
+            <Badge
+              variant="outline"
+              class="border-destructive/50 text-destructive"
+            >
               Closing soon
             </Badge>
           )
         }
         <a href={opportunitiesPath(opportunityType)} data-pagefind-ignore>
-          <Badge variant={"secondary"} class="hover:bg-secondary/80">{kindLabel}</Badge>
+          <Badge variant={"secondary"} class="hover:bg-secondary/80"
+            >{kindLabel}</Badge
+          >
         </a>
         {isJob && type && <Badge variant={"secondary"}>{type}</Badge>}
         {
@@ -109,13 +118,13 @@ const structuredData = [
 
       <h1
         data-pagefind-meta="title"
-        class="text-3xl md:text-4xl font-bold tracking-tight text-balance"
+        class="text-3xl font-bold tracking-tight text-balance md:text-4xl"
       >
         {title}
       </h1>
 
       <div
-        class="flex flex-wrap flex-row justify-center items-center gap-x-6 gap-y-2 text-sm text-muted-foreground"
+        class="flex flex-row flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground"
       >
         {
           company && (
@@ -126,7 +135,7 @@ const structuredData = [
                   href={company.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="hover:underline inline-flex items-center gap-1"
+                  class="inline-flex items-center gap-1 hover:underline"
                 >
                   {company.name}
                 </a>
@@ -169,9 +178,9 @@ const structuredData = [
           closingDate && !isClosed && (
             <span
               data-pagefind-ignore
-              class="flex items-center gap-1 text-foreground font-medium italic hover:underline hover:underline-offset-1"
+              class="flex items-center gap-1 font-medium text-foreground italic hover:underline hover:underline-offset-1"
             >
-              <IconPoint class="fill-destructive text-destructive w-3 h-3" />
+              <IconPoint class="h-3 w-3 fill-destructive text-destructive" />
               Closes: <FormattedDate date={new Date(closingDate)} />
             </span>
           )
@@ -179,7 +188,7 @@ const structuredData = [
       </div>
     </header>
 
-    <div class="prose max-w-6xl mx-auto dark:prose-invert">
+    <div class="mx-auto prose max-w-6xl dark:prose-invert">
       <PortableText portableText={vacancy.body} />
     </div>
 
@@ -190,38 +199,36 @@ const structuredData = [
       url={opportunityPath(vacancy)}
     />
 
-    <div class="border-t pt-8 space-y-4" data-pagefind-ignore>
+    <div class="space-y-4 border-t pt-8" data-pagefind-ignore>
       {
         isClosed ? (
-          <div class="p-4 bg-destructive/10 text-destructive rounded-lg text-center">
-            <p class="font-medium">This {isJob ? "position" : "opportunity"} is closed.</p>
+          <div class="rounded-lg bg-destructive/10 p-4 text-center text-destructive">
+            <p class="font-medium">
+              This {isJob ? "position" : "opportunity"} is closed.
+            </p>
           </div>
         ) : (
-          <div class="flex flex-col items-center text-center gap-4">
+          <div class="flex flex-col items-center gap-4 text-center">
             <h3 class="text-xl font-semibold">
               Interested in this {isJob ? "role" : kindLabel.toLowerCase()}?
             </h3>
-            <p class="text-muted-foreground text-sm">
-              {
-                applyUrl
-                  ? "Review the details above, then apply before the deadline."
-                  : "Please review the details above and apply via the method described."
-              }
+            <p class="text-sm text-muted-foreground">
+              {applyUrl
+                ? "Review the details above, then apply before the deadline."
+                : "Please review the details above and apply via the method described."}
             </p>
-            {
-              applyUrl && (
-                <Button
-                  href={applyUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  size="lg"
-                  class="rounded-full"
-                >
-                  {isJob ? "Apply now" : "Apply / learn more"}
-                  <IconArrowUpRight />
-                </Button>
-              )
-            }
+            {applyUrl && (
+              <Button
+                href={applyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                size="lg"
+                class="rounded-full"
+              >
+                {isJob ? "Apply now" : "Apply / learn more"}
+                <IconArrowUpRight />
+              </Button>
+            )}
           </div>
         )
       }

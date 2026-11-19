@@ -2,12 +2,7 @@ import type { PortableTextBlock } from "sanity";
 import { loadQuery } from "../load-query";
 
 export type MinutesType =
-	| "agm"
-	| "executive"
-	| "general"
-	| "emergency"
-	| "sub-committee"
-	| "other";
+	"agm" | "executive" | "general" | "emergency" | "sub-committee" | "other";
 
 export type RecordedBy = {
 	_id: string;

@@ -39,35 +39,39 @@ const {
 ---
 
 <PageLayout title={title} description={`Minutes for ${title}`}>
-  <article class="py-8 space-y-10" data-pagefind-body data-pagefind-filter="type:Minutes">
+  <article
+    class="space-y-10 py-8"
+    data-pagefind-body
+    data-pagefind-filter="type:Minutes"
+  >
     <a
       data-pagefind-ignore
       href="/minutes"
-      class="px-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
+      class="inline-flex items-center gap-2 px-4 font-mono text-xs tracking-widest text-muted-foreground uppercase transition-colors hover:text-primary"
     >
       <IconArrowLeft class="size-4" /> Back to All Minutes
     </a>
     <header class="space-y-8 border-b border-border/50 pb-8">
       <div class="space-y-4 text-center">
-        <div class="flex flex-wrap items-center gap-4 justify-center">
+        <div class="flex flex-wrap items-center justify-center gap-4">
           <Badge
             variant={"secondary"}
             size={"xs"}
             class={"font-mono text-xs uppercase tracking-wider flex items-center gap-1.5"}
           >
-            <IconPoint class="fill-destructive text-destructive w-2.5 h-2.5" />
+            <IconPoint class="h-2.5 w-2.5 fill-destructive text-destructive" />
             {type}
           </Badge>
           <span
             data-pagefind-meta={`date:${new Date(pubDate).toISOString()}`}
             data-pagefind-ignore
-            class="flex flex-row gap-1.5 items-center font-mono text-xs text-muted-foreground uppercase tracking-wider"
+            class="flex flex-row items-center gap-1.5 font-mono text-xs tracking-wider text-muted-foreground uppercase"
           >
             <IconCalendarWeek class={"size-4"} />
             <FormattedDate date={new Date(pubDate)} />
           </span>
           <span
-            class="flex flex-row gap-1.5 items-center font-mono text-xs text-muted-foreground uppercase tracking-wider"
+            class="flex flex-row items-center gap-1.5 font-mono text-xs tracking-wider text-muted-foreground uppercase"
           >
             <IconMapPin class={"size-4"} />
             {location}
@@ -75,22 +79,22 @@ const {
         </div>
         <h1
           data-pagefind-meta="title"
-          class="font-sans text-3xl md:text-5xl font-medium tracking-tighter first-letter:capitalize"
+          class="font-sans text-3xl font-medium tracking-tighter first-letter:capitalize md:text-5xl"
         >
           {title}
         </h1>
       </div>
 
       <div
-        class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 bg-secondary/50 p-6 rounded-xl border border-border/50"
+        class="mx-auto grid max-w-7xl grid-cols-1 gap-6 rounded-xl border border-border/50 bg-secondary/50 p-6 md:grid-cols-2"
       >
         {
           chairperson && (
             <div data-pagefind-ignore>
-              <span class="font-mono text-xs text-muted-foreground uppercase tracking-wider block mb-1.5">
+              <span class="mb-1.5 block font-mono text-xs tracking-wider text-muted-foreground uppercase">
                 Chairperson
               </span>
-              <span class="font-sans font-medium text-lg text-foreground">
+              <span class="font-sans text-lg font-medium text-foreground">
                 {chairperson}
               </span>
             </div>
@@ -99,10 +103,10 @@ const {
         {
           secretary && (
             <div data-pagefind-ignore>
-              <span class="font-mono text-xs text-muted-foreground uppercase tracking-wider block mb-1.5">
+              <span class="mb-1.5 block font-mono text-xs tracking-wider text-muted-foreground uppercase">
                 Secretary
               </span>
-              <span class="font-sans font-medium text-lg text-foreground">
+              <span class="font-sans text-lg font-medium text-foreground">
                 {secretary}
               </span>
             </div>
@@ -111,10 +115,10 @@ const {
         {
           attendees && attendees.length > 0 && (
             <div data-pagefind-ignore class="md:col-span-2">
-              <span class="font-mono text-xs text-muted-foreground uppercase tracking-wider block mb-1.5">
+              <span class="mb-1.5 block font-mono text-xs tracking-wider text-muted-foreground uppercase">
                 Attendees
               </span>
-              <span class="font-sans text-muted-foreground leading-relaxed">
+              <span class="font-sans leading-relaxed text-muted-foreground">
                 {attendees.join(", ")}
               </span>
             </div>
@@ -128,7 +132,7 @@ const {
             <a
               href={downloadUrl}
               target="_blank"
-              class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-mono text-xs uppercase tracking-widest"
+              class="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 font-mono text-xs tracking-widest text-primary-foreground uppercase transition-colors hover:bg-primary/90"
             >
               <IconDownload class="size-4" /> Download PDF
             </a>
@@ -137,7 +141,7 @@ const {
       }
     </header>
 
-    <div class="prose max-w-7xl mx-auto dark:prose-invert">
+    <div class="mx-auto prose max-w-7xl dark:prose-invert">
       <PortableText portableText={body} />
     </div>
   </article>

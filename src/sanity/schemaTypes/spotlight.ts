@@ -51,7 +51,8 @@ export const spotlightType = defineType({
 		defineField({
 			name: "summary",
 			title: "Summary",
-			description: "One or two sentences for cards, the home page and search results.",
+			description:
+				"One or two sentences for cards, the home page and search results.",
 			type: "text",
 			rows: 3,
 			validation: (Rule) => Rule.required().max(280),
@@ -98,7 +99,11 @@ export const spotlightType = defineType({
 							type: "string",
 							description: 'e.g. "2024" or "2021–2023".',
 						}),
-						defineField({ name: "location", title: "Location", type: "string" }),
+						defineField({
+							name: "location",
+							title: "Location",
+							type: "string",
+						}),
 						defineField({
 							name: "summary",
 							title: "Summary",
@@ -109,7 +114,11 @@ export const spotlightType = defineType({
 					],
 					preview: {
 						select: { title: "title", year: "year", media: "image" },
-						prepare: ({ title, year, media }) => ({ title, subtitle: year, media }),
+						prepare: ({ title, year, media }) => ({
+							title,
+							subtitle: year,
+							media,
+						}),
 					},
 				}),
 			],
@@ -123,7 +132,8 @@ export const spotlightType = defineType({
 		defineField({
 			name: "featured",
 			title: "Show on Home Page",
-			description: "The most recent featured spotlight appears on the home page.",
+			description:
+				"The most recent featured spotlight appears on the home page.",
 			type: "boolean",
 			initialValue: true,
 		}),
@@ -152,7 +162,9 @@ export const spotlightType = defineType({
 		},
 		prepare: ({ title, name, media, memberImage, featured }) => ({
 			title,
-			subtitle: [name, featured ? "On home page" : undefined].filter(Boolean).join(" • "),
+			subtitle: [name, featured ? "On home page" : undefined]
+				.filter(Boolean)
+				.join(" • "),
 			media: media ?? memberImage,
 		}),
 	},

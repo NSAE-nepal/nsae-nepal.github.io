@@ -29,12 +29,12 @@ const components = {
   open={defaultOpen}
 >
   <summary
-    class="cursor-pointer select-none bg-secondary px-5 py-4 font-semibold"
+    class="cursor-pointer bg-secondary px-5 py-4 font-semibold select-none"
   >
     {title}
   </summary>
 
-  <div class="prose dark:prose-invert max-w-none px-5 py-4">
+  <div class="prose max-w-none px-5 py-4 dark:prose-invert">
     <PortableText value={content} components={components} />
   </div>
 </details>

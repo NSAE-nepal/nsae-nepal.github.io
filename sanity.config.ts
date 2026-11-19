@@ -85,13 +85,17 @@ export default defineConfig({
 													),
 											),
 										S.divider(),
-										S.documentTypeListItem("resource").title("Resource library"),
+										S.documentTypeListItem("resource").title(
+											"Resource library",
+										),
 									]),
 							),
 
 						...S.documentTypeListItems().filter((listItem) => {
 							const id = listItem.getId() || "";
-							return !SINGLETON_TYPES.includes(id) && !GROUPED_TYPES.includes(id);
+							return (
+								!SINGLETON_TYPES.includes(id) && !GROUPED_TYPES.includes(id)
+							);
 						}),
 					]),
 		}),

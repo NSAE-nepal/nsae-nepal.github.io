@@ -71,8 +71,7 @@ export const quizType = defineType({
 					.min(1)
 					.custom((questions, context) => {
 						const doc = context.document as
-							| { settings?: { negativeMarkingPercentage?: number } }
-							| undefined;
+							{ settings?: { negativeMarkingPercentage?: number } } | undefined;
 
 						const negativeMarking = doc?.settings?.negativeMarkingPercentage;
 

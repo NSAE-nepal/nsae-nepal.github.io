@@ -5,11 +5,15 @@ import {
 	opportunityTypeLabel,
 } from "../../lib/opportunities";
 
-type OpportunityDocument = { opportunityType?: OpportunityType; postedDate?: string };
+type OpportunityDocument = {
+	opportunityType?: OpportunityType;
+	postedDate?: string;
+};
 
 // Documents created before opportunity types existed are jobs.
 const isJob = (document: unknown) =>
-	((document as OpportunityDocument | undefined)?.opportunityType ?? "job") === "job";
+	((document as OpportunityDocument | undefined)?.opportunityType ?? "job") ===
+	"job";
 
 export const careerType = defineType({
 	name: "careers",
@@ -39,7 +43,10 @@ export const careerType = defineType({
 			title: "Opportunity Type",
 			type: "string",
 			options: {
-				list: OPPORTUNITY_TYPES.map(({ value, label }) => ({ title: label, value })),
+				list: OPPORTUNITY_TYPES.map(({ value, label }) => ({
+					title: label,
+					value,
+				})),
 			},
 			initialValue: "job",
 			validation: (Rule) => Rule.required(),

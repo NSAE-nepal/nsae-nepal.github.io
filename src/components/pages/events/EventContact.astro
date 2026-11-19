@@ -13,7 +13,7 @@ const { contactPersons } = Astro.props;
   contactPersons && contactPersons.length > 0 && (
     <div class="rounded-lg border bg-card text-card-foreground">
       <div class="p-6">
-        <h3 class="font-sans text-xl font-medium tracking-tight mb-4 capitalize">
+        <h3 class="mb-4 font-sans text-xl font-medium tracking-tight capitalize">
           Reach out to our team
         </h3>
         <div class="flex flex-col gap-5">
@@ -21,19 +21,19 @@ const { contactPersons } = Astro.props;
             <div
               class={
                 person.isPrimary
-                  ? "relative pl-3 border-l-2 border-primary"
+                  ? "relative border-l-2 border-primary pl-3"
                   : ""
               }
             >
-              <p class="font-sans text-sm font-medium flex items-center gap-2">
+              <p class="flex items-center gap-2 font-sans text-sm font-medium">
                 {person.name}
                 {person.isPrimary && (
-                  <span class="font-mono text-[10px] uppercase tracking-widest text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+                  <span class="rounded bg-primary/10 px-1.5 py-0.5 font-mono text-[10px] tracking-widest text-primary uppercase">
                     Primary
                   </span>
                 )}
               </p>
-              <p class="font-sans text-xs text-muted-foreground mb-2">
+              <p class="mb-2 font-sans text-xs text-muted-foreground">
                 {person.role}
               </p>
 
@@ -41,7 +41,7 @@ const { contactPersons } = Astro.props;
                 {person.email && (
                   <a
                     href={`mailto:${person.email}`}
-                    class="flex items-center gap-2 font-mono text-xs text-muted-foreground hover:text-primary transition-colors"
+                    class="flex items-center gap-2 font-mono text-xs text-muted-foreground transition-colors hover:text-primary"
                   >
                     <IconMail class={"size-4"} />
                     {person.email}
@@ -50,7 +50,7 @@ const { contactPersons } = Astro.props;
                 {person.phone && (
                   <a
                     href={`tel:${person.phone}`}
-                    class="flex items-center gap-2 font-mono text-xs text-muted-foreground hover:text-primary transition-colors"
+                    class="flex items-center gap-2 font-mono text-xs text-muted-foreground transition-colors hover:text-primary"
                   >
                     <IconPhone class={"size-4"} />
                     {person.phone}

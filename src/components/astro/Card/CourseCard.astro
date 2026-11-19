@@ -1,10 +1,20 @@
 ---
 import { Image } from "astro:assets";
-import { IconArrowNarrowRight, IconBook2, IconClock, IconSchool } from "@tabler/icons-astro";
+import {
+  IconArrowNarrowRight,
+  IconBook2,
+  IconClock,
+  IconSchool,
+} from "@tabler/icons-astro";
 import Badge from "@/components/astro/Badge.astro";
 import NewBadge from "@/components/NewBadge.astro";
 import CourseProgress from "@/components/pages/courses/CourseProgress.astro";
-import { courseLessons, courseStats, formatDuration, LEVEL_LABELS } from "@/lib/courses";
+import {
+  courseLessons,
+  courseStats,
+  formatDuration,
+  LEVEL_LABELS,
+} from "@/lib/courses";
 import { cn } from "@/lib/utils";
 import type { Course } from "@/sanity/lib/queries/courses";
 import { sanityImage } from "@/sanity/lib/url-for-image";
@@ -19,7 +29,9 @@ const { lessonCount, totalMinutes } = courseStats(data);
 const lessonIds = courseLessons(data).map((lesson) => lesson._id);
 ---
 
-<article class={cn("flex h-full flex-col overflow-hidden rounded-2xl", className)}>
+<article
+  class={cn("flex h-full flex-col overflow-hidden rounded-2xl", className)}
+>
   <div class="relative aspect-[16/9] overflow-hidden bg-secondary">
     {
       data.coverImage ? (
@@ -32,13 +44,16 @@ const lessonIds = courseLessons(data).map((lesson) => lesson._id);
           class="size-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
         />
       ) : (
-        <div class="flex size-full items-center justify-center" aria-hidden="true">
+        <div
+          class="flex size-full items-center justify-center"
+          aria-hidden="true"
+        >
           <IconSchool class="size-14 text-muted-foreground/40" />
         </div>
       )
     }
-    <div class="absolute left-3 top-3 flex flex-wrap gap-2">
-      <Badge class="font-mono text-[10px] uppercase tracking-widest">
+    <div class="absolute top-3 left-3 flex flex-wrap gap-2">
+      <Badge class="font-mono text-[10px] tracking-widest uppercase">
         {LEVEL_LABELS[data.level] ?? data.level}
       </Badge>
       <NewBadge date={data.publishedAt} />
@@ -46,10 +61,12 @@ const lessonIds = courseLessons(data).map((lesson) => lesson._id);
   </div>
 
   <div class="flex grow flex-col gap-3 p-5">
-    <h3 class="font-sans text-xl font-medium leading-snug">{data.title}</h3>
-    <p class="text-sm text-muted-foreground line-clamp-3">{data.summary}</p>
+    <h3 class="font-sans text-xl leading-snug font-medium">{data.title}</h3>
+    <p class="line-clamp-3 text-sm text-muted-foreground">{data.summary}</p>
 
-    <p class="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1 pt-2 font-mono text-xs uppercase tracking-wider text-muted-foreground">
+    <p
+      class="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1 pt-2 font-mono text-xs tracking-wider text-muted-foreground uppercase"
+    >
       <span class="inline-flex items-center gap-1.5">
         <IconBook2 class="size-3.5" aria-hidden="true" />
         {lessonCount} lesson{lessonCount === 1 ? "" : "s"}
@@ -60,11 +77,19 @@ const lessonIds = courseLessons(data).map((lesson) => lesson._id);
       </span>
     </p>
 
-    <CourseProgress courseId={data._id} lessonIds={lessonIds} hideUntilStarted />
+    <CourseProgress
+      courseId={data._id}
+      lessonIds={lessonIds}
+      hideUntilStarted
+    />
 
-    <span class="inline-flex items-center gap-1 font-mono text-xs uppercase tracking-widest text-foreground transition-colors group-hover:text-primary">
+    <span
+      class="inline-flex items-center gap-1 font-mono text-xs tracking-widest text-foreground uppercase transition-colors group-hover:text-primary"
+    >
       View course
-      <IconArrowNarrowRight class="size-4 transition-transform group-hover:translate-x-1" />
+      <IconArrowNarrowRight
+        class="size-4 transition-transform group-hover:translate-x-1"
+      />
     </span>
   </div>
 </article>

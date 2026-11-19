@@ -10,7 +10,7 @@ type Props = Omit<HTMLAttributes<"div">, "role" | "aria-orientation"> & {
   orientation?: "horizontal" | "vertical";
 };
 
-const separator = cva("bg-border shrink-0", {
+const separator = cva("shrink-0 bg-border", {
   variants: {
     orientation: {
       horizontal: "h-[1px] w-full",

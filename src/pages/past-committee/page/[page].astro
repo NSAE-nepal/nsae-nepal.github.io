@@ -24,40 +24,54 @@ export const getStaticPaths = (async ({ paginate }) => {
 const { page, currentIteration, total } = Astro.props;
 
 const pageTitle =
-  page.currentPage === 1 ? "Past Committees" : `Past Committees, page ${page.currentPage}`;
+  page.currentPage === 1
+    ? "Past Committees"
+    : `Past Committees, page ${page.currentPage}`;
 const pageDescription =
   "Browse the dedicated members and executive boards that have shaped our journey through the years.";
 ---
 
-<PageLayout title={pageTitle} description={pageDescription} dataPagefindIgnore="all">
-  <header class="flex flex-col items-center justify-center py-16 md:py-24 text-center">
-    <div class="anim-header-badge opacity-0 scale-50">
+<PageLayout
+  title={pageTitle}
+  description={pageDescription}
+  dataPagefindIgnore="all"
+>
+  <header
+    class="flex flex-col items-center justify-center py-16 text-center md:py-24"
+  >
+    <div class="anim-header-badge scale-50 opacity-0">
       <Badge
         variant="secondary"
         size="sm"
-        class="font-mono uppercase tracking-widest text-xs mb-3 border border-border/50"
+        class="mb-3 border border-border/50 font-mono text-xs tracking-widest uppercase"
       >
         Archives
       </Badge>
     </div>
     <h1
-      class="anim-header-title invisible font-sans text-5xl md:text-7xl font-medium tracking-tighter pt-4 max-w-4xl leading-tight"
+      class="anim-header-title invisible max-w-4xl pt-4 font-sans text-5xl leading-tight font-medium tracking-tighter md:text-7xl"
     >
       Leadership History
     </h1>
     <p
-      class="anim-header-desc mt-6 max-w-2xl font-sans text-lg text-muted-foreground opacity-0 translate-y-4"
+      class="anim-header-desc mt-6 max-w-2xl translate-y-4 font-sans text-lg text-muted-foreground opacity-0"
     >
       {pageDescription}
     </p>
   </header>
 
-  <section class="mb-16" aria-labelledby="committees-heading" data-committee-listing>
+  <section
+    class="mb-16"
+    aria-labelledby="committees-heading"
+    data-committee-listing
+  >
     <h2
       id="committees-heading"
-      class="anim-section-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
+      class="anim-section-title mb-8 translate-y-4 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase opacity-0 md:text-2xl"
     >
-      All committees{total > 0 && <span class="text-muted-foreground"> ({total})</span>}
+      All committees{
+        total > 0 && <span class="text-muted-foreground"> ({total})</span>
+      }
     </h2>
 
     {
@@ -65,7 +79,7 @@ const pageDescription =
         <>
           <ul class="grid grid-cols-1 gap-6" role="list">
             {page.data.map((committee) => (
-              <li class="anim-card opacity-0 translate-y-4">
+              <li class="anim-card translate-y-4 opacity-0">
                 <ClickableCard
                   href={`/past-committee/${committee.committeeIteration}/`}
                   label={committee.title}
@@ -73,18 +87,23 @@ const pageDescription =
                 >
                   <CommitteeCard
                     data={committee}
-                    isCurrent={committee.committeeIteration === currentIteration}
+                    isCurrent={
+                      committee.committeeIteration === currentIteration
+                    }
                   />
                 </ClickableCard>
               </li>
             ))}
           </ul>
-          <div class="anim-pagination flex justify-center mt-16 opacity-0">
-            <Pagination url={page.url} class="font-mono text-sm uppercase tracking-widest" />
+          <div class="anim-pagination mt-16 flex justify-center opacity-0">
+            <Pagination
+              url={page.url}
+              class="font-mono text-sm tracking-widest uppercase"
+            />
           </div>
         </>
       ) : (
-        <div class="anim-empty-state opacity-0 scale-95">
+        <div class="anim-empty-state scale-95 opacity-0">
           <Empty
             title="No committees yet"
             description="Committee records will appear here once they're published. Please check back later."
@@ -113,16 +132,43 @@ const pageDescription =
 
       const tl = gsap
         .timeline({ defaults: { ease: "power3.out" } })
-        .to(".anim-header-badge", { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.5)" })
+        .to(".anim-header-badge", {
+          scale: 1,
+          opacity: 1,
+          duration: 0.6,
+          ease: "back.out(1.5)",
+        })
         .set(".anim-header-title", { autoAlpha: 1 }, "-=0.3")
-        .from(titleSplit.words, { yPercent: 100, opacity: 0, duration: 0.8, stagger: 0.04, ease: "power4.out" }, "<")
+        .from(
+          titleSplit.words,
+          {
+            yPercent: 100,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.04,
+            ease: "power4.out",
+          },
+          "<",
+        )
         .to(".anim-header-desc", { y: 0, opacity: 1, duration: 0.6 }, "-=0.4")
-        .to(".anim-section-title", { y: 0, opacity: 1, duration: 0.5 }, "-=0.4");
+        .to(
+          ".anim-section-title",
+          { y: 0, opacity: 1, duration: 0.5 },
+          "-=0.4",
+        );
 
       if (document.querySelector(".anim-card")) {
-        tl.to(".anim-card", { y: 0, opacity: 1, duration: 0.6, stagger: 0.08 }, "-=0.2");
+        tl.to(
+          ".anim-card",
+          { y: 0, opacity: 1, duration: 0.6, stagger: 0.08 },
+          "-=0.2",
+        );
       } else {
-        tl.to(".anim-empty-state", { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.2)" }, "-=0.2");
+        tl.to(
+          ".anim-empty-state",
+          { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.2)" },
+          "-=0.2",
+        );
       }
 
       if (document.querySelector(".anim-pagination")) {

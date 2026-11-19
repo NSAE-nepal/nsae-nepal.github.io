@@ -73,7 +73,7 @@ const displayProfiles: DisplayProfile[] = instructors.map((inst, index) => {
   displayProfiles.length > 0 && (
     <div class="rounded-lg border bg-card text-card-foreground">
       <div class="p-6">
-        <h3 class="font-sans text-xl font-medium tracking-tight mb-6">
+        <h3 class="mb-6 font-sans text-xl font-medium tracking-tight">
           Instructors & Speakers
         </h3>
 
@@ -82,11 +82,14 @@ const displayProfiles: DisplayProfile[] = instructors.map((inst, index) => {
             if (profile.isOrg) {
               return (
                 <div>
-                  <div class="flex items-start gap-4 group">
-                    <div class="relative h-12 w-12 shrink-0 overflow-hidden rounded-full flex items-center justify-center border border-border/50 bg-background">
+                  <div class="group flex items-start gap-4">
+                    <div class="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border/50 bg-background">
                       {profile.image ? (
                         <Image
-                          src={sanityImage(profile.image, { width: 96, height: 96 })}
+                          src={sanityImage(profile.image, {
+                            width: 96,
+                            height: 96,
+                          })}
                           alt={profile.name}
                           inferSize
                           class="h-full w-full object-contain p-1.5 transition-transform duration-300 group-hover:scale-110"
@@ -96,19 +99,19 @@ const displayProfiles: DisplayProfile[] = instructors.map((inst, index) => {
                       )}
                     </div>
 
-                    <div class="flex-1 min-w-0 pt-0.5">
+                    <div class="min-w-0 flex-1 pt-0.5">
                       <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                        <h4 class="font-sans font-medium text-sm leading-none">
+                        <h4 class="font-sans text-sm leading-none font-medium">
                           {profile.name}
                         </h4>
-                        <span class="font-mono uppercase tracking-wider text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-medium">
+                        <span class="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] font-medium tracking-wider text-muted-foreground uppercase">
                           Organization
                         </span>
                       </div>
 
-                      <div class="flex flex-col mt-1 gap-1">
+                      <div class="mt-1 flex flex-col gap-1">
                         {profile.position && (
-                          <p class="font-sans text-xs text-muted-foreground line-clamp-2">
+                          <p class="line-clamp-2 font-sans text-xs text-muted-foreground">
                             {profile.position}
                           </p>
                         )}
@@ -117,7 +120,7 @@ const displayProfiles: DisplayProfile[] = instructors.map((inst, index) => {
                             href={profile.website}
                             target="_blank"
                             rel="noopener noreferrer"
-                            class="inline-flex items-center gap-1 text-xs text-primary/80 hover:text-primary w-fit hover:underline"
+                            class="inline-flex w-fit items-center gap-1 text-xs text-primary/80 hover:text-primary hover:underline"
                           >
                             <IconWorld class="size-3" />
                             <span>Visit Website</span>
@@ -129,13 +132,16 @@ const displayProfiles: DisplayProfile[] = instructors.map((inst, index) => {
 
                   {profile.representatives &&
                     profile.representatives.length > 0 && (
-                      <div class="mt-4 flex flex-col gap-3 pl-6 border-l-2 border-muted ml-6">
+                      <div class="mt-4 ml-6 flex flex-col gap-3 border-l-2 border-muted pl-6">
                         {profile.representatives.map((rep) => (
-                          <div class="flex items-start gap-3 group/rep">
-                            <div class="relative h-8 w-8 shrink-0 overflow-hidden rounded-full flex items-center justify-center border border-border/50 bg-background">
+                          <div class="group/rep flex items-start gap-3">
+                            <div class="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border/50 bg-background">
                               {rep.profileImage ? (
                                 <Image
-                                  src={sanityImage(rep.profileImage, { width: 64, height: 64 })}
+                                  src={sanityImage(rep.profileImage, {
+                                    width: 64,
+                                    height: 64,
+                                  })}
                                   alt={rep.name}
                                   inferSize
                                   class="h-full w-full object-cover transition-transform duration-300 group-hover/rep:scale-110"
@@ -145,17 +151,17 @@ const displayProfiles: DisplayProfile[] = instructors.map((inst, index) => {
                               )}
                             </div>
 
-                            <div class="flex-1 min-w-0 pt-0.5">
+                            <div class="min-w-0 flex-1 pt-0.5">
                               <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                                <p class="text-sm font-medium leading-tight">
+                                <p class="text-sm leading-tight font-medium">
                                   {rep.name}
                                 </p>
-                                <span class="font-mono uppercase tracking-wider text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-medium">
+                                <span class="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] font-medium tracking-wider text-muted-foreground uppercase">
                                   {rep.eventRole || "Representative"}
                                 </span>
                               </div>
                               {rep.position && (
-                                <p class="text-xs text-muted-foreground mt-0.5 line-clamp-1 font-sans">
+                                <p class="mt-0.5 line-clamp-1 font-sans text-xs text-muted-foreground">
                                   {rep.position}
                                 </p>
                               )}
@@ -169,11 +175,14 @@ const displayProfiles: DisplayProfile[] = instructors.map((inst, index) => {
             }
 
             return (
-              <div class="flex items-start gap-4 group">
-                <div class="relative h-12 w-12 shrink-0 overflow-hidden rounded-full bg-muted flex items-center justify-center border border-border/50">
+              <div class="group flex items-start gap-4">
+                <div class="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border/50 bg-muted">
                   {profile.image ? (
                     <Image
-                      src={sanityImage(profile.image, { width: 96, height: 96 })}
+                      src={sanityImage(profile.image, {
+                        width: 96,
+                        height: 96,
+                      })}
                       alt={profile.name}
                       inferSize
                       class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
@@ -183,18 +192,18 @@ const displayProfiles: DisplayProfile[] = instructors.map((inst, index) => {
                   )}
                 </div>
 
-                <div class="flex-1 min-w-0 pt-0.5">
+                <div class="min-w-0 flex-1 pt-0.5">
                   <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <p class="font-sans font-medium text-sm leading-none">
+                    <p class="font-sans text-sm leading-none font-medium">
                       {profile.name}
                     </p>
-                    <span class="font-mono uppercase tracking-wider text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-medium">
+                    <span class="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] font-medium tracking-wider text-muted-foreground uppercase">
                       {profile.role}
                     </span>
                   </div>
 
-                  <div class="flex flex-col mt-1">
-                    <p class="font-sans text-muted-foreground text-xs line-clamp-1">
+                  <div class="mt-1 flex flex-col">
+                    <p class="line-clamp-1 font-sans text-xs text-muted-foreground">
                       {profile.position && (
                         <span class="capitalize">{profile.position}</span>
                       )}

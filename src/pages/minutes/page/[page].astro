@@ -2,7 +2,10 @@
 import type { GetStaticPaths } from "astro";
 import MinutesListing from "@/components/pages/minutes/MinutesListing.astro";
 import { PAGE_SIZE } from "@/consts";
-import { getMinutes, summarizeMinutesTypes } from "@/sanity/lib/queries/minutes";
+import {
+  getMinutes,
+  summarizeMinutesTypes,
+} from "@/sanity/lib/queries/minutes";
 
 export const getStaticPaths = (async ({ paginate }) => {
   const minutes = (await getMinutes()) ?? [];

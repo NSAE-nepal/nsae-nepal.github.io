@@ -71,9 +71,13 @@ function renderProgress(store: Store) {
 
 			const bar = container.querySelector<HTMLElement>("[data-progress-bar]");
 			if (bar) bar.style.transform = `scaleX(${ratio})`;
-			const track = container.querySelector<HTMLElement>("[role='progressbar']");
+			const track = container.querySelector<HTMLElement>(
+				"[role='progressbar']",
+			);
 			track?.setAttribute("aria-valuenow", String(Math.round(ratio * 100)));
-			const label = container.querySelector<HTMLElement>("[data-progress-label]");
+			const label = container.querySelector<HTMLElement>(
+				"[data-progress-label]",
+			);
 			if (label) {
 				label.textContent =
 					done === 0
@@ -86,33 +90,41 @@ function renderProgress(store: Store) {
 			container.dataset.finished = String(total > 0 && done === total);
 		});
 
-	document.querySelectorAll<HTMLElement>("[data-lesson-item]").forEach((item) => {
-		const courseId = item.dataset.courseId ?? "";
-		const done = store.courses[courseId]?.completed ?? [];
-		item.dataset.complete = String(done.includes(item.dataset.lessonId ?? ""));
-	});
+	document
+		.querySelectorAll<HTMLElement>("[data-lesson-item]")
+		.forEach((item) => {
+			const courseId = item.dataset.courseId ?? "";
+			const done = store.courses[courseId]?.completed ?? [];
+			item.dataset.complete = String(
+				done.includes(item.dataset.lessonId ?? ""),
+			);
+		});
 
-	document.querySelectorAll<HTMLAnchorElement>("[data-course-cta]").forEach((cta) => {
-		const courseId = cta.dataset.courseId ?? "";
-		const lessonIds = ids(cta.dataset.lessonIds);
-		const entry = store.courses[courseId];
-		const done = completedIn(store, courseId, lessonIds).length;
-		const label = cta.querySelector<HTMLElement>("[data-cta-label]");
-		if (!entry || done === 0 || !label) return;
-		if (done === lessonIds.length) {
-			label.textContent = "Review course";
-			return;
-		}
-		if (entry.lastLessonPath) {
-			cta.href = entry.lastLessonPath;
-			label.textContent = "Continue learning";
-		}
-	});
+	document
+		.querySelectorAll<HTMLAnchorElement>("[data-course-cta]")
+		.forEach((cta) => {
+			const courseId = cta.dataset.courseId ?? "";
+			const lessonIds = ids(cta.dataset.lessonIds);
+			const entry = store.courses[courseId];
+			const done = completedIn(store, courseId, lessonIds).length;
+			const label = cta.querySelector<HTMLElement>("[data-cta-label]");
+			if (!entry || done === 0 || !label) return;
+			if (done === lessonIds.length) {
+				label.textContent = "Review course";
+				return;
+			}
+			if (entry.lastLessonPath) {
+				cta.href = entry.lastLessonPath;
+				label.textContent = "Continue learning";
+			}
+		});
 }
 
 function renderLessonToggle(store: Store) {
 	const page = document.querySelector<HTMLElement>("[data-lesson-page]");
-	const toggle = document.querySelector<HTMLButtonElement>("[data-lesson-complete]");
+	const toggle = document.querySelector<HTMLButtonElement>(
+		"[data-lesson-complete]",
+	);
 	if (!page || !toggle) return;
 	const { courseId = "", lessonId = "" } = page.dataset;
 	const done = store.courses[courseId]?.completed.includes(lessonId) ?? false;
@@ -140,7 +152,10 @@ function renderContinueLearning(store: Store) {
 			try {
 				known = new Map(
 					Object.entries(
-						JSON.parse(slot.dataset.courses ?? "{}") as Record<string, string[]>,
+						JSON.parse(slot.dataset.courses ?? "{}") as Record<
+							string,
+							string[]
+						>,
 					),
 				);
 			} catch {
@@ -174,11 +189,9 @@ function renderContinueLearning(store: Store) {
 }
 
 function render(store: Store) {
-	document
-		.querySelectorAll<HTMLElement>("[data-progress-ui]")
-		.forEach((el) => {
-			el.hidden = false;
-		});
+	document.querySelectorAll<HTMLElement>("[data-progress-ui]").forEach((el) => {
+		el.hidden = false;
+	});
 	renderProgress(store);
 	renderLessonToggle(store);
 	renderContinueLearning(store);

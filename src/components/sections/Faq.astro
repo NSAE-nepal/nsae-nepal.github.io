@@ -8,7 +8,7 @@ const faqItems = data?.items ?? [];
 ---
 
 <section id="faq-section" class="py-24 md:py-32">
-  <div class="flex flex-col gap-4 mb-12 header-content">
+  <div class="header-content mb-12 flex flex-col gap-4">
     <Badge
       variant="secondary"
       size="sm"
@@ -18,7 +18,7 @@ const faqItems = data?.items ?? [];
     </Badge>
 
     <h1
-      class="font-sans text-4xl md:text-5xl font-medium tracking-tighter text-balance opacity-0 translate-y-8"
+      class="translate-y-8 font-sans text-4xl font-medium tracking-tighter text-balance opacity-0 md:text-5xl"
     >
       Frequently Asked Questions
     </h1>
@@ -29,10 +29,10 @@ const faqItems = data?.items ?? [];
       <div class="space-y-4">
         {faqItems.map((faq) => (
           <details
-            class=" p-6 group rounded-xl bg-secondary/50 border border-border/50 [&_summary::-webkit-details-marker]:hidden overflow-hidden opacity-0 translate-y-8"
+            class="group translate-y-8 overflow-hidden rounded-xl border border-border/50 bg-secondary/50 p-6 opacity-0 [&_summary::-webkit-details-marker]:hidden"
             name="faq-accordion"
           >
-            <summary class="faq-summary flex cursor-pointer items-center justify-between gap-4 text-lg font-sans font-medium text-foreground marker:content-none select-none relative z-10">
+            <summary class="faq-summary relative z-10 flex cursor-pointer items-center justify-between gap-4 font-sans text-lg font-medium text-foreground select-none marker:content-none">
               <span class="question-text transition-colors duration-300">
                 {faq.question}
               </span>
@@ -44,8 +44,8 @@ const faqItems = data?.items ?? [];
               </span>
             </summary>
 
-            <div class="faq-content-wrapper overflow-hidden h-0 opacity-0">
-              <div class="faq-inner-content font-sans text-muted-foreground leading-relaxed border-t border-border mt-4 pt-4">
+            <div class="faq-content-wrapper h-0 overflow-hidden opacity-0">
+              <div class="faq-inner-content mt-4 border-t border-border pt-4 font-sans leading-relaxed text-muted-foreground">
                 {faq.answer}
               </div>
             </div>
@@ -53,21 +53,21 @@ const faqItems = data?.items ?? [];
         ))}
       </div>
     ) : (
-      <div class="text-center p-12 font-sans text-muted-foreground">
+      <div class="p-12 text-center font-sans text-muted-foreground">
         <p>No questions currently available.</p>
       </div>
     )
   }
 
   <div
-    class="mt-12 flex flex-col items-center gap-3 text-center cta-content opacity-0 translate-y-8"
+    class="cta-content mt-12 flex translate-y-8 flex-col items-center gap-3 text-center opacity-0"
   >
-    <p class="font-sans text-lg text-muted-foreground text-balance">
+    <p class="font-sans text-lg text-balance text-muted-foreground">
       Need a personalized answer?
     </p>
     <a
       href="/contact"
-      class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-primary hover:text-primary/80 transition-colors"
+      class="inline-flex items-center gap-2 font-mono text-xs tracking-widest text-primary uppercase transition-colors hover:text-primary/80"
     >
       Contact our team <IconArrowRight class="size-4" />
     </a>

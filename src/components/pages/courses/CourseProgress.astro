@@ -13,7 +13,12 @@ interface Props {
   class?: string;
 }
 
-const { courseId, lessonIds, hideUntilStarted = false, class: className } = Astro.props;
+const {
+  courseId,
+  lessonIds,
+  hideUntilStarted = false,
+  class: className,
+} = Astro.props;
 ---
 
 <div
@@ -23,7 +28,11 @@ const { courseId, lessonIds, hideUntilStarted = false, class: className } = Astr
   data-course-id={courseId}
   data-lesson-ids={lessonIds.join(",")}
   data-started="false"
-  class={cn("space-y-1.5", hideUntilStarted && "data-[started=false]:hidden", className)}
+  class={cn(
+    "space-y-1.5",
+    hideUntilStarted && "data-[started=false]:hidden",
+    className,
+  )}
   data-pagefind-ignore
 >
   <div
@@ -40,5 +49,9 @@ const { courseId, lessonIds, hideUntilStarted = false, class: className } = Astr
     >
     </div>
   </div>
-  <p data-progress-label class="font-mono text-[11px] uppercase tracking-wider text-muted-foreground"></p>
+  <p
+    data-progress-label
+    class="font-mono text-[11px] tracking-wider text-muted-foreground uppercase"
+  >
+  </p>
 </div>

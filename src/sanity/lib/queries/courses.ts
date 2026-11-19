@@ -127,9 +127,7 @@ const normalizeCourse = (course: Course): Course => ({
 	...course,
 	instructors: (course.instructors ?? []).filter(Boolean),
 	categories: (course.categories ?? []).filter(Boolean),
-	relatedEvents: (course.relatedEvents ?? []).filter(
-		(event) => event?.slug,
-	),
+	relatedEvents: (course.relatedEvents ?? []).filter((event) => event?.slug),
 	resources: (course.resources ?? []).filter((resource) => resource?.url),
 	modules: (course.modules ?? [])
 		.filter(Boolean)
@@ -152,10 +150,14 @@ export async function getCourses(): Promise<Course[]> {
 	// A course whose lessons are all unpublished has nothing to open yet.
 	return (data ?? [])
 		.map(normalizeCourse)
-		.filter((course) => course.modules.some((module) => module.lessons.length > 0));
+		.filter((course) =>
+			course.modules.some((module) => module.lessons.length > 0),
+		);
 }
 
-export async function getLessonDetails(slug: string): Promise<LessonDetails | null> {
+export async function getLessonDetails(
+	slug: string,
+): Promise<LessonDetails | null> {
 	const { data } = await loadQuery<LessonDetails | null>({
 		query: `*[
       _type == "lesson" &&
@@ -181,7 +183,8 @@ export async function getLessonDetails(slug: string): Promise<LessonDetails | nu
 		// failing the build in Quiz.astro.
 		body: (data.body ?? []).filter(
 			(block) =>
-				block._type !== "quizReference" || Boolean((block as { slug?: string }).slug),
+				block._type !== "quizReference" ||
+				Boolean((block as { slug?: string }).slug),
 		),
 		attachments: (data.attachments ?? []).filter((resource) => resource?.url),
 	};

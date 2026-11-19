@@ -5,7 +5,7 @@ import AvatarImage from "@/components/astro/Avatar/AvatarImage.astro";
 export { Avatar, AvatarFallback, AvatarImage };
 
 export default {
-  Root: Avatar,
-  Image: AvatarImage,
-  Fallback: AvatarFallback,
+	Root: Avatar,
+	Image: AvatarImage,
+	Fallback: AvatarFallback,
 };

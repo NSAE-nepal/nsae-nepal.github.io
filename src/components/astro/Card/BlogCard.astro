@@ -13,21 +13,23 @@ const readingTime = formatReadingTime(data.readingMinutes);
 ---
 
 <article
-  class="split-card space-y-2 cursor-pointer flex flex-col relative z-10 p-4"
+  class="split-card relative z-10 flex cursor-pointer flex-col space-y-2 p-4"
 >
-  <div class="flex flex-row justify-between items-center">
-    {categories?.length > 0 ? (
-      <Categories
-        categories={categories}
-        basePath={data.type === "notice" ? "/notices" : "/blog"}
-      />
-    ) : (
-      <div />
-    )}
+  <div class="flex flex-row items-center justify-between">
+    {
+      categories?.length > 0 ? (
+        <Categories
+          categories={categories}
+          basePath={data.type === "notice" ? "/notices" : "/blog"}
+        />
+      ) : (
+        <div />
+      )
+    }
 
     {
       publishedAt && (
-        <p class="flex flex-wrap items-center justify-end gap-x-2 gap-y-1 font-mono text-xs text-muted-foreground uppercase tracking-wider">
+        <p class="flex flex-wrap items-center justify-end gap-x-2 gap-y-1 font-mono text-xs tracking-wider text-muted-foreground uppercase">
           <NewBadge date={publishedAt} />
           <FormattedDate date={new Date(publishedAt)} />
           {readingTime && <span aria-hidden="true">·</span>}
@@ -37,9 +39,9 @@ const readingTime = formatReadingTime(data.readingMinutes);
     }
   </div>
 
-  <div class="flex flex-col gap-2 grow">
+  <div class="flex grow flex-col gap-2">
     <a
-      class="split-target font-sans text-xl md:text-2xl font-medium first-letter:capitalize leading-snug"
+      class="split-target font-sans text-xl leading-snug font-medium first-letter:capitalize md:text-2xl"
       href={href ? href : `/blog/${slug}`}
     >
       {title}
@@ -51,12 +53,12 @@ const readingTime = formatReadingTime(data.readingMinutes);
         </span>
       )
     }
-    <div class="flex flex-row items-center justify-between pt-4 pb-0 mt-auto">
+    <div class="mt-auto flex flex-row items-center justify-between pt-4 pb-0">
       <a
-        class="font-mono text-xs uppercase tracking-widest flex flex-row gap-2 items-center hover:text-primary transition-colors"
+        class="flex flex-row items-center gap-2 font-mono text-xs tracking-widest uppercase transition-colors hover:text-primary"
         href={href ? href : `/blog/${slug}`}
       >
-        Read more <IconArrowNarrowRight class="w-4 h-4" />
+        Read more <IconArrowNarrowRight class="h-4 w-4" />
       </a>
       {authors?.length > 0 && <AvatarGroup data={authors} />}
     </div>

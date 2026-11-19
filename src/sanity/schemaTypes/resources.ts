@@ -31,7 +31,10 @@ export const resourceType = defineType({
 			title: "Type",
 			type: "string",
 			options: {
-				list: RESOURCE_TYPES.map(({ value, label }) => ({ title: label, value })),
+				list: RESOURCE_TYPES.map(({ value, label }) => ({
+					title: label,
+					value,
+				})),
 			},
 			validation: (Rule) => Rule.required(),
 		}),
@@ -49,7 +52,9 @@ export const resourceType = defineType({
 			title: "Topics",
 			description: "e.g. Irrigation, Farm Machinery, Post-Harvest.",
 			type: "array",
-			of: [defineArrayMember({ type: "reference", to: [{ type: "category" }] })],
+			of: [
+				defineArrayMember({ type: "reference", to: [{ type: "category" }] }),
+			],
 		}),
 		defineField({
 			name: "publisher",
@@ -82,7 +87,8 @@ export const resourceType = defineType({
 						defineField({
 							name: "title",
 							title: "Label",
-							description: 'Optional, e.g. "Full report" or "Annex 2". Defaults to the file name.',
+							description:
+								'Optional, e.g. "Full report" or "Annex 2". Defaults to the file name.',
 							type: "string",
 						}),
 						defineField({
@@ -109,7 +115,8 @@ export const resourceType = defineType({
 						defineField({
 							name: "title",
 							title: "Label",
-							description: 'Optional, e.g. "Online edition" or "Download page". Defaults to the website name.',
+							description:
+								'Optional, e.g. "Online edition" or "Download page". Defaults to the website name.',
 							type: "string",
 						}),
 						defineField({
@@ -122,11 +129,15 @@ export const resourceType = defineType({
 					],
 					preview: {
 						select: { title: "title", url: "url" },
-						prepare: ({ title, url }) => ({ title: title || url || "Link", subtitle: url }),
+						prepare: ({ title, url }) => ({
+							title: title || url || "Link",
+							subtitle: url,
+						}),
 					},
 				}),
 			],
-			validation: (Rule) => Rule.required().min(1).error("Add at least one file or link."),
+			validation: (Rule) =>
+				Rule.required().min(1).error("Add at least one file or link."),
 		}),
 		defineField({
 			name: "body",

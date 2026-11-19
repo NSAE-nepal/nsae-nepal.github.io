@@ -67,7 +67,7 @@ const relatedCards = Astro.slots.has("related")
   >
   </div>
   <article
-    class="py-8 space-y-10"
+    class="space-y-10 py-8"
     data-pagefind-body
     data-pagefind-filter={`type:${searchType}`}
   >
@@ -76,14 +76,14 @@ const relatedCards = Astro.slots.has("related")
       <a
         data-pagefind-ignore
         href={backHref}
-        class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors px-4"
+        class="inline-flex items-center gap-2 px-4 font-mono text-xs tracking-widest text-muted-foreground uppercase transition-colors hover:text-primary"
       >
         <IconArrowLeft class="size-4" />
         {backLabel}
       </a>
       <div class="space-y-4 text-center">
         <h1
-          class="font-sans text-3xl md:text-5xl font-medium tracking-tighter first-letter:capitalize"
+          class="font-sans text-3xl font-medium tracking-tighter first-letter:capitalize md:text-5xl"
           data-pagefind-meta="title"
         >
           {title}
@@ -92,7 +92,7 @@ const relatedCards = Astro.slots.has("related")
           subtitle && (
             <p
               data-pagefind-meta="sub_title"
-              class="font-sans text-lg text-muted-foreground leading-relaxed first-letter:capitalize max-w-3xl mx-auto"
+              class="mx-auto max-w-3xl font-sans text-lg leading-relaxed text-muted-foreground first-letter:capitalize"
             >
               {subtitle}
             </p>
@@ -101,8 +101,8 @@ const relatedCards = Astro.slots.has("related")
         <slot name="byline" />
       </div>
 
-      <div class="flex flex-row justify-around items-center text-xs">
-        <slot name="meta-start"><div /></slot>
+      <div class="flex flex-row items-center justify-around text-xs">
+        <slot name="meta-start"><div></div></slot>
         <slot name="meta-end" />
       </div>
     </header>
@@ -111,7 +111,7 @@ const relatedCards = Astro.slots.has("related")
 
     <div class={`mx-auto max-w-7xl ${showToc ? "xl:flex xl:gap-12" : ""}`}>
       <div
-        class="prose w-full min-w-0 max-w-none dark:prose-invert"
+        class="prose w-full max-w-none min-w-0 dark:prose-invert"
         data-reading-target
       >
         <slot />
@@ -139,11 +139,11 @@ const relatedCards = Astro.slots.has("related")
     {
       relatedCards && (
         <section
-          class="border-t border-border/50 pt-12 space-y-8"
+          class="space-y-8 border-t border-border/50 pt-12"
           aria-labelledby="keep-reading"
           data-pagefind-ignore
         >
-          <div class="flex flex-col text-center gap-2">
+          <div class="flex flex-col gap-2 text-center">
             <h2
               id="keep-reading"
               class="font-sans text-2xl font-medium tracking-tight"

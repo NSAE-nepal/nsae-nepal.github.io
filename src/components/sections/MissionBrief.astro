@@ -19,33 +19,33 @@ const { objective, bylaws } = Astro.props as {
 
 <section
   id="mission-brief"
-  class="mission-section relative space-y-12 pt-24 md:pt-32 bg-background text-foreground overflow-hidden"
+  class="mission-section relative space-y-12 overflow-hidden bg-background pt-24 text-foreground md:pt-32"
 >
   <div
-    class="mission-text border-b border-border/50 pb-12 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8"
+    class="mission-text flex flex-col items-start justify-between gap-8 border-b border-border/50 pb-12 lg:flex-row lg:items-center"
   >
     <div class="max-w-3xl">
-      <div class="flex items-center gap-4 mb-4">
-        <Badge class="font-mono text-xs uppercase tracking-widest" size="sm"
+      <div class="mb-4 flex items-center gap-4">
+        <Badge class="font-mono text-xs tracking-widest uppercase" size="sm"
           >( 02 )</Badge
         >
         <span
-          class="font-mono text-xs text-muted-foreground uppercase tracking-widest"
+          class="font-mono text-xs tracking-widest text-muted-foreground uppercase"
           >Mission Brief</span
         >
       </div>
       <h1
-        class="text-5xl md:text-8xl font-sans font-medium tracking-tighter leading-[0.9] opacity-0 translate-y-8"
+        class="translate-y-8 font-sans text-5xl leading-[0.9] font-medium tracking-tighter opacity-0 md:text-8xl"
       >
         Objectives of the <br />
-        <span class="text-muted-foreground italic font-serif">Society.</span>
+        <span class="font-serif text-muted-foreground italic">Society.</span>
       </h1>
     </div>
     <div class="max-w-xl lg:max-w-3xl">
       <p
-        class="text-base md:text-lg text-muted-foreground font-sans leading-relaxed opacity-0 translate-y-8"
+        class="translate-y-8 font-sans text-base leading-relaxed text-muted-foreground opacity-0 md:text-lg"
       >
-        <span class="font-mono text-xs text-primary block mb-2"
+        <span class="mb-2 block font-mono text-xs text-primary"
           >[ SUMMARIZED OBJECTIVE ]</span
         >
         {objective.summaryText}
@@ -54,61 +54,61 @@ const { objective, bylaws } = Astro.props as {
   </div>
 
   <div
-    class="grid grid-cols-1 md:grid-cols-[1fr_1fr] lg:grid-cols-[2fr_3fr] gap-4"
+    class="grid grid-cols-1 gap-4 md:grid-cols-[1fr_1fr] lg:grid-cols-[2fr_3fr]"
   >
     <div
-      class="mission-card group relative rounded-2xl overflow-hidden bg-secondary min-h-[400px] lg:min-h-[600px] border border-border/50 opacity-0 translate-y-12 scale-95"
+      class="mission-card group relative min-h-[400px] translate-y-12 scale-95 overflow-hidden rounded-2xl border border-border/50 bg-secondary opacity-0 lg:min-h-[600px]"
     >
       <Image
         alt={objective.imagePrimary.alt || ""}
         src={sanityImage(objective.imagePrimary.url, { width: 1200 })}
         inferSize
-        class="absolute w-full h-full top-0 left-0 object-cover transition-all duration-700 grayscale group-hover:grayscale-0 group-hover:scale-105"
+        class="absolute top-0 left-0 h-full w-full object-cover grayscale transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0"
       />
       <div
         class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"
       >
       </div>
 
-      <div class="absolute bottom-0 left-0 w-full p-6 md:p-8 text-white z-10">
+      <div class="absolute bottom-0 left-0 z-10 w-full p-6 text-white md:p-8">
         <div
-          class="flex justify-between items-end border-t border-white/20 pt-6"
+          class="flex items-end justify-between border-t border-white/20 pt-6"
         >
           <div>
             <h3
-              class="font-mono text-xs uppercase tracking-widest mb-2 text-white/70"
+              class="mb-2 font-mono text-xs tracking-widest text-white/70 uppercase"
             >
               Objective
             </h3>
-            <h1 class="font-sans text-3xl md:text-4xl font-medium leading-none">
+            <h1 class="font-sans text-3xl leading-none font-medium md:text-4xl">
               Uplifting professionalism
             </h1>
           </div>
           <IconArrowRight
-            class="w-6 h-6 text-white/50 group-hover:text-white transition-colors"
+            class="h-6 w-6 text-white/50 transition-colors group-hover:text-white"
           />
         </div>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
+    <div class="grid h-full grid-cols-1 gap-4 md:grid-cols-2">
       <div
-        class="mission-card group rounded-2xl p-6 md:p-8 bg-secondary flex flex-col justify-between min-h-[200px] border border-border/50 hover:border-foreground/20 transition-colors opacity-0 translate-y-12 scale-95"
+        class="mission-card group flex min-h-[200px] translate-y-12 scale-95 flex-col justify-between rounded-2xl border border-border/50 bg-secondary p-6 opacity-0 transition-colors hover:border-foreground/20 md:p-8"
       >
-        <div class="flex justify-between items-start">
-          <IconPlus class="w-5 h-5 text-muted-foreground" />
+        <div class="flex items-start justify-between">
+          <IconPlus class="h-5 w-5 text-muted-foreground" />
           <span class="font-mono text-xs text-muted-foreground"
             >( {objective.metric1.name} )</span
           >
         </div>
         <div>
           <h3
-            class="font-sans text-5xl md:text-6xl font-medium tracking-tight mb-2"
+            class="mb-2 font-sans text-5xl font-medium tracking-tight md:text-6xl"
           >
             {objective.metric1.value}
           </h3>
           <p
-            class="font-mono text-xs uppercase tracking-wider text-muted-foreground"
+            class="font-mono text-xs tracking-wider text-muted-foreground uppercase"
           >
             {objective.metric1.subtitle}
           </p>
@@ -116,37 +116,37 @@ const { objective, bylaws } = Astro.props as {
       </div>
 
       <div
-        class="mission-card group relative rounded-2xl overflow-hidden bg-secondary min-h-[200px] border border-border/50 opacity-0 translate-y-12 scale-95"
+        class="mission-card group relative min-h-[200px] translate-y-12 scale-95 overflow-hidden rounded-2xl border border-border/50 bg-secondary opacity-0"
       >
         <Image
           alt={objective.imageSecondary.alt || ""}
           src={sanityImage(objective.imageSecondary.url, { width: 1000 })}
           inferSize
-          class="absolute w-full h-full top-0 left-0 object-cover transition-transform duration-700 group-hover:scale-110"
+          class="absolute top-0 left-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
         <div
-          class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"
+          class="absolute inset-0 bg-black/20 transition-colors group-hover:bg-transparent"
         >
         </div>
       </div>
 
       <div
-        class="mission-card group rounded-2xl p-6 md:p-8 bg-secondary flex flex-col justify-between min-h-[200px] border border-border/50 hover:border-foreground/20 transition-colors opacity-0 translate-y-12 scale-95"
+        class="mission-card group flex min-h-[200px] translate-y-12 scale-95 flex-col justify-between rounded-2xl border border-border/50 bg-secondary p-6 opacity-0 transition-colors hover:border-foreground/20 md:p-8"
       >
-        <div class="flex justify-between items-start">
-          <IconPlus class="w-5 h-5 text-muted-foreground" />
+        <div class="flex items-start justify-between">
+          <IconPlus class="h-5 w-5 text-muted-foreground" />
           <span class="font-mono text-xs text-muted-foreground"
             >( {objective.metric2.name} )</span
           >
         </div>
         <div>
           <h3
-            class="font-sans text-5xl md:text-6xl font-medium tracking-tight mb-2"
+            class="mb-2 font-sans text-5xl font-medium tracking-tight md:text-6xl"
           >
             {objective.metric2.value}
           </h3>
           <p
-            class="font-mono text-xs uppercase tracking-wider text-muted-foreground"
+            class="font-mono text-xs tracking-wider text-muted-foreground uppercase"
           >
             {objective.metric2.subtitle}
           </p>
@@ -154,27 +154,27 @@ const { objective, bylaws } = Astro.props as {
       </div>
 
       <div
-        class="mission-card relative rounded-2xl overflow-hidden bg-black min-h-[250px] col-span-1 md:col-span-2 lg:col-span-1 xl:col-span-1 border border-border/50 opacity-0 translate-y-12 scale-95"
+        class="mission-card relative col-span-1 min-h-[250px] translate-y-12 scale-95 overflow-hidden rounded-2xl border border-border/50 bg-black opacity-0 md:col-span-2 lg:col-span-1 xl:col-span-1"
       >
         <video
           autoplay
-          class="js-mission-video absolute w-full h-full top-0 left-0 object-cover opacity-80"
+          class="js-mission-video absolute top-0 left-0 h-full w-full object-cover opacity-80"
           loop
           muted
           playsinline
         >
           <source src={objective.videoPrimary} type="video/mp4" />
         </video>
-        <div class="absolute bottom-4 right-4 z-20">
+        <div class="absolute right-4 bottom-4 z-20">
           <button
-            class="js-video-btn bg-white/10 backdrop-blur-md border border-white/20 p-2 rounded-full hover:bg-white hover:text-black transition-all"
+            class="js-video-btn rounded-full border border-white/20 bg-white/10 p-2 backdrop-blur-md transition-all hover:bg-white hover:text-black"
             aria-label="Toggle Video Playback"
           >
             <span class="js-pause-icon block">
-              <IconPlayerPause class="w-4 h-4" />
+              <IconPlayerPause class="h-4 w-4" />
             </span>
             <span class="js-play-icon hidden">
-              <IconPlayerPlay class="w-4 h-4" />
+              <IconPlayerPlay class="h-4 w-4" />
             </span>
           </button>
         </div>
@@ -182,30 +182,30 @@ const { objective, bylaws } = Astro.props as {
     </div>
 
     <div
-      class="mission-card group relative rounded-2xl overflow-hidden bg-secondary min-h-[350px] md:col-span-2 lg:col-span-2 flex items-center border border-border/50 opacity-0 translate-y-12 scale-95"
+      class="mission-card group relative flex min-h-[350px] translate-y-12 scale-95 items-center overflow-hidden rounded-2xl border border-border/50 bg-secondary opacity-0 md:col-span-2 lg:col-span-2"
     >
       <Image
         alt="Background"
         src={MissionPlaceholder3}
         width="1200"
-        class="absolute w-full h-full top-0 left-0 object-cover object-[0%_30%] opacity-40 group-hover:opacity-20 transition-opacity duration-700"
+        class="absolute top-0 left-0 h-full w-full object-cover object-[0%_30%] opacity-40 transition-opacity duration-700 group-hover:opacity-20"
       />
       <div
-        class="absolute inset-0 bg-gradient-to-r from-black via-black/50 to-transparent z-0"
+        class="absolute inset-0 z-0 bg-gradient-to-r from-black via-black/50 to-transparent"
       >
       </div>
 
-      <div class="relative z-10 w-full md:w-2/3 p-8 md:p-12 text-white">
+      <div class="relative z-10 w-full p-8 text-white md:w-2/3 md:p-12">
         <div class="mb-6">
-          <Badge class="font-mono border-white/30 capitalize">( Bylaws )</Badge>
+          <Badge class="border-white/30 font-mono capitalize">( Bylaws )</Badge>
         </div>
         <h3
-          class="font-sans text-3xl md:text-5xl font-light mb-6 leading-tight"
+          class="mb-6 font-sans text-3xl leading-tight font-light md:text-5xl"
         >
-          By Laws of <span class="italic font-serif text-gray-400">NSAE</span>
+          By Laws of <span class="font-serif text-gray-400 italic">NSAE</span>
         </h3>
         <p
-          class="font-sans text-lg text-gray-300 mb-8 leading-relaxed max-w-lg"
+          class="mb-8 max-w-lg font-sans text-lg leading-relaxed text-gray-300"
         >
           {bylaws.description}
         </p>
@@ -213,10 +213,10 @@ const { objective, bylaws } = Astro.props as {
         <a
           href={bylaws.file}
           target="_blank"
-          class="group/btn flex items-center gap-4 font-mono text-xs uppercase tracking-widest hover:text-primary transition-colors"
+          class="group/btn flex items-center gap-4 font-mono text-xs tracking-widest uppercase transition-colors hover:text-primary"
         >
           Read the Full bylaws <IconArrowRight
-            class="w-4 h-4 transition-transform group-hover/btn:translate-x-2"
+            class="h-4 w-4 transition-transform group-hover/btn:translate-x-2"
           />
         </a>
       </div>

@@ -5,7 +5,7 @@ import Button from "./astro/Button/Button.astro";
 const today = new Date();
 ---
 
-<footer class="border-t border-border bg-secondary p-8 pb-14 rounded-t-xl">
+<footer class="rounded-t-xl border-t border-border bg-secondary p-8 pb-14">
   <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
     <div>
       <div class="flex items-center gap-2">
@@ -148,7 +148,7 @@ const today = new Date();
           <button
             id="theme-toggle"
             aria-label="Toggle Dark Mode"
-            class="flex items-center text-muted-foreground transition hover:opacity-75 hover:text-foreground cursor-pointer"
+            class="flex cursor-pointer items-center text-muted-foreground transition hover:text-foreground hover:opacity-75"
           >
             <IconBrightness class="h-5 w-5" />
           </button>

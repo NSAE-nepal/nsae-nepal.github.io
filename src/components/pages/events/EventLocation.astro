@@ -12,14 +12,14 @@ const { location } = Astro.props;
   location && (
     <div class="rounded-lg border bg-card text-card-foreground">
       <div class="p-6">
-        <h3 class="font-sans text-xl font-medium tracking-tight mb-4">
+        <h3 class="mb-4 font-sans text-xl font-medium tracking-tight">
           Event Details
         </h3>
         <div class="flex flex-col gap-3 text-sm">
           {location.type !== "online" && (
             <>
               {location.venueName && (
-                <span class="font-sans font-medium text-base">
+                <span class="font-sans text-base font-medium">
                   {location.venueName}
                 </span>
               )}
@@ -34,7 +34,7 @@ const { location } = Astro.props;
                 <a
                   href={location.mapsLink}
                   target="_blank"
-                  class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-primary hover:underline mt-1"
+                  class="mt-1 flex items-center gap-2 font-mono text-xs tracking-widest text-primary uppercase hover:underline"
                 >
                   <IconMap class="h-4 w-4" /> View on Map
                 </a>
@@ -42,12 +42,12 @@ const { location } = Astro.props;
             </>
           )}
           {location.type !== "in_person" && (
-            <div class="flex flex-col gap-2 mt-2 pt-2 border-t border-dashed">
+            <div class="mt-2 flex flex-col gap-2 border-t border-dashed pt-2">
               {location.meetingUrl && (
                 <a
                   href={location.meetingUrl}
                   target="_blank"
-                  class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-primary hover:underline"
+                  class="flex items-center gap-2 font-mono text-xs tracking-widest text-primary uppercase hover:underline"
                 >
                   <IconLink class="h-4 w-4" /> Join Online Meeting
                 </a>
@@ -55,7 +55,7 @@ const { location } = Astro.props;
               {location.meetingId && (
                 <p class="font-sans">
                   Meeting ID:{" "}
-                  <span class="font-mono bg-muted px-1 rounded ml-1">
+                  <span class="ml-1 rounded bg-muted px-1 font-mono">
                     {location.meetingId}
                   </span>
                 </p>
@@ -63,7 +63,7 @@ const { location } = Astro.props;
               {location.meetingPassword && (
                 <p class="font-sans">
                   Password:{" "}
-                  <span class="font-mono bg-muted px-1 rounded ml-1">
+                  <span class="ml-1 rounded bg-muted px-1 font-mono">
                     {location.meetingPassword}
                   </span>
                 </p>

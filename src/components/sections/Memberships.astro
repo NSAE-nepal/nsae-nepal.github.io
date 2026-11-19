@@ -13,32 +13,32 @@ const { membership } = Astro.props as {
 
 <div
   id="cursor"
-  class="fixed top-0 left-0 w-4 h-4 bg-white rounded-full pointer-events-none z-[9999] mix-blend-difference hidden md:block opacity-0 transition-opacity duration-300"
+  class="pointer-events-none fixed top-0 left-0 z-[9999] hidden h-4 w-4 rounded-full bg-white opacity-0 mix-blend-difference transition-opacity duration-300 md:block"
 >
 </div>
 
 <section
-  class="relative overflow-hidden min-h-screen bg-background text-foreground cursor-none"
+  class="relative min-h-screen cursor-none overflow-hidden bg-background text-foreground"
   id="membership-container"
 >
-  <div class="border-b border-border pt-32 pb-10 px-6 md:px-12 relative">
+  <div class="relative border-b border-border px-6 pt-32 pb-10 md:px-12">
     <div class="overflow-hidden">
       <h1
-        class="text-[12vw] leading-[0.85] font-black uppercase tracking-tighter reveal-text text-foreground opacity-0 translate-y-full"
+        class="reveal-text translate-y-full text-[12vw] leading-[0.85] font-black tracking-tighter text-foreground uppercase opacity-0"
       >
         Join
       </h1>
     </div>
     <div
-      class="overflow-hidden flex items-center gap-4 md:gap-12 justify-between"
+      class="flex items-center justify-between gap-4 overflow-hidden md:gap-12"
     >
       <h1
-        class="text-[12vw] leading-[0.85] font-black uppercase tracking-tighter text-transparent stroke-text reveal-text opacity-0 translate-y-full"
+        class="stroke-text reveal-text translate-y-full text-[12vw] leading-[0.85] font-black tracking-tighter text-transparent uppercase opacity-0"
       >
         Us
       </h1>
       <p
-        class="hidden md:block max-w-sm text-sm md:text-base text-muted-foreground font-mono mt-4 leading-relaxed reveal-opacity opacity-0"
+        class="reveal-opacity mt-4 hidden max-w-sm font-mono text-sm leading-relaxed text-muted-foreground opacity-0 md:block md:text-base"
       >
         [ EST. 1990 ] <br />
         We are an enclave of thinkers and doers. Select your level of access to the
@@ -47,40 +47,40 @@ const { membership } = Astro.props as {
     </div>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 min-h-screen relative">
+  <div class="relative grid min-h-screen grid-cols-1 lg:grid-cols-2">
     <div
-      class="hidden lg:block absolute left-1/2 top-0 bottom-0 w-[1px] bg-border z-10 origin-top scale-y-0"
+      class="absolute top-0 bottom-0 left-1/2 z-10 hidden w-[1px] origin-top scale-y-0 bg-border lg:block"
       id="center-line"
     >
     </div>
 
     <div
-      class="group relative border-b border-border lg:border-b-0 p-6 md:p-12 flex flex-col justify-between h-[80vh] lg:h-auto hover-trigger bg-background opacity-0 translate-y-20"
+      class="group hover-trigger relative flex h-[80vh] translate-y-20 flex-col justify-between border-b border-border bg-background p-6 opacity-0 md:p-12 lg:h-auto lg:border-b-0"
     >
       <div
-        class="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-700 ease-out pointer-events-none"
+        class="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 ease-out group-hover:opacity-10"
       >
         <Image
           src={GeneralMemberImg}
           alt=""
-          class="w-full h-full object-cover grayscale"
+          class="h-full w-full object-cover grayscale"
         />
       </div>
 
       <div class="relative z-10">
-        <div class="flex justify-between items-center mb-20">
-          <span class="font-mono text-xs md:text-sm text-muted-foreground"
+        <div class="mb-20 flex items-center justify-between">
+          <span class="font-mono text-xs text-muted-foreground md:text-sm"
             >( 01 )</span
           >
           <Badge
-            class="font-mono text-xs md:text-sm border px-3 py-1 rounded-full"
+            class="rounded-full border px-3 py-1 font-mono text-xs md:text-sm"
           >
             ANNUAL
           </Badge>
         </div>
 
         <h2
-          class="text-5xl md:text-7xl font-medium tracking-tight mb-6 border-b border-border pb-6"
+          class="mb-6 border-b border-border pb-6 text-5xl font-medium tracking-tight md:text-7xl"
         >
           General<br />Membership
         </h2>
@@ -89,7 +89,7 @@ const { membership } = Astro.props as {
           {
             membership.general.benefits.map((benefit) => (
               <li class="flex items-center gap-3">
-                <IconPlus class="w-3 h-3" />
+                <IconPlus class="h-3 w-3" />
                 {benefit}
               </li>
             ))
@@ -101,64 +101,64 @@ const { membership } = Astro.props as {
         <a
           href={membership.general.joinUrl}
           target="_blank"
-          class="inline-flex items-center gap-4 text-lg uppercase tracking-widest hover:gap-8 transition-all duration-500 text-foreground group-hover:text-primary"
+          class="inline-flex items-center gap-4 text-lg tracking-widest text-foreground uppercase transition-all duration-500 group-hover:text-primary hover:gap-8"
         >
-          Join Us <IconArrowRight class="w-5 h-5" />
+          Join Us <IconArrowRight class="h-5 w-5" />
         </a>
       </div>
     </div>
 
     <div
-      class="group relative p-0 overflow-hidden h-[80vh] lg:h-auto hover-trigger bg-black opacity-0 translate-y-20"
+      class="group hover-trigger relative h-[80vh] translate-y-20 overflow-hidden bg-black p-0 opacity-0 lg:h-auto"
     >
-      <div class="absolute inset-0 w-full h-full overflow-hidden">
+      <div class="absolute inset-0 h-full w-full overflow-hidden">
         <Image
           src={LifeMemberImg}
           alt="Life Member"
           width={1200}
-          class="w-full h-full object-cover opacity-60 transition-transform duration-1000 ease-[0.25,1,0.5,1] group-hover:scale-110 grayscale group-hover:grayscale-0"
+          class="h-full w-full object-cover opacity-60 grayscale transition-transform duration-1000 ease-[0.25,1,0.5,1] group-hover:scale-110 group-hover:grayscale-0"
         />
         <div
-          class="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors duration-700"
+          class="absolute inset-0 bg-black/40 transition-colors duration-700 group-hover:bg-black/60"
         >
         </div>
       </div>
 
       <div
-        class="relative z-10 h-full flex flex-col justify-between p-6 md:p-12 text-white"
+        class="relative z-10 flex h-full flex-col justify-between p-6 text-white md:p-12"
       >
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <span
-            class="font-mono text-xs md:text-sm text-white/80 mix-blend-difference"
+            class="font-mono text-xs text-white/80 mix-blend-difference md:text-sm"
           >
             ( 02 )
           </span>
           <span
-            class="font-mono text-xs md:text-sm bg-primary text-primary-foreground px-3 py-1 rounded-full font-bold border-none"
+            class="rounded-full border-none bg-primary px-3 py-1 font-mono text-xs font-bold text-primary-foreground md:text-sm"
           >
             LIFETIME
           </span>
         </div>
 
         <div
-          class="lg:translate-y-8 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 transition-all duration-700 ease-out"
+          class="transition-all duration-700 ease-out lg:translate-y-8 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100"
         >
           <h2
-            class="text-5xl md:text-7xl font-medium tracking-tight mb-2 text-white mix-blend-difference"
+            class="mb-2 text-5xl font-medium tracking-tight text-white mix-blend-difference md:text-7xl"
           >
             Life Membership
           </h2>
           <p
-            class="text-lg text-gray-300 max-w-md leading-relaxed mix-blend-difference"
+            class="max-w-md text-lg leading-relaxed text-gray-300 mix-blend-difference"
           >
             Be a part of NSAE as Permanent member for developing agricultural
             engineering profession.
           </p>
-          <ul class="space-y-4 font-mono text-sm text-gray-300 pt-4 uppercase">
+          <ul class="space-y-4 pt-4 font-mono text-sm text-gray-300 uppercase">
             {
               membership.lifetime.benefits.map((benefit) => (
                 <li class="flex items-center gap-3">
-                  <IconPlus class="w-3 h-3" />
+                  <IconPlus class="h-3 w-3" />
                   {benefit}
                 </li>
               ))
@@ -166,20 +166,20 @@ const { membership } = Astro.props as {
           </ul>
         </div>
 
-        <div class="flex justify-end items-end">
+        <div class="flex items-end justify-end">
           <div
-            class="relative flex items-center justify-center scale-100 lg:scale-0 group-hover:scale-100 transition-transform duration-500 ease-back-out m-4"
+            class="ease-back-out relative m-4 flex scale-100 items-center justify-center transition-transform duration-500 group-hover:scale-100 lg:scale-0"
           >
             <div
-              class="absolute w-32 h-32 animate-spin-slow pointer-events-none select-none"
+              class="animate-spin-slow pointer-events-none absolute h-32 w-32 select-none"
             >
-              <svg viewBox="0 0 100 100" class="w-full h-full overflow-visible">
+              <svg viewBox="0 0 100 100" class="h-full w-full overflow-visible">
                 <path
                   id="circlePath"
                   d="M 50, 50 m -36, 0 a 36,36 0 1,1 72,0 a 36,36 0 1,1 -72,0"
                   fill="none"></path>
                 <text
-                  class="fill-white font-mono text-[9.5px] font-bold uppercase tracking-[0.2em]"
+                  class="fill-white font-mono text-[9.5px] font-bold tracking-[0.2em] uppercase"
                 >
                   <textPath href="#circlePath" startOffset="0%">
                     Join Us • Join Us • Join Us •
@@ -191,9 +191,9 @@ const { membership } = Astro.props as {
             <a
               href={membership.lifetime.joinUrl}
               target="_blank"
-              class="relative z-10 w-16 h-16 rounded-full bg-primary flex items-center justify-center text-primary-foreground transition-transform duration-300 hover:scale-110"
+              class="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform duration-300 hover:scale-110"
             >
-              <IconArrowRight class="w-6 h-6 -rotate-45" />
+              <IconArrowRight class="h-6 w-6 -rotate-45" />
             </a>
           </div>
         </div>
@@ -202,21 +202,21 @@ const { membership } = Astro.props as {
   </div>
 
   <div
-    class="border-t border-border py-6 overflow-hidden whitespace-nowrap flex bg-background"
+    class="flex overflow-hidden border-t border-border bg-background py-6 whitespace-nowrap"
   >
     <div
-      class="animate-marquee flex gap-12 items-center text-sm font-mono text-muted-foreground uppercase"
+      class="animate-marquee flex items-center gap-12 font-mono text-sm text-muted-foreground uppercase"
     >
       <span>Legacy Defined</span>
-      <span class="w-2 h-2 bg-muted-foreground/30 rounded-full"></span>
+      <span class="h-2 w-2 rounded-full bg-muted-foreground/30"></span>
       <span>Uncompromising Quality</span>
-      <span class="w-2 h-2 bg-muted-foreground/30 rounded-full"></span>
+      <span class="h-2 w-2 rounded-full bg-muted-foreground/30"></span>
       <span>Global Community</span>
-      <span class="w-2 h-2 bg-muted-foreground/30 rounded-full"></span>
+      <span class="h-2 w-2 rounded-full bg-muted-foreground/30"></span>
       <span>Legacy Defined</span>
-      <span class="w-2 h-2 bg-muted-foreground/30 rounded-full"></span>
+      <span class="h-2 w-2 rounded-full bg-muted-foreground/30"></span>
       <span>Uncompromising Quality</span>
-      <span class="w-2 h-2 bg-muted-foreground/30 rounded-full"></span>
+      <span class="h-2 w-2 rounded-full bg-muted-foreground/30"></span>
       <span>Global Community</span>
     </div>
   </div>

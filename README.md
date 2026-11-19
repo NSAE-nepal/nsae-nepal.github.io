@@ -14,21 +14,21 @@ cp .env.example .env   # fill in the values
 bun run dev            # http://localhost:4321, Sanity Studio at /studio
 ```
 
-| Script | What it does |
-| --- | --- |
-| `bun run dev` | Development server |
-| `bun run build` | Production build into `dist/` plus the Pagefind search index |
-| `bun run preview` | Serve the production build locally |
-| `bun run check` | Type-check (`astro check`) |
+| Script             | What it does                                                                  |
+| ------------------ | ----------------------------------------------------------------------------- |
+| `bun run dev`      | Development server                                                            |
+| `bun run build`    | Production build into `dist/` plus the Pagefind search index                  |
+| `bun run preview`  | Serve the production build locally                                            |
+| `bun run check`    | Type-check (`astro check`)                                                    |
 | `bun run dev:full` | Dev server + Pagefind server, so search works in dev (run `build` once first) |
 
 ### Environment variables
 
-| Variable | Purpose |
-| --- | --- |
-| `PUBLIC_SANITY_PROJECT_ID` | Sanity project ID, used by both the site's queries and the embedded Studio (required) |
-| `PUBLIC_SANITY_DATASET` | Sanity dataset, usually `production` (required) |
-| `PUBLIC_CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name (not currently read by the code) |
+| Variable                       | Purpose                                                                               |
+| ------------------------------ | ------------------------------------------------------------------------------------- |
+| `PUBLIC_SANITY_PROJECT_ID`     | Sanity project ID, used by both the site's queries and the embedded Studio (required) |
+| `PUBLIC_SANITY_DATASET`        | Sanity dataset, usually `production` (required)                                       |
+| `PUBLIC_CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name (not currently read by the code)                                |
 
 The same values are configured as repository secrets for the GitHub Actions workflows.
 

@@ -72,7 +72,9 @@ const iconButton =
   data-share-url={shareUrl}
   data-pagefind-ignore
 >
-  <span class="mr-1 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+  <span
+    class="mr-1 font-mono text-xs tracking-widest text-muted-foreground uppercase"
+  >
     {label}
   </span>
 
@@ -109,9 +111,10 @@ const iconButton =
     title="Copy link"
   >
     <IconLink class="size-4" data-copy-idle />
-    <IconCheck class="size-4 hidden text-primary" data-copy-done />
+    <IconCheck class="hidden size-4 text-primary" data-copy-done />
   </button>
-  <span class="sr-only" role="status" aria-live="polite" data-share-status></span>
+  <span class="sr-only" role="status" aria-live="polite" data-share-status
+  ></span>
 </div>
 
 <script>
@@ -133,7 +136,11 @@ const iconButton =
 
     if (target.closest("[data-share-native]")) {
       try {
-        await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: shareUrl,
+        });
       } catch {
         // Dismissed by the user; nothing to do.
       }
