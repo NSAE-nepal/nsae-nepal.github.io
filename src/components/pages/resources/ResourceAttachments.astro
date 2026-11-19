@@ -1,0 +1,71 @@
+---
+import { IconDownload, IconExternalLink, IconFile, IconLink } from "@tabler/icons-astro";
+import Button from "@/components/astro/Button/Button.astro";
+import { downloadUrl } from "@/lib/resources";
+import { cn } from "@/lib/utils";
+import {
+  attachmentMeta,
+  attachmentTitle,
+  type ResourceAttachment,
+} from "@/sanity/lib/queries/resources";
+
+/** A resource's files and links, one row each with a Download / Open button. */
+interface Props {
+  attachments: ResourceAttachment[];
+  class?: string;
+}
+
+const { attachments, class: className } = Astro.props;
+---
+
+<ul
+  class={cn(
+    "divide-y divide-border/60 overflow-hidden rounded-2xl border border-border/60 bg-secondary/30",
+    className,
+  )}
+  aria-label="Files and links"
+>
+  {
+    attachments.map((item) => {
+      const isFile = item._type === "resourceFile";
+      const title = attachmentTitle(item);
+      return (
+        <li class="flex flex-col items-center gap-4 p-5 text-center sm:flex-row sm:text-left">
+          <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            {isFile ? (
+              <IconFile class="size-5" aria-hidden="true" />
+            ) : (
+              <IconLink class="size-5" aria-hidden="true" />
+            )}
+          </span>
+          <div class="min-w-0 flex-1">
+            <p class="break-words font-medium">{title}</p>
+            <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+              {attachmentMeta(item)}
+            </p>
+          </div>
+          {isFile ? (
+            <Button
+              href={downloadUrl(item.url, item.filename)}
+              variant={attachments.length > 1 ? "outline" : "default"}
+              class="rounded-full"
+            >
+              <IconDownload /> Download<span class="sr-only">: {title}</span>
+            </Button>
+          ) : (
+            <Button
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant={attachments.length > 1 ? "outline" : "default"}
+              class="rounded-full"
+            >
+              Open <IconExternalLink />
+              <span class="sr-only">: {title} (opens in a new tab)</span>
+            </Button>
+          )}
+        </li>
+      );
+    })
+  }
+</ul>

@@ -1,0 +1,20 @@
+---
+import type { GetStaticPaths } from "astro";
+import ResourceListing from "@/components/pages/resources/ResourceListing.astro";
+import { PAGE_SIZE } from "@/consts";
+import { summarizeResourceTypes } from "@/lib/resources";
+import { getResources } from "@/sanity/lib/queries/resources";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const resources = await getResources();
+
+  return paginate(resources, {
+    pageSize: PAGE_SIZE,
+    props: { types: summarizeResourceTypes(resources) },
+  });
+}) satisfies GetStaticPaths;
+
+const { page, types } = Astro.props;
+---
+
+<ResourceListing page={page} types={types} />

@@ -1,11 +1,13 @@
 import type { APIContext, GetStaticPaths } from "astro";
 import { type OgCard, renderOgPng } from "@/lib/og";
 import { opportunityTypeLabel } from "@/lib/opportunities";
+import { resourceTypeLabel } from "@/lib/resources";
 import { courseStats, formatDuration, LEVEL_LABELS } from "@/lib/courses";
 import { getVacancies } from "@/sanity/lib/queries/careers";
 import { getCourses } from "@/sanity/lib/queries/courses";
 import { getEvents } from "@/sanity/lib/queries/events";
 import { getPosts } from "@/sanity/lib/queries/posts";
+import { getResources } from "@/sanity/lib/queries/resources";
 import { formatDate } from "@/utils/datetime";
 
 /**
@@ -13,11 +15,12 @@ import { formatDate } from "@/utils/datetime";
  * use these when they have no cover image of their own (see `ogImagePath`).
  */
 export const getStaticPaths: GetStaticPaths = async () => {
-  const [posts, events, vacancies, courses] = await Promise.all([
+  const [posts, events, vacancies, courses, resources] = await Promise.all([
     getPosts(),
     getEvents(),
     getVacancies(),
     getCourses(),
+    getResources(),
   ]);
 
   const date = (value?: string) =>
@@ -67,6 +70,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
         },
       };
     }),
+    ...resources.map((resource) => ({
+      path: `resources/${resource.slug}`,
+      card: {
+        kicker: resourceTypeLabel(resource.resourceType),
+        title: resource.title,
+        meta: [resource.publisher, resource.year].filter(Boolean).join(" · "),
+      },
+    })),
   ];
 
   return cards

@@ -1,0 +1,153 @@
+---
+import type { Page } from "astro";
+import { IconBooks } from "@tabler/icons-astro";
+import Badge from "@/components/astro/Badge.astro";
+import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
+import ResourceCard from "@/components/astro/Card/ResourceCard.astro";
+import Empty from "@/components/astro/Empty.astro";
+import Pagination from "@/components/astro/Pagination.astro";
+import FilterChips from "@/components/FilterChips.astro";
+import PageLayout from "@/layouts/PageLayout.astro";
+import { type ResourceTypeSummary, resourcePath, resourcesPath } from "@/lib/resources";
+import type { Resource } from "@/sanity/lib/queries/resources";
+
+/**
+ * Resource library listing, shared by /resources/page/[page] and
+ * /resources/type/[type]/page/[page].
+ */
+interface Props {
+  page: Page<Resource>;
+  types: ResourceTypeSummary[];
+  activeType?: ResourceTypeSummary;
+}
+
+const { page, types, activeType } = Astro.props;
+
+const pageTitle = [
+  activeType ? `${activeType.label} resources` : "Resource library",
+  page.currentPage > 1 ? `page ${page.currentPage}` : "",
+]
+  .filter(Boolean)
+  .join(", ");
+const pageDescription =
+  "Standards, manuals, guidelines, reports, templates and tools for agricultural engineers, free to download.";
+---
+
+<PageLayout title={pageTitle} description={pageDescription} dataPagefindIgnore="all">
+  <header class="flex flex-col items-center justify-center py-16 md:py-24 text-center">
+    <div class="anim-header-badge opacity-0 scale-50">
+      <Badge
+        variant="secondary"
+        size="sm"
+        class="font-mono uppercase tracking-widest text-xs mb-3 border border-border/50"
+      >
+        Resource library
+      </Badge>
+    </div>
+    <h1
+      class="anim-header-title invisible font-sans text-5xl md:text-7xl font-medium tracking-tighter pt-4 max-w-4xl leading-tight"
+    >
+      Tools of the trade
+    </h1>
+    <p
+      class="anim-header-desc mt-6 max-w-2xl font-sans text-lg text-muted-foreground opacity-0 translate-y-4"
+    >
+      {pageDescription}
+    </p>
+  </header>
+
+  <section class="mb-16" aria-labelledby="resources-heading" data-resource-listing>
+    <h2
+      id="resources-heading"
+      class="anim-section-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
+    >
+      {activeType ? activeType.label : "All resources"}
+    </h2>
+    {
+      types.length > 1 && (
+        <FilterChips
+          label="Filter resources by type"
+          allHref={resourcesPath()}
+          options={types.map((type) => ({
+            href: resourcesPath(type.value),
+            label: type.label,
+            count: type.count,
+            active: type.value === activeType?.value,
+          }))}
+        />
+      )
+    }
+
+    {
+      page.data.length > 0 ? (
+        <>
+          <ul class="grid gap-6 md:grid-cols-2" role="list">
+            {page.data.map((resource) => (
+              <li class="anim-card opacity-0 translate-y-4">
+                <ClickableCard
+                  href={resourcePath(resource)}
+                  label={resource.title}
+                  class="h-full rounded-2xl border border-border/60 bg-secondary/30 transition-colors hover:bg-secondary/70"
+                >
+                  <ResourceCard data={resource} />
+                </ClickableCard>
+              </li>
+            ))}
+          </ul>
+          <div class="anim-pagination flex justify-center mt-16 opacity-0">
+            <Pagination url={page.url} class="font-mono text-sm uppercase tracking-widest" />
+          </div>
+        </>
+      ) : (
+        <div class="anim-empty-state opacity-0 scale-95">
+          <Empty
+            title="The library is being stocked"
+            description="We're collecting standards, manuals and guidelines for members. Please check back soon."
+          >
+            <IconBooks slot="icon" class="size-8 text-muted-foreground" />
+          </Empty>
+        </div>
+      )
+    }
+  </section>
+</PageLayout>
+
+<script>
+  import { gsap, SplitText } from "@/utils/gsap-init";
+
+  let ctx: gsap.Context | undefined;
+
+  document.addEventListener("astro:page-load", () => {
+    if (!document.querySelector("[data-resource-listing]")) return;
+
+    ctx = gsap.context(() => {
+      const titleSplit = SplitText.create(".anim-header-title", {
+        type: "lines, words",
+        linesClass: "overflow-hidden",
+      });
+
+      const tl = gsap
+        .timeline({ defaults: { ease: "power3.out" } })
+        .to(".anim-header-badge", { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.5)" })
+        .set(".anim-header-title", { autoAlpha: 1 }, "-=0.3")
+        .from(titleSplit.words, { yPercent: 100, opacity: 0, duration: 0.8, stagger: 0.04, ease: "power4.out" }, "<")
+        .to(".anim-header-desc", { y: 0, opacity: 1, duration: 0.6 }, "-=0.4")
+        .to(".anim-section-title", { y: 0, opacity: 1, duration: 0.5 }, "-=0.4");
+
+      if (document.querySelector(".anim-card")) {
+        tl.to(".anim-card", { y: 0, opacity: 1, duration: 0.6, stagger: 0.08 }, "-=0.2");
+      } else {
+        tl.to(".anim-empty-state", { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.2)" }, "-=0.2");
+      }
+
+      if (document.querySelector(".anim-pagination")) {
+        tl.to(".anim-pagination", { opacity: 1, duration: 0.5 }, "-=0.2");
+      }
+    });
+  });
+
+  document.addEventListener("astro:before-swap", () => {
+    ctx?.revert();
+    ctx = undefined;
+  });
+</script>
