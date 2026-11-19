@@ -1,0 +1,167 @@
+---
+import type { Page } from "astro";
+import Badge from "@/components/astro/Badge.astro";
+import CareersCard from "@/components/astro/Card/CareersCard.astro";
+import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
+import Empty from "@/components/astro/Empty.astro";
+import Pagination from "@/components/astro/Pagination.astro";
+import FilterChips from "@/components/FilterChips.astro";
+import PageLayout from "@/layouts/PageLayout.astro";
+import {
+  type OpportunityTypeSummary,
+  opportunitiesPath,
+  opportunityPath,
+} from "@/lib/opportunities";
+import type { Vacancy } from "@/sanity/lib/queries/careers";
+
+/**
+ * Opportunities listing (jobs, scholarships, grants, trainings, …), shared by
+ * /careers/page/[page] and /careers/type/[type]/page/[page].
+ */
+interface Props {
+  page: Page<Vacancy>;
+  types: OpportunityTypeSummary[];
+  activeType?: OpportunityTypeSummary;
+}
+
+const { page, types, activeType } = Astro.props;
+
+const pageTitle = [
+  activeType ? `${activeType.label} opportunities` : "Opportunities",
+  page.currentPage > 1 ? `page ${page.currentPage}` : "",
+]
+  .filter(Boolean)
+  .join(", ");
+const pageDescription =
+  "Jobs, scholarships, fellowships, grants, trainings and calls for papers for agricultural engineers in Nepal.";
+---
+
+<PageLayout
+  title={pageTitle}
+  description={pageDescription}
+  dataPagefindIgnore="all"
+>
+  <header class="flex flex-col items-center justify-center py-16 md:py-24 text-center">
+    <div class="anim-header-badge opacity-0 scale-50">
+      <Badge
+        variant={"secondary"}
+        size={"sm"}
+        class="font-mono uppercase tracking-widest text-xs mb-3 border border-border/50"
+      >
+        Opportunities
+      </Badge>
+    </div>
+    <h1
+      class="anim-header-title invisible font-sans text-5xl md:text-7xl font-medium tracking-tighter pt-4 max-w-4xl leading-tight"
+    >
+      Your Next Chapter Starts Here
+    </h1>
+    <p
+      class="anim-header-desc font-sans text-lg text-muted-foreground max-w-2xl text-balance pt-2 opacity-0 translate-y-4"
+    >
+      {pageDescription}
+    </p>
+  </header>
+
+  <section class="mb-12" data-manual-card-anim data-opportunities-listing>
+    <h2
+      class="anim-section-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
+    >
+      {activeType ? activeType.label : "All opportunities"}
+    </h2>
+    {
+      types.length > 1 && (
+        <FilterChips
+          label="Filter opportunities by type"
+          allHref={opportunitiesPath()}
+          options={types.map((type) => ({
+            href: opportunitiesPath(type.value),
+            label: type.label,
+            count: type.count,
+            active: type.value === activeType?.value,
+          }))}
+        />
+      )
+    }
+    {
+      page.data.length > 0 ? (
+        <>
+          <div class="grid grid-cols-2">
+            {page.data.map((vacancy, index) => (
+              <>
+                <ClickableCard
+                  class="anim-card group relative col-span-2 hover:bg-secondary/60 transition-colors opacity-0 translate-y-4"
+                  href={opportunityPath(vacancy)}
+                  label={vacancy.title}
+                >
+                  <CareersCard data={vacancy} />
+                </ClickableCard>
+                {index < page.data.length - 1 && (
+                  <div class="anim-divider col-span-2 my-6 border-b-2 border-dashed border-secondary-foreground opacity-0 translate-y-4" />
+                )}
+              </>
+            ))}
+          </div>
+          <div class="anim-pagination flex justify-center mt-16 opacity-0">
+            <Pagination
+              url={page.url}
+              class="font-mono text-sm uppercase tracking-widest"
+            />
+          </div>
+        </>
+      ) : (
+        <div class="anim-empty-state opacity-0 scale-95">
+          <Empty
+            title="No opportunities right now"
+            description="We don't have any open jobs, scholarships or calls right now. Please check back later."
+          />
+        </div>
+      )
+    }
+  </section>
+</PageLayout>
+
+<script>
+  import { initCardSplitTextAnimation } from "@/utils/animations/cards-split-text-animation";
+  import { gsap, SplitText } from "@/utils/gsap-init";
+
+  let ctx: gsap.Context | undefined;
+
+  document.addEventListener("astro:page-load", () => {
+    if (!document.querySelector("[data-opportunities-listing]")) return;
+
+    ctx = gsap.context(() => {
+      const titleSplit = SplitText.create(".anim-header-title", {
+        type: "lines, words",
+        linesClass: "overflow-hidden",
+      });
+
+      const tl = gsap
+        .timeline({ defaults: { ease: "power3.out" } })
+        .to(".anim-header-badge", { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.5)" })
+        .set(".anim-header-title", { autoAlpha: 1 }, "-=0.3")
+        .from(titleSplit.words, { yPercent: 100, opacity: 0, duration: 0.8, stagger: 0.04, ease: "power4.out" }, "<")
+        .to(".anim-header-desc", { y: 0, opacity: 1, duration: 0.6 }, "-=0.4")
+        .to(".anim-section-title", { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" }, "-=0.4");
+
+      if (document.querySelector(".anim-card")) {
+        tl.to(
+          ".anim-card, .anim-divider",
+          { y: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: "power2.out" },
+          "-=0.3",
+        ).add(() => initCardSplitTextAnimation(), "<");
+      } else {
+        tl.to(".anim-empty-state", { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.2)" }, "-=0.2");
+      }
+
+      if (document.querySelector(".anim-pagination")) {
+        tl.to(".anim-pagination", { opacity: 1, duration: 0.5 }, "-=0.2");
+      }
+    });
+  });
+
+  document.addEventListener("astro:before-swap", () => {
+    ctx?.revert();
+    ctx = undefined;
+  });
+</script>

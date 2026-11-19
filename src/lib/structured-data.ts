@@ -177,7 +177,7 @@ export function eventLd(
   };
 }
 
-const EMPLOYMENT_TYPE: Record<VacancyDetails["type"], string> = {
+const EMPLOYMENT_TYPE: Record<NonNullable<VacancyDetails["type"]>, string> = {
   "Full-time": "FULL_TIME",
   "Part-time": "PART_TIME",
   Contract: "CONTRACTOR",
@@ -197,7 +197,7 @@ export function jobPostingLd(vacancy: VacancyDetails, site: Site) {
     url: abs(`/careers/${vacancy.slug}/`, site),
     datePosted: vacancy.postedDate,
     validThrough: vacancy.closingDate,
-    employmentType: EMPLOYMENT_TYPE[vacancy.type],
+    employmentType: vacancy.type ? EMPLOYMENT_TYPE[vacancy.type] : undefined,
     hiringOrganization: vacancy.company?.name
       ? {
           "@type": "Organization",
