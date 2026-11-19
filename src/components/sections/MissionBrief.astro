@@ -19,6 +19,7 @@ const { objective, bylaws } = Astro.props as {
 
 <section
   id="mission-brief"
+  data-section="mission-brief"
   class="mission-section relative space-y-12 overflow-hidden bg-background pt-24 text-foreground md:pt-32"
 >
   <div
@@ -55,6 +56,7 @@ const { objective, bylaws } = Astro.props as {
 
   <div
     class="grid grid-cols-1 gap-4 md:grid-cols-[1fr_1fr] lg:grid-cols-[2fr_3fr]"
+    data-mission-cards
   >
     <div
       class="mission-card group relative min-h-[400px] translate-y-12 scale-95 overflow-hidden rounded-2xl border border-border/50 bg-secondary opacity-0 lg:min-h-[600px]"
@@ -226,70 +228,65 @@ const { objective, bylaws } = Astro.props as {
 
 <script>
   import { gsap } from "@/utils/gsap-init";
+  import { onPage } from "@/utils/page-script";
 
-  let ctx: gsap.Context | undefined;
-  function initMissionBrief() {
-    ctx = gsap.context(() => {
-      if (typeof window !== "undefined") {
-        gsap
-          .timeline({
-            scrollTrigger: {
-              trigger: ".mission-text",
-              start: "top 80%",
-              end: "top 50%",
-              toggleActions: "play none none reverse",
-            },
-          })
-          .to(".mission-text h1, .mission-text p", {
-            y: 0,
-            opacity: 1,
-            duration: 1,
-            stagger: 0.1,
-            ease: "power3.out",
-          });
+  onPage('[data-section="mission-brief"]', ({ root, signal }) => {
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: ".mission-text",
+          start: "top 80%",
+          end: "top 50%",
+          toggleActions: "play none none reverse",
+        },
+      })
+      .to(".mission-text h1, .mission-text p", {
+        y: 0,
+        opacity: 1,
+        duration: 1,
+        stagger: 0.1,
+        ease: "power3.out",
+      });
 
-        gsap
-          .timeline({
-            scrollTrigger: {
-              trigger: ".mission-section .grid",
-              start: "top 85%",
-              end: "top 60%",
-              toggleActions: "play none none reverse",
-            },
-          })
-          .to(".mission-card", {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            stagger: 0.15,
-            duration: 0.8,
-            ease: "power2.out",
-          });
-        const videoBtn = document.querySelector(".js-video-btn");
-        const video = document.querySelector(
-          ".js-mission-video",
-        ) as HTMLVideoElement; // Type casting for TS
-        const pauseIcon = document.querySelector(".js-pause-icon");
-        const playIcon = document.querySelector(".js-play-icon");
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "[data-mission-cards]",
+          start: "top 85%",
+          end: "top 60%",
+          toggleActions: "play none none reverse",
+        },
+      })
+      .to(".mission-card", {
+        y: 0,
+        opacity: 1,
+        scale: 1,
+        stagger: 0.15,
+        duration: 0.8,
+        ease: "power2.out",
+      });
 
-        if (videoBtn && video && pauseIcon && playIcon) {
-          videoBtn.addEventListener("click", () => {
-            if (video.paused) {
-              video.play();
-              playIcon.classList.add("hidden");
-              pauseIcon.classList.remove("hidden");
-            } else {
-              video.pause();
-              playIcon.classList.remove("hidden");
-              pauseIcon.classList.add("hidden");
-            }
-          });
-        }
-      }
-    });
-  }
-  document.addEventListener("astro:page-load", initMissionBrief);
-  document.addEventListener("astro:before-swap", () => {
-    ctx?.revert();
+    const videoBtn = root.querySelector(".js-video-btn");
+    const video = root.querySelector<HTMLVideoElement>(".js-mission-video");
+    const pauseIcon = root.querySelector(".js-pause-icon");
+    const playIcon = root.querySelector(".js-play-icon");
+
+    if (videoBtn && video && pauseIcon && playIcon) {
+      videoBtn.addEventListener(
+        "click",
+        () => {
+          if (video.paused) {
+            video.play();
+            playIcon.classList.add("hidden");
+            pauseIcon.classList.remove("hidden");
+          } else {
+            video.pause();
+            playIcon.classList.remove("hidden");
+            pauseIcon.classList.add("hidden");
+          }
+        },
+        { signal },
+      );
+    }
   });
 </script>

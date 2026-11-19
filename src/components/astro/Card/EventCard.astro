@@ -207,15 +207,3 @@ const { hasEnded, isRegistrationOpen } = getEventStatus(data);
     transform-origin: var(--transform-origin);
   }
 </style>
-
-<script>
-  import { initCardSplitTextAnimation } from "@/utils/animations/cards-split-text-animation";
-
-  if (typeof window !== "undefined") {
-    window.addEventListener("load", () => {
-      if (!document.querySelector("[data-manual-card-anim]")) {
-        initCardSplitTextAnimation();
-      }
-    });
-  }
-</script>

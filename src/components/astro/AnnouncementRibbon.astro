@@ -150,6 +150,10 @@ const storageKey = `announcement-dismissed-${id}-${hashContent(contentSignature)
     return false;
   }
 
+  // Stops this page's ribbon (rotation, pending transitions, listeners). The
+  // ribbon is on the home page only, so it is torn down on every swap.
+  let teardown = null;
+
   function initRibbon() {
     const ribbon = document.getElementById(id);
     if (!ribbon) return;
@@ -170,6 +174,17 @@ const storageKey = `announcement-dismissed-${id}-${hashContent(contentSignature)
     let currentIndex = 0;
     let isTransitioning = false;
     let timer = null;
+    const timeouts = new Set();
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    const later = (fn, ms) => {
+      const handle = setTimeout(() => {
+        timeouts.delete(handle);
+        fn();
+      }, ms);
+      timeouts.add(handle);
+    };
 
     function renderIndex(index) {
       const item = items[index];
@@ -209,7 +224,7 @@ const storageKey = `announcement-dismissed-${id}-${hashContent(contentSignature)
         direction === "next" ? "-translate-x-4" : "translate-x-4",
       );
 
-      setTimeout(() => {
+      later(() => {
         renderIndex(index);
         currentIndex = index;
 
@@ -217,7 +232,7 @@ const storageKey = `announcement-dismissed-${id}-${hashContent(contentSignature)
         void contentEl.offsetWidth;
         contentEl.classList.remove("opacity-0");
 
-        setTimeout(() => {
+        later(() => {
           isTransitioning = false;
         }, 50);
       }, 300);
@@ -242,20 +257,28 @@ const storageKey = `announcement-dismissed-${id}-${hashContent(contentSignature)
     }
 
     dots.forEach((dot) => {
-      dot.addEventListener("click", () => {
-        const index = parseInt(dot.dataset.index || "0", 10);
-        goTo(index, index > currentIndex ? "next" : "prev");
-        startRotation();
-      });
+      dot.addEventListener(
+        "click",
+        () => {
+          const index = parseInt(dot.dataset.index || "0", 10);
+          goTo(index, index > currentIndex ? "next" : "prev");
+          startRotation();
+        },
+        { signal },
+      );
     });
 
     if (closeBtn) {
-      closeBtn.addEventListener("click", () => {
-        const expirationTime = Date.now() + dismissDuration * 60 * 60 * 1000;
-        localStorage.setItem(storageKeyClient, expirationTime.toString());
-        stopRotation();
-        ribbon.remove();
-      });
+      closeBtn.addEventListener(
+        "click",
+        () => {
+          const expirationTime = Date.now() + dismissDuration * 60 * 60 * 1000;
+          localStorage.setItem(storageKeyClient, expirationTime.toString());
+          stopRotation();
+          ribbon.remove();
+        },
+        { signal },
+      );
     }
 
     // Pause auto-rotation while the user is reading or interacting with it.
@@ -267,16 +290,32 @@ const storageKey = `announcement-dismissed-${id}-${hashContent(contentSignature)
       isPaused = false;
       startRotation();
     };
-    ribbon.addEventListener("mouseenter", pause);
-    ribbon.addEventListener("mouseleave", resume);
-    ribbon.addEventListener("focusin", pause);
-    ribbon.addEventListener("focusout", (event) => {
-      if (!ribbon.contains(event.relatedTarget)) resume();
-    });
+    ribbon.addEventListener("mouseenter", pause, { signal });
+    ribbon.addEventListener("mouseleave", resume, { signal });
+    ribbon.addEventListener("focusin", pause, { signal });
+    ribbon.addEventListener(
+      "focusout",
+      (event) => {
+        if (!ribbon.contains(event.relatedTarget)) resume();
+      },
+      { signal },
+    );
+
+    teardown = () => {
+      stopRotation();
+      timeouts.forEach(clearTimeout);
+      timeouts.clear();
+      controller.abort();
+      delete ribbon.dataset.initialized;
+    };
 
     startRotation();
   }
 
   initRibbon();
   document.addEventListener("astro:page-load", initRibbon);
+  document.addEventListener("astro:before-swap", () => {
+    teardown?.();
+    teardown = null;
+  });
 </script>

@@ -20,6 +20,7 @@ const { membership } = Astro.props as {
 <section
   class="relative min-h-screen cursor-none overflow-hidden bg-background text-foreground"
   id="membership-container"
+  data-section="memberships"
 >
   <div class="relative border-b border-border px-6 pt-32 pb-10 md:px-12">
     <div class="overflow-hidden">
@@ -259,112 +260,97 @@ const { membership } = Astro.props as {
 </style>
 <script>
   import { gsap } from "@/utils/gsap-init";
+  import { onPage } from "@/utils/page-script";
 
-  let ctx: gsap.Context | undefined;
-  function initMemberships() {
-    ctx = gsap.context(() => {
-      if (typeof window !== "undefined") {
-        const cursor = document.getElementById("cursor");
-        const section = document.getElementById("membership-container");
-        const triggers = document.querySelectorAll(".hover-trigger");
+  onPage('[data-section="memberships"]', ({ root: section, signal }) => {
+    // The custom cursor sits outside the section (it is position: fixed).
+    const cursor = document.getElementById("cursor");
 
-        window.addEventListener("mousemove", (e) => {
-          if (cursor) {
-            gsap.to(cursor, {
-              x: e.clientX,
-              y: e.clientY,
-              duration: 0.1,
-              ease: "power2.out",
-              overwrite: "auto",
-            });
-          }
-        });
+    if (cursor) {
+      gsap.set(cursor, { xPercent: -50, yPercent: -50 });
 
-        if (section && cursor) {
-          section.addEventListener("mouseenter", () => {
-            gsap.to(cursor, {
-              autoAlpha: 1,
-              duration: 0.2,
-              ease: "power2.out",
-            });
+      window.addEventListener(
+        "mousemove",
+        (e) => {
+          gsap.to(cursor, {
+            x: e.clientX,
+            y: e.clientY,
+            duration: 0.1,
+            ease: "power2.out",
+            overwrite: "auto",
           });
+        },
+        { signal },
+      );
 
-          section.addEventListener("mouseleave", () => {
-            gsap.to(cursor, {
-              autoAlpha: 0,
-              duration: 0.2,
-              ease: "power2.out",
-            });
-          });
-        }
+      section.addEventListener(
+        "mouseenter",
+        () =>
+          gsap.to(cursor, { autoAlpha: 1, duration: 0.2, ease: "power2.out" }),
+        { signal },
+      );
+      section.addEventListener(
+        "mouseleave",
+        () =>
+          gsap.to(cursor, { autoAlpha: 0, duration: 0.2, ease: "power2.out" }),
+        { signal },
+      );
 
-        triggers.forEach((trigger) => {
-          trigger.addEventListener("mouseenter", () => {
-            if (cursor) gsap.to(cursor, { scale: 4, duration: 0.3 });
-          });
-          trigger.addEventListener("mouseleave", () => {
-            if (cursor) gsap.to(cursor, { scale: 1, duration: 0.3 });
-          });
-        });
+      section.querySelectorAll(".hover-trigger").forEach((trigger) => {
+        trigger.addEventListener(
+          "mouseenter",
+          () => gsap.to(cursor, { scale: 4, duration: 0.3 }),
+          { signal },
+        );
+        trigger.addEventListener(
+          "mouseleave",
+          () => gsap.to(cursor, { scale: 1, duration: 0.3 }),
+          { signal },
+        );
+      });
+    }
 
-        gsap.set(cursor, { xPercent: -50, yPercent: -50 });
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "top 50%",
+          toggleActions: "play none none reverse",
+        },
+      })
+      .to(".reveal-text", {
+        y: 0,
+        opacity: 1,
+        duration: 1.2,
+        stagger: 0.1,
+        ease: "power4.out",
+      })
+      .to(
+        ".reveal-opacity",
+        { opacity: 1, duration: 1, ease: "power2.out" },
+        "-=0.8",
+      )
+      .to(
+        "#center-line",
+        { scaleY: 1, duration: 1.2, ease: "power3.inOut" },
+        "-=0.5",
+      );
 
-        const headerTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: "#membership-container",
-            start: "top 50%",
-            toggleActions: "play none none reverse",
-          },
-        });
-
-        headerTl
-          .to(".reveal-text", {
-            y: 0,
-            opacity: 1,
-            duration: 1.2,
-            stagger: 0.1,
-            ease: "power4.out",
-          })
-          .to(
-            ".reveal-opacity",
-            {
-              opacity: 1,
-              duration: 1,
-              ease: "power2.out",
-            },
-            "-=0.8",
-          )
-          .to(
-            "#center-line",
-            {
-              scaleY: 1,
-              duration: 1.2,
-              ease: "power3.inOut",
-            },
-            "-=0.5",
-          );
-
-        const cardsTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: ".grid.grid-cols-1.lg\\:grid-cols-2",
-            start: "top 95%",
-            end: "top 70%",
-            toggleActions: "play none none reverse",
-          },
-        });
-
-        cardsTl.to(".hover-trigger", {
-          y: 0,
-          opacity: 1,
-          stagger: 0.2,
-          duration: 1,
-          ease: "power3.out",
-        });
-      }
-    });
-  }
-  document.addEventListener("astro:page-load", initMemberships);
-  document.addEventListener("astro:before-swap", () => {
-    ctx?.revert();
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: ".grid.grid-cols-1.lg\\:grid-cols-2",
+          start: "top 95%",
+          end: "top 70%",
+          toggleActions: "play none none reverse",
+        },
+      })
+      .to(".hover-trigger", {
+        y: 0,
+        opacity: 1,
+        stagger: 0.2,
+        duration: 1,
+        ease: "power3.out",
+      });
   });
 </script>

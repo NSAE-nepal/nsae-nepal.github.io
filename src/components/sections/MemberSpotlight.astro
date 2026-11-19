@@ -30,6 +30,7 @@ const role = [member?.position, member?.company].filter(Boolean).join(" · ");
 {
   spotlight && member && (
     <section
+      data-section="member-spotlight"
       class="member-spotlight-section pt-24 md:pt-32"
       aria-labelledby="member-spotlight-heading"
     >
@@ -117,36 +118,27 @@ const role = [member?.position, member?.company].filter(Boolean).join(" · ");
 
 <script>
   import { gsap } from "@/utils/gsap-init";
+  import { onPage } from "@/utils/page-script";
 
-  let ctx: gsap.Context | undefined;
-
-  document.addEventListener("astro:page-load", () => {
-    if (!document.querySelector(".member-spotlight-section")) return;
-    ctx = gsap.context(() => {
-      gsap
-        .timeline({
-          scrollTrigger: {
-            trigger: ".member-spotlight-section",
-            start: "top 75%",
-          },
-        })
-        .to(".anim-spotlight-header", {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: "power3.out",
-        })
-        .to(
-          ".anim-spotlight-card",
-          { y: 0, opacity: 1, duration: 0.8, ease: "power2.out" },
-          "-=0.4",
-        );
-    });
-  });
-
-  document.addEventListener("astro:before-swap", () => {
-    ctx?.revert();
-    ctx = undefined;
+  onPage('[data-section="member-spotlight"]', ({ root }) => {
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: root,
+          start: "top 75%",
+        },
+      })
+      .to(".anim-spotlight-header", {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: "power3.out",
+      })
+      .to(
+        ".anim-spotlight-card",
+        { y: 0, opacity: 1, duration: 0.8, ease: "power2.out" },
+        "-=0.4",
+      );
   });
 </script>

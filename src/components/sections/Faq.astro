@@ -7,7 +7,7 @@ const data = await getFaqDetails();
 const faqItems = data?.items ?? [];
 ---
 
-<section id="faq-section" class="py-24 md:py-32">
+<section data-section="faq" id="faq-section" class="py-24 md:py-32">
   <div class="header-content mb-12 flex flex-col gap-4">
     <Badge
       variant="secondary"
@@ -76,149 +76,138 @@ const faqItems = data?.items ?? [];
 
 <script>
   import { gsap } from "@/utils/gsap-init";
+  import { onPage } from "@/utils/page-script";
 
-  let ctx: gsap.Context | undefined;
-  function initFAQ() {
-    ctx = gsap.context(() => {
-      if (typeof window !== "undefined") {
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: "#faq-section",
-            start: "top 80%",
-          },
-        });
+  onPage('[data-section="faq"]', ({ root, signal }) => {
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: root,
+        start: "top 80%",
+      },
+    });
 
-        tl.to("#faq-section .header-content > *", {
+    tl.to(".header-content > *", {
+      y: 0,
+      opacity: 1,
+      duration: 1,
+      stagger: 0.1,
+      ease: "power3.out",
+    })
+      .to(
+        "details",
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.05,
+          ease: "power2.out",
+        },
+        "-=0.6",
+      )
+      .to(
+        ".cta-content",
+        {
           y: 0,
           opacity: 1,
           duration: 1,
-          stagger: 0.1,
           ease: "power3.out",
-        })
-          .to(
-            "#faq-section details",
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.8,
-              stagger: 0.05,
-              ease: "power2.out",
-            },
-            "-=0.6",
-          )
-          .to(
-            ".cta-content",
-            {
-              y: 0,
-              opacity: 1,
-              duration: 1,
-              ease: "power3.out",
-            },
-            "-=0.4",
-          );
+        },
+        "-=0.4",
+      );
 
-        const detailsElements = document.querySelectorAll(
-          "#faq-section details",
-        );
+    const detailsElements = root.querySelectorAll("details");
 
-        detailsElements.forEach((detail) => {
-          const summary = detail.querySelector("summary");
-          const contentWrapper = detail.querySelector(".faq-content-wrapper");
-          const innerContent = detail.querySelector(".faq-inner-content");
-          const iconContainer = detail.querySelector(".icon-container");
+    detailsElements.forEach((detail) => {
+      const summary = detail.querySelector("summary");
+      const contentWrapper = detail.querySelector(".faq-content-wrapper");
+      const innerContent = detail.querySelector(".faq-inner-content");
+      const iconContainer = detail.querySelector(".icon-container");
 
-          if (!summary || !contentWrapper || !innerContent || !iconContainer) {
-            return;
-          }
-          summary.addEventListener("click", (e) => {
-            e.preventDefault();
-
-            if (gsap.isTweening(contentWrapper)) return;
-
-            const isOpen = detail.hasAttribute("open");
-
-            if (!isOpen) {
-              detailsElements.forEach((otherDetail) => {
-                if (
-                  otherDetail !== detail &&
-                  otherDetail.hasAttribute("open")
-                ) {
-                  const otherWrapper = otherDetail.querySelector(
-                    ".faq-content-wrapper",
-                  );
-                  const otherIcon =
-                    otherDetail.querySelector(".icon-container");
-
-                  gsap.to(otherWrapper, {
-                    height: 0,
-                    opacity: 0,
-                    duration: 0.4,
-                    ease: "power3.inOut",
-                    onComplete: () => otherDetail.removeAttribute("open"),
-                  });
-                  gsap.to(otherIcon, {
-                    rotation: 0,
-                    duration: 0.4,
-                    ease: "power3.inOut",
-                  });
-                }
-              });
-            }
-
-            if (isOpen) {
-              gsap.to(contentWrapper, {
-                height: 0,
-                opacity: 0,
-                duration: 0.4,
-                ease: "power3.inOut",
-                onComplete: () => detail.removeAttribute("open"),
-              });
-
-              gsap.to(iconContainer, {
-                rotation: 0,
-                duration: 0.4,
-                ease: "power3.inOut",
-              });
-            } else {
-              detail.setAttribute("open", "true");
-
-              gsap.fromTo(
-                contentWrapper,
-                { height: 0, opacity: 1 },
-                {
-                  height: "auto",
-                  opacity: 1,
-                  duration: 0.6,
-                  ease: "expo.out",
-                },
-              );
-
-              gsap.fromTo(
-                innerContent,
-                { y: 20, opacity: 0 },
-                {
-                  y: 0,
-                  opacity: 1,
-                  duration: 0.5,
-                  delay: 0.1,
-                  ease: "power3.out",
-                },
-              );
-
-              gsap.to(iconContainer, {
-                rotation: 45,
-                duration: 0.4,
-                ease: "back.out(1.7)",
-              });
-            }
-          });
-        });
+      if (!summary || !contentWrapper || !innerContent || !iconContainer) {
+        return;
       }
-    });
-  }
-  document.addEventListener("astro:page-load", initFAQ);
+      summary.addEventListener(
+        "click",
+        (e) => {
+          e.preventDefault();
 
-  document.addEventListener("astro:before-swap", () => {
-    ctx?.revert();
+          if (gsap.isTweening(contentWrapper)) return;
+
+          const isOpen = detail.hasAttribute("open");
+
+          if (!isOpen) {
+            detailsElements.forEach((otherDetail) => {
+              if (otherDetail !== detail && otherDetail.hasAttribute("open")) {
+                const otherWrapper = otherDetail.querySelector(
+                  ".faq-content-wrapper",
+                );
+                const otherIcon = otherDetail.querySelector(".icon-container");
+
+                gsap.to(otherWrapper, {
+                  height: 0,
+                  opacity: 0,
+                  duration: 0.4,
+                  ease: "power3.inOut",
+                  onComplete: () => otherDetail.removeAttribute("open"),
+                });
+                gsap.to(otherIcon, {
+                  rotation: 0,
+                  duration: 0.4,
+                  ease: "power3.inOut",
+                });
+              }
+            });
+          }
+
+          if (isOpen) {
+            gsap.to(contentWrapper, {
+              height: 0,
+              opacity: 0,
+              duration: 0.4,
+              ease: "power3.inOut",
+              onComplete: () => detail.removeAttribute("open"),
+            });
+
+            gsap.to(iconContainer, {
+              rotation: 0,
+              duration: 0.4,
+              ease: "power3.inOut",
+            });
+          } else {
+            detail.setAttribute("open", "true");
+
+            gsap.fromTo(
+              contentWrapper,
+              { height: 0, opacity: 1 },
+              {
+                height: "auto",
+                opacity: 1,
+                duration: 0.6,
+                ease: "expo.out",
+              },
+            );
+
+            gsap.fromTo(
+              innerContent,
+              { y: 20, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                duration: 0.5,
+                delay: 0.1,
+                ease: "power3.out",
+              },
+            );
+
+            gsap.to(iconContainer, {
+              rotation: 45,
+              duration: 0.4,
+              ease: "back.out(1.7)",
+            });
+          }
+        },
+        { signal },
+      );
+    });
   });
 </script>

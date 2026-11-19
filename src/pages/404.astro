@@ -6,6 +6,7 @@ import PageLayout from "@/layouts/PageLayout.astro";
   title="Page Not Found"
   description="Page Not Found"
   dataPagefindIgnore="all"
+  page="not-found"
 >
   <section
     class="flex min-h-screen w-full flex-col items-center justify-center"
@@ -43,40 +44,36 @@ import PageLayout from "@/layouts/PageLayout.astro";
 
 <script>
   import { gsap } from "@/utils/gsap-init";
+  import { onPage } from "@/utils/page-script";
 
-  let ctx: gsap.Context | undefined;
-  function init404Page() {
-    ctx = gsap.context(() => {
-      const tl = gsap.timeline();
+  onPage('[data-page="not-found"]', () => {
+    const tl = gsap.timeline();
 
-      gsap.set(".digit", { y: 50 });
-      gsap.set(".fade-in", { y: 20 });
+    gsap.set(".digit", { y: 50 });
+    gsap.set(".fade-in", { y: 20 });
 
-      tl.to(
-        ".digit",
-        {
-          y: 0,
-          autoAlpha: 1,
-          duration: 0.8,
-          ease: "back.out(1.7)",
-          stagger: 0.2,
-        },
-        "+=0.2",
-      );
+    tl.to(
+      ".digit",
+      {
+        y: 0,
+        autoAlpha: 1,
+        duration: 0.8,
+        ease: "back.out(1.7)",
+        stagger: 0.2,
+      },
+      "+=0.2",
+    );
 
-      tl.to(
-        ".fade-in",
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.6,
-          ease: "power3.out",
-          stagger: 0.15,
-        },
-        "-=0.5",
-      );
-    });
-  }
-  document.addEventListener("astro:page-load", init404Page);
-  document.addEventListener("astro:before-swap", () => ctx?.revert());
+    tl.to(
+      ".fade-in",
+      {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.6,
+        ease: "power3.out",
+        stagger: 0.15,
+      },
+      "-=0.5",
+    );
+  });
 </script>

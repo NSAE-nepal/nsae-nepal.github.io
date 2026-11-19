@@ -42,6 +42,7 @@ const pageTitle =
   title={pageTitle}
   description="Free self-paced courses from NSAE for agricultural engineers and students: lessons, videos and quizzes, with progress saved in your browser."
   dataPagefindIgnore="all"
+  page="course-listing"
 >
   <header
     class="flex flex-col items-center justify-center py-16 text-center md:py-24"
@@ -61,7 +62,7 @@ const pageTitle =
       Courses for agricultural engineers
     </h1>
     <p
-      class="anim-header-intro mt-6 max-w-2xl translate-y-4 text-lg text-muted-foreground opacity-0"
+      class="anim-header-desc mt-6 max-w-2xl translate-y-4 text-lg text-muted-foreground opacity-0"
     >
       Free, self-paced lessons with videos and quizzes. Your progress is saved
       in this browser, so you can pick up where you left off.
@@ -157,62 +158,29 @@ const pageTitle =
 
 <script>
   import "@/scripts/course-progress";
-  import { gsap, SplitText } from "@/utils/gsap-init";
+  import { animateListingHeader } from "@/utils/animations/listing-header";
+  import { gsap } from "@/utils/gsap-init";
+  import { onPage } from "@/utils/page-script";
 
-  let ctx: gsap.Context | undefined;
+  onPage('[data-page="course-listing"]', ({ root }) => {
+    const tl = animateListingHeader(
+      gsap.timeline({ defaults: { ease: "power3.out" } }),
+      root,
+      { sectionTitle: { at: "-=0.3" } },
+    );
 
-  document.addEventListener("astro:page-load", () => {
-    if (!document.querySelector("#all-courses")) return;
-    ctx = gsap.context(() => {
-      const titleSplit = SplitText.create(".anim-header-title", {
-        type: "lines, words",
-        linesClass: "overflow-hidden",
-      });
-      const tl = gsap
-        .timeline({ defaults: { ease: "power3.out" } })
-        .to(".anim-header-badge", {
-          scale: 1,
-          opacity: 1,
-          duration: 0.6,
-          ease: "back.out(1.5)",
-        })
-        .set(".anim-header-title", { autoAlpha: 1 }, "-=0.3")
-        .from(
-          titleSplit.words,
-          {
-            yPercent: 100,
-            opacity: 0,
-            duration: 0.8,
-            stagger: 0.04,
-            ease: "power4.out",
-          },
-          "<",
-        )
-        .to(".anim-header-intro", { y: 0, opacity: 1, duration: 0.6 }, "-=0.4")
-        .to(
-          ".anim-section-title",
-          { y: 0, opacity: 1, duration: 0.5 },
-          "-=0.3",
-        );
-
-      if (document.querySelector(".anim-card")) {
-        tl.to(
-          ".anim-card",
-          { y: 0, opacity: 1, duration: 0.6, stagger: 0.08 },
-          "-=0.2",
-        );
-      } else if (document.querySelector(".anim-empty-state")) {
-        tl.to(
-          ".anim-empty-state",
-          { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.2)" },
-          "-=0.2",
-        );
-      }
-    });
-  });
-
-  document.addEventListener("astro:before-swap", () => {
-    ctx?.revert();
-    ctx = undefined;
+    if (root.querySelector(".anim-card")) {
+      tl.to(
+        ".anim-card",
+        { y: 0, opacity: 1, duration: 0.6, stagger: 0.08 },
+        "-=0.2",
+      );
+    } else if (root.querySelector(".anim-empty-state")) {
+      tl.to(
+        ".anim-empty-state",
+        { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.2)" },
+        "-=0.2",
+      );
+    }
   });
 </script>

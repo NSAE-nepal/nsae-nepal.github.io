@@ -67,7 +67,12 @@ const description =
   `Articles and notices by ${displayName}${role ? `, ${role}` : ""}, on the NSAE website.`;
 ---
 
-<PageLayout title={displayName} description={description} type="profile">
+<PageLayout
+  title={displayName}
+  description={description}
+  type="profile"
+  page="author"
+>
   <JsonLd
     slot="head"
     data={[
@@ -280,33 +285,20 @@ const description =
 </PageLayout>
 
 <script>
+  import { startCardHover } from "@/utils/animations/cards-split-text-animation";
   import { gsap } from "@/utils/gsap-init";
-  import { initCardSplitTextAnimation } from "@/utils/animations/cards-split-text-animation";
+  import { onPage } from "@/utils/page-script";
 
   // Mirrors the blog listing's entrance animation for the post grid.
-  let ctx: gsap.Context | undefined;
-  function initAuthorPage() {
-    if (!document.querySelector("[aria-labelledby='author-posts']")) return;
-    ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-      tl.to(".anim-all-title", { y: 0, opacity: 1, duration: 0.5 });
-      if (document.querySelector(".anim-regular-card")) {
-        tl.to(
-          ".anim-regular-card",
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.5,
-            stagger: 0.08,
-            ease: "power2.out",
-          },
-          "-=0.3",
-        ).add(() => {
-          initCardSplitTextAnimation({ cardSelector: ".anim-regular-card" });
-        }, "<");
-      }
-    });
-  }
-  document.addEventListener("astro:page-load", initAuthorPage);
-  document.addEventListener("astro:before-swap", () => ctx?.revert());
+  onPage('[data-page="author"]', (scope) => {
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+    tl.to(".anim-all-title", { y: 0, opacity: 1, duration: 0.5 });
+    if (scope.root.querySelector(".anim-regular-card")) {
+      tl.to(
+        ".anim-regular-card",
+        { y: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: "power2.out" },
+        "-=0.3",
+      ).add(startCardHover(scope, ".anim-regular-card"), "<");
+    }
+  });
 </script>
