@@ -22,6 +22,7 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
+import { startScroll, stopScroll } from "@/utils/lenis";
 
 export const OPEN_SEARCH_EVENT = "nsae:open-search";
 
@@ -131,6 +132,13 @@ export function SearchDialog({
     window.addEventListener(OPEN_SEARCH_EVENT, handleOpen);
     return () => window.removeEventListener(OPEN_SEARCH_EVENT, handleOpen);
   }, []);
+
+  // Hold the page still behind the dialog; its result list scrolls itself.
+  useEffect(() => {
+    if (!open) return;
+    stopScroll();
+    return startScroll;
+  }, [open]);
 
   useEffect(() => {
     if (!open || pagefind) return;

@@ -139,6 +139,8 @@ const fullSize = (image: GalleryImage) => {
 </style>
 
 <script>
+  import { startScroll, stopScroll } from "@/utils/lenis";
+
   let controller: AbortController | undefined;
 
   document.addEventListener("astro:page-load", () => {
@@ -200,10 +202,13 @@ const fullSize = (image: GalleryImage) => {
         () => {
           show(Number(item.dataset.galleryIndex));
           dialog.showModal();
+          stopScroll();
         },
         { signal },
       );
     }
+
+    dialog.addEventListener("close", startScroll, { signal });
 
     dialog
       .querySelector("[data-gallery-prev]")
