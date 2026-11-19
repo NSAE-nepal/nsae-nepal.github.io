@@ -1,10 +1,11 @@
 ---
+import type { PortableTextBlock } from "@portabletext/types";
 import { PortableText } from "astro-portabletext";
 import PortableHeading from "./PortableHeading.astro";
 
 interface CollapsibleNode {
   title: string;
-  content: any;
+  content: PortableTextBlock[];
   defaultOpen?: boolean;
 }
 

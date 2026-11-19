@@ -27,7 +27,7 @@ const faqItems = data?.items ?? [];
   {
     faqItems.length > 0 ? (
       <div class="space-y-4">
-        {faqItems.map((faq, index) => (
+        {faqItems.map((faq) => (
           <details
             class=" p-6 group rounded-xl bg-secondary/50 border border-border/50 [&_summary::-webkit-details-marker]:hidden overflow-hidden opacity-0 translate-y-8"
             name="faq-accordion"

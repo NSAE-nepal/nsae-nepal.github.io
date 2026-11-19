@@ -14,6 +14,8 @@ Package manager is **bun** (`bun.lock`).
 - `bun run build` – production build + Pagefind index (`dist/pagefind`)
 - `bun run preview` – serve the production build
 - `bun run check` – `astro check` type-check (must stay at 0 errors; CI runs it)
+- `bun run lint` – ESLint (`eslint.config.js`: TypeScript, `eslint-plugin-astro` incl. `<script>` blocks, jsx-a11y via the ESLint 10 fork `eslint-plugin-jsx-a11y-x`, react-hooks for `.tsx`); must stay at 0 errors, CI runs it
+- `bun run format` / `bun run format:check` – Prettier with `prettier-plugin-astro` 0.14 + `prettier-plugin-tailwindcss` (class sorting, also inside `cn()`/`cva()`), pinned exactly; see `.prettierrc.mjs` for why the Astro plugin isn't on 1.x and its one limit (no `<script>` with `{`/`<` inside a `{…}` template expression). Tabs in `.ts`/`.js`/`.mjs`, 2 spaces elsewhere, `endOfLine: "auto"` so CRLF files keep CRLF. The repo isn't fully formatted yet, so CI doesn't run `format:check`; format only the files you touch
 - `bun run dev:full` – dev server + Pagefind server (search works in dev only after one `build`)
 
 ## Architecture

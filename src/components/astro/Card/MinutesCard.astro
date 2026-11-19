@@ -5,6 +5,7 @@ import {
   IconPoint,
 } from "@tabler/icons-astro";
 import FormattedDate from "@/components/FormattedDate.astro";
+import { cn } from "@/lib/utils";
 import { type Minutes, minutesTypeLabel } from "@/sanity/lib/queries/minutes";
 import Badge from "../Badge.astro";
 
@@ -18,7 +19,10 @@ const formatType = minutesTypeLabel;
 ---
 
 <article
-  class="split-card space-y-2 cursor-pointer flex flex-col relative z-10 p-4"
+  class={cn(
+    "split-card space-y-2 cursor-pointer flex flex-col relative z-10 p-4",
+    className,
+  )}
 >
   <div class="flex flex-row justify-between items-center">
     <Badge

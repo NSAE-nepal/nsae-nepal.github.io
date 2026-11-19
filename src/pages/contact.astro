@@ -17,7 +17,7 @@ import { getContactsDetails } from "@/sanity/lib/queries/contacts";
 
 const data = await getContactsDetails();
 const socials = data?.socials;
-const socialIcons: Record<string, any> = {
+const socialIcons: Record<string, typeof IconBrandX> = {
   linkedin: IconBrandLinkedin,
   twitter: IconBrandX,
   x: IconBrandX,

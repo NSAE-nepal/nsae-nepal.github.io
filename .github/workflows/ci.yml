@@ -27,5 +27,10 @@ jobs:
       - name: Type-check
         run: bun run check
 
+      # `--bun` runs ESLint on Bun itself, so it doesn't depend on the
+      # runner's Node version (ESLint 10 needs a recent Node).
+      - name: Lint
+        run: bun --bun run lint
+
       - name: Build
         run: bun run build

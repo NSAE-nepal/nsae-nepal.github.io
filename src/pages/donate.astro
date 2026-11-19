@@ -42,7 +42,7 @@ if (!data) {
   throw new Error('Donate page data not found: publish the "donate" document in Sanity.');
 }
 
-const iconMap: Record<string, any> = {
+const iconMap: Record<string, typeof IconSchool> = {
   School: IconSchool,
   Microscope: IconMicroscope,
   Users: IconUsers,

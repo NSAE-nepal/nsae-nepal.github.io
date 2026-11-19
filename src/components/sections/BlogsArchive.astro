@@ -14,18 +14,10 @@ const featuredPosts = allPublishedPosts.filter((post) => post.featured);
 
 const nonFeaturedPosts = allPublishedPosts.filter((post) => !post.featured);
 
-let mainFeature = null;
-let sideListPosts = [];
-
-if (featuredPosts.length > 0) {
-  mainFeature = featuredPosts[0];
-  const remainingFeatured = featuredPosts.slice(1);
-  const combinedPool = [...remainingFeatured, ...nonFeaturedPosts];
-  sideListPosts = combinedPool.slice(0, 3);
-} else {
-  mainFeature = null;
-  sideListPosts = nonFeaturedPosts.slice(0, 3);
-}
+// The first featured post leads; the next three (remaining featured, then
+// the rest) fill the side list.
+const mainFeature = featuredPosts[0] ?? null;
+const sideListPosts = [...featuredPosts.slice(1), ...nonFeaturedPosts].slice(0, 3);
 ---
 
 {

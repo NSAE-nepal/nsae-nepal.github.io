@@ -58,18 +58,6 @@ const storageKey = `announcement-dismissed-${id}-${hashContent(contentSignature)
         className,
       ]}
     >
-      <script is:inline data-astro-rerun define:vars={{ id, storageKey }}>
-        {
-          const dismissedAt = localStorage.getItem(storageKey);
-          if (dismissedAt && Date.now() < parseInt(dismissedAt, 10)) {
-            const ribbon = document.getElementById(id);
-            if (ribbon) ribbon.style.display = "none";
-          } else if (dismissedAt) {
-            localStorage.removeItem(storageKey);
-          }
-        }
-      </script>
-
       {dismissible && (
         <button
           type="button"
@@ -119,6 +107,24 @@ const storageKey = `announcement-dismissed-${id}-${hashContent(contentSignature)
     </div>
   )
 }
+
+{
+  /*
+   * Hide a dismissed ribbon before first paint. It sits outside the conditional
+   * above because prettier-plugin-astro 0.14 can't parse scripts inside template
+   * expressions; it is a no-op when there is no ribbon. define:vars already
+   * wraps the code in a function.
+   */
+}
+<script is:inline data-astro-rerun define:vars={{ id, storageKey }}>
+  const dismissedAt = localStorage.getItem(storageKey);
+  if (dismissedAt && Date.now() < parseInt(dismissedAt, 10)) {
+    const ribbon = document.getElementById(id);
+    if (ribbon) ribbon.style.display = "none";
+  } else if (dismissedAt) {
+    localStorage.removeItem(storageKey);
+  }
+</script>
 
 <script define:vars={{ id, storageKeyClient: storageKey, items, dismissDuration }}>
   function checkDismissed(ribbon) {

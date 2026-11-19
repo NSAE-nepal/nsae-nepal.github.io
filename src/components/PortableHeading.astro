@@ -4,7 +4,7 @@ import { slugify } from "@/sanity/lib/slugify";
 const { node } = Astro.props;
 
 const Tag = node.style;
-const text = node.children?.map((child: any) => child.text).join("") ?? "";
+const text = node.children?.map((child: { text?: string }) => child.text).join("") ?? "";
 const id = slugify(text) || node._key; // fallback for empty headings
 ---
 

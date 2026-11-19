@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 interface Props extends HTMLAttributes<"div">, VariantProps<typeof avatar> {}
 
-export const avatar = cva(
+const avatar = cva(
   "text-foreground bg-muted relative overflow-hidden rounded-full border-2",
   {
     variants: {

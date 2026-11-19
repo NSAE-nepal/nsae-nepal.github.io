@@ -140,10 +140,8 @@ export function SearchDialog({ defaultOpen = false }: { defaultOpen?: boolean })
 	}, [open, pagefind]);
 
 	useEffect(() => {
-		if (!isSearching || !pagefind) {
-			setResults([]);
-			return;
-		}
+		// Results only render while searching, so nothing to clear here.
+		if (!isSearching || !pagefind) return;
 
 		let cancelled = false;
 		const debounce = setTimeout(async () => {
