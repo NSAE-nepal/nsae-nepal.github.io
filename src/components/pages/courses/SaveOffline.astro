@@ -1,6 +1,7 @@
 ---
 import { IconCloudDownload } from "@tabler/icons-astro";
 import Button from "@/components/astro/Button/Button.astro";
+import { cn } from "@/lib/utils";
 
 /**
  * "Save for offline": asks the service worker to download the course page
@@ -13,9 +14,10 @@ interface Props {
   path: string;
   /** The course page followed by every lesson page. */
   pages: string[];
+  class?: string;
 }
 
-const { courseId, title, path, pages } = Astro.props;
+const { courseId, title, path, pages, class: className } = Astro.props;
 const lessonCount = pages.length - 1;
 ---
 
@@ -28,7 +30,7 @@ const lessonCount = pages.length - 1;
   data-pages={JSON.stringify(pages)}
   data-state="idle"
   aria-labelledby="save-offline-title"
-  class="space-y-3 rounded-xl border border-border/60 p-4"
+  class={cn("space-y-3 rounded-xl border border-border/60 p-4", className)}
   data-pagefind-ignore
 >
   <div class="flex items-start gap-3">
