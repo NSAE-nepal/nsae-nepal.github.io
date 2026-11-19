@@ -3,6 +3,8 @@ import { ClientRouter } from "astro:transitions";
 import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
+import InstallAppDialog from "../components/InstallAppDialog.astro";
+import OfflineStatus from "../components/OfflineStatus.astro";
 
 interface Props {
   title: string;
@@ -15,10 +17,20 @@ interface Props {
   dataPagefindIgnore?: "index" | "all";
   /** Sets `data-page` on <main>: the root that page scripts scope to (see onPage). */
   page?: string;
+  /** Keep the page out of search engines. */
+  noindex?: boolean;
 }
 
-const { title, description, image, imageAlt, type, dataPagefindIgnore, page } =
-  Astro.props;
+const {
+  title,
+  description,
+  image,
+  imageAlt,
+  type,
+  dataPagefindIgnore,
+  page,
+  noindex,
+} = Astro.props;
 ---
 
 <html lang="en">
@@ -29,6 +41,7 @@ const { title, description, image, imageAlt, type, dataPagefindIgnore, page } =
       image={image}
       imageAlt={imageAlt}
       type={type}
+      noindex={noindex}
     />
     <ClientRouter />
     <slot name="head" />
@@ -39,6 +52,8 @@ const { title, description, image, imageAlt, type, dataPagefindIgnore, page } =
       <slot />
     </main>
     <Footer />
+    <OfflineStatus />
+    <InstallAppDialog />
     <script>
       import "@/scripts/visit-tracker";
       import "@/scripts/card-hover";

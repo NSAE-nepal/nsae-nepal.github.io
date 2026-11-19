@@ -1,0 +1,266 @@
+---
+import { IconCloudDownload } from "@tabler/icons-astro";
+import Button from "@/components/astro/Button/Button.astro";
+
+/**
+ * "Save for offline": asks the service worker to download the course page
+ * and every lesson (src/service-worker/sw.js). Hidden unless a worker is
+ * active, i.e. only in production builds with service worker support.
+ */
+interface Props {
+  courseId: string;
+  title: string;
+  path: string;
+  /** The course page followed by every lesson page. */
+  pages: string[];
+}
+
+const { courseId, title, path, pages } = Astro.props;
+const lessonCount = pages.length - 1;
+---
+
+<section
+  hidden
+  data-save-offline
+  data-course-id={courseId}
+  data-course-title={title}
+  data-course-path={path}
+  data-pages={JSON.stringify(pages)}
+  data-state="idle"
+  aria-labelledby="save-offline-title"
+  class="space-y-3 rounded-xl border border-border/60 p-4"
+  data-pagefind-ignore
+>
+  <div class="flex items-start gap-3">
+    <span
+      class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-secondary"
+    >
+      <IconCloudDownload class="size-4 text-primary" aria-hidden="true" />
+    </span>
+    <div class="min-w-0 space-y-1">
+      <h2 id="save-offline-title" class="text-sm font-medium" data-title>
+        Use this course offline
+      </h2>
+      <p class="text-sm text-muted-foreground" data-detail aria-live="polite">
+        Download all {lessonCount} lesson{lessonCount === 1 ? "" : "s"} to this device
+        so they open without a connection.
+      </p>
+    </div>
+  </div>
+
+  <div
+    hidden
+    data-progress
+    role="progressbar"
+    aria-label="Download progress"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow="0"
+    class="h-1.5 w-full overflow-hidden rounded-full bg-border/60"
+  >
+    <div
+      data-progress-fill
+      class="h-full w-full origin-left scale-x-0 rounded-full bg-primary transition-transform duration-300 motion-reduce:transition-none"
+    >
+    </div>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <Button type="button" size="sm" data-save>
+      <span data-save-label>Save for offline</span>
+    </Button>
+    <Button type="button" size="sm" variant="ghost" data-remove hidden>
+      Remove download
+    </Button>
+  </div>
+
+  <p class="text-xs text-muted-foreground">
+    Videos, search and external links still need a connection.
+  </p>
+
+  <!-- After saving: suggest installing, if this browser can (install-app.ts). -->
+  <div class="hidden in-data-[state=saved]:block">
+    <p data-install-app hidden class="text-xs text-muted-foreground">
+      <button
+        type="button"
+        data-install-trigger
+        class="cursor-pointer font-medium text-primary underline-offset-4 hover:underline"
+      >
+        Install the NSAE app
+      </button>
+      to open saved courses from your home screen.
+    </p>
+  </div>
+</section>
+
+<script>
+  import { formatFileSize } from "@/lib/courses";
+  import {
+    CACHE_NAMES,
+    savedRecordPath,
+    type SavedCourse,
+  } from "@/lib/offline";
+  import { activeWorker, askWorker } from "@/scripts/service-worker";
+
+  const dateFormat = new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+
+  async function loadRecord(courseId: string) {
+    try {
+      const cache = await caches.open(CACHE_NAMES.saved);
+      const response = await cache.match(savedRecordPath(courseId));
+      return response ? ((await response.json()) as SavedCourse) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  async function setup(root: HTMLElement, signal: AbortSignal) {
+    const worker = await activeWorker();
+    if (!worker || signal.aborted) return;
+
+    const title = root.querySelector<HTMLElement>("[data-title]")!;
+    const detail = root.querySelector<HTMLElement>("[data-detail]")!;
+    const progress = root.querySelector<HTMLElement>("[data-progress]")!;
+    const fill = root.querySelector<HTMLElement>("[data-progress-fill]")!;
+    const save = root.querySelector<HTMLButtonElement>("[data-save]")!;
+    const saveLabel = root.querySelector<HTMLElement>("[data-save-label]")!;
+    const remove = root.querySelector<HTMLButtonElement>("[data-remove]")!;
+
+    const courseId = root.dataset.courseId ?? "";
+    const pages = JSON.parse(root.dataset.pages ?? "[]") as string[];
+    const lessons = pages.length - 1;
+    const lessonsLabel = `${lessons} lesson${lessons === 1 ? "" : "s"}`;
+    const intro = detail.textContent?.trim() ?? "";
+    let busy = false;
+
+    const setProgress = (ratio: number | null) => {
+      progress.hidden = ratio === null;
+      fill.style.transform = `scaleX(${ratio ?? 0})`;
+      progress.setAttribute(
+        "aria-valuenow",
+        String(Math.round((ratio ?? 0) * 100)),
+      );
+    };
+
+    const render = async (error?: string) => {
+      const record = await loadRecord(courseId);
+      if (signal.aborted) return;
+      setProgress(null);
+      save.disabled = false;
+      remove.disabled = false;
+      remove.hidden = !record;
+
+      if (error) {
+        root.dataset.state = "error";
+        title.textContent = "Download didn't finish";
+        detail.textContent =
+          "Check your connection and try again. Nothing was saved.";
+        saveLabel.textContent = "Try again";
+      } else if (record) {
+        // New or removed lessons since it was saved.
+        const outdated =
+          record.pages.length !== pages.length ||
+          pages.some((page) => !record.pages.includes(page));
+        root.dataset.state = outdated ? "outdated" : "saved";
+        title.textContent = outdated
+          ? "Saved copy is out of date"
+          : "Saved for offline";
+        detail.textContent = outdated
+          ? "This course has changed since you saved it. Update the download to get every lesson."
+          : `All ${lessonsLabel} open without a connection on this device · ${formatFileSize(record.bytes)} · saved ${dateFormat.format(record.savedAt)}.`;
+        saveLabel.textContent = "Update download";
+      } else {
+        root.dataset.state = "idle";
+        title.textContent = "Use this course offline";
+        detail.textContent = intro;
+        saveLabel.textContent = "Save for offline";
+      }
+
+      if (!navigator.onLine) {
+        save.disabled = true;
+        if (!record) {
+          detail.textContent = "Connect to the internet to save this course.";
+        }
+      }
+    };
+
+    const start = async () => {
+      if (busy) return;
+      busy = true;
+      root.dataset.state = "saving";
+      save.disabled = true;
+      remove.disabled = true;
+      saveLabel.textContent = "Saving…";
+      setProgress(0);
+      // Ask the browser not to clear saved courses when space runs low. Chrome
+      // decides silently (more likely once installed); Firefox asks the user.
+      void navigator.storage?.persist?.().catch(() => false);
+
+      const reply = await askWorker(
+        worker,
+        {
+          type: "save-course",
+          course: {
+            id: courseId,
+            title: root.dataset.courseTitle,
+            path: root.dataset.coursePath,
+            pages,
+            // Responsive images: download one width, sized for this screen.
+            imageWidth: Math.round(
+              Math.min(window.innerWidth, 1024) *
+                Math.min(window.devicePixelRatio || 1, 2),
+            ),
+          },
+        },
+        ({ phase, done, total }) => {
+          if (signal.aborted) return;
+          const count = Number(total) || 1;
+          if (phase === "pages") {
+            detail.textContent = `Downloading page ${Number(done) + 1} of ${count}…`;
+            setProgress((Number(done) / count) * 0.8);
+          } else {
+            detail.textContent = "Downloading images and styles…";
+            setProgress(0.9);
+          }
+        },
+      );
+      busy = false;
+      await render(reply.type === "error" ? String(reply.message) : undefined);
+    };
+
+    const removeDownload = async () => {
+      if (busy) return;
+      busy = true;
+      remove.disabled = true;
+      save.disabled = true;
+      await askWorker(worker, { type: "remove-course", id: courseId });
+      busy = false;
+      await render();
+    };
+
+    save.addEventListener("click", start, { signal });
+    remove.addEventListener("click", removeDownload, { signal });
+    for (const type of ["online", "offline"]) {
+      window.addEventListener(type, () => !busy && render(), { signal });
+    }
+
+    await render();
+    root.hidden = false;
+  }
+
+  let controller: AbortController | undefined;
+
+  document.addEventListener("astro:page-load", () => {
+    controller?.abort();
+    const root = document.querySelector<HTMLElement>("[data-save-offline]");
+    if (!root) return;
+    controller = new AbortController();
+    void setup(root, controller.signal);
+  });
+
+  document.addEventListener("astro:before-swap", () => controller?.abort());
+</script>

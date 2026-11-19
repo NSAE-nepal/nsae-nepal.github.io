@@ -18,6 +18,7 @@ import FormattedDate from "@/components/FormattedDate.astro";
 import CourseProgress from "@/components/pages/courses/CourseProgress.astro";
 import CourseSyllabus from "@/components/pages/courses/CourseSyllabus.astro";
 import ResourceList from "@/components/pages/courses/ResourceList.astro";
+import SaveOffline from "@/components/pages/courses/SaveOffline.astro";
 import PortableText from "@/components/PortableText.astro";
 import JsonLd from "@/components/seo/JsonLd.astro";
 import ShareBar from "@/components/ShareBar.astro";
@@ -202,6 +203,19 @@ const stats = [
             )
           }
           <CourseProgress courseId={course._id} lessonIds={lessonIds} />
+          {
+            lessons.length > 0 && (
+              <SaveOffline
+                courseId={course._id}
+                title={course.title}
+                path={coursePath(course)}
+                pages={[
+                  coursePath(course),
+                  ...lessons.map((lesson) => lessonPath(course, lesson)),
+                ]}
+              />
+            )
+          }
         </div>
       </div>
 

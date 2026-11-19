@@ -40,7 +40,8 @@ export default defineConfig({
 	},
 	integrations: [
 		sitemap({
-			filter: (page) => !page.includes("/studio"),
+			filter: (page) =>
+				!page.includes("/studio") && !page.includes("/offline/"),
 		}),
 		react(),
 		sanity({

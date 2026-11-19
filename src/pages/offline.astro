@@ -1,0 +1,267 @@
+---
+import {
+  IconArrowRight,
+  IconBook2,
+  IconFileText,
+  IconRefresh,
+  IconWifiOff,
+} from "@tabler/icons-astro";
+import Button from "@/components/astro/Button/Button.astro";
+import PageLayout from "@/layouts/PageLayout.astro";
+
+/**
+ * Precached by the service worker and served in place of any page that
+ * isn't cached while offline (the address bar keeps the requested URL).
+ * Lists what this device has saved, read from the caches.
+ */
+---
+
+<PageLayout
+  title="Offline"
+  description="Pages and courses saved on this device for offline use."
+  dataPagefindIgnore="all"
+  noindex
+  page="offline"
+>
+  <section class="mx-auto max-w-3xl space-y-10 px-4 py-16 md:py-24">
+    <header class="space-y-5">
+      <span
+        class="flex size-12 items-center justify-center rounded-2xl bg-secondary"
+      >
+        <IconWifiOff class="size-6 text-primary" aria-hidden="true" />
+      </span>
+      <h1
+        class="font-sans text-4xl leading-tight font-medium tracking-tighter md:text-6xl"
+        data-offline-heading
+      >
+        Saved on this device
+      </h1>
+      <p class="max-w-xl text-lg text-muted-foreground" data-offline-intro>
+        Pages you visit are kept so they open without a connection, and whole
+        courses can be saved from their course page.
+      </p>
+      <div class="flex flex-wrap gap-2">
+        <Button type="button" data-offline-retry>
+          <IconRefresh class="size-4" aria-hidden="true" /> Try again
+        </Button>
+        <Button href="/" variant="outline">Go to the home page</Button>
+      </div>
+    </header>
+
+    <section hidden data-saved-courses aria-labelledby="saved-courses-title">
+      <h2
+        id="saved-courses-title"
+        class="mb-4 font-sans text-2xl font-medium tracking-tight"
+      >
+        Saved courses
+      </h2>
+      <ul class="grid gap-2" role="list" data-list></ul>
+    </section>
+
+    <section hidden data-recent-pages aria-labelledby="recent-pages-title">
+      <h2
+        id="recent-pages-title"
+        class="mb-4 font-sans text-2xl font-medium tracking-tight"
+      >
+        Recently visited
+      </h2>
+      <ul class="grid gap-2" role="list" data-list></ul>
+    </section>
+
+    <p hidden data-nothing-saved class="text-muted-foreground">
+      Nothing is saved on this device yet. Visit a few pages while you're
+      online, or open a course and choose "Save for offline".
+    </p>
+
+    <div class="space-y-1 text-sm text-muted-foreground">
+      <p>Search, videos and links to other websites need a connection.</p>
+      <p hidden data-storage-usage></p>
+    </div>
+  </section>
+
+  <template data-item-template>
+    <li>
+      <!-- href is set by the script below. -->
+      <a
+        href="/"
+        class="group flex items-center gap-3 rounded-xl border border-border/60 p-3 transition-colors hover:border-primary/50 hover:bg-secondary/50"
+      >
+        <span
+          class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-secondary"
+        >
+          <IconBook2
+            data-icon="course"
+            class="size-4 text-primary"
+            aria-hidden="true"
+          />
+          <IconFileText
+            data-icon="page"
+            class="size-4 text-primary"
+            aria-hidden="true"
+          />
+        </span>
+        <span class="min-w-0 flex-1">
+          <span
+            data-item-title
+            class="block truncate text-sm font-medium group-hover:text-primary"
+          ></span>
+          <span
+            data-item-meta
+            class="block truncate font-mono text-[11px] tracking-wider text-muted-foreground uppercase"
+          ></span>
+        </span>
+        <IconArrowRight
+          class="size-4 shrink-0 text-muted-foreground"
+          aria-hidden="true"
+        />
+      </a>
+    </li>
+  </template>
+</PageLayout>
+
+<script>
+  import { formatFileSize } from "@/lib/courses";
+  import {
+    CACHE_NAMES,
+    OFFLINE_PATH,
+    SAVED_RECORD_PREFIX,
+    type SavedCourse,
+  } from "@/lib/offline";
+
+  type Item = { href: string; title: string; meta: string; icon: string };
+
+  const SITE_SUFFIX = / \| NSAE$/;
+
+  /** The <title> of a cached page, decoded, without the site suffix. */
+  async function pageTitle(response: Response) {
+    const match = (await response.text()).match(/<title>([^<]*)<\/title>/i);
+    if (!match) return "";
+    const decoded =
+      new DOMParser().parseFromString(match[1], "text/html").documentElement
+        .textContent ?? "";
+    return decoded.replace(SITE_SUFFIX, "").trim();
+  }
+
+  /** Saved courses, plus every page they cover (left out of "Recently visited"). */
+  async function savedCourses(): Promise<{
+    items: Item[];
+    pages: Set<string>;
+  }> {
+    const cache = await caches.open(CACHE_NAMES.saved);
+    const items: Item[] = [];
+    const pages = new Set<string>();
+    for (const request of await cache.keys()) {
+      if (!new URL(request.url).pathname.startsWith(SAVED_RECORD_PREFIX)) {
+        continue;
+      }
+      try {
+        const record = (await (
+          await cache.match(request)
+        )?.json()) as SavedCourse;
+        const lessons = record.pages.length - 1;
+        record.pages.forEach((page) => pages.add(page));
+        items.push({
+          href: record.path,
+          title: record.title,
+          meta: `${lessons} lesson${lessons === 1 ? "" : "s"} · ${formatFileSize(record.bytes)}`,
+          icon: "course",
+        });
+      } catch {
+        // Skip unreadable records.
+      }
+    }
+    return { items, pages };
+  }
+
+  async function recentPages(exclude: Set<string>): Promise<Item[]> {
+    const cache = await caches.open(CACHE_NAMES.pages);
+    // Oldest first in the cache; show the most recent first.
+    const requests = [...(await cache.keys())].reverse();
+    const items: Item[] = [];
+    for (const request of requests) {
+      const { pathname } = new URL(request.url);
+      if (pathname === OFFLINE_PATH || exclude.has(pathname)) continue;
+      const response = await cache.match(request);
+      if (!response) continue;
+      const title = await pageTitle(response);
+      // Redirect stubs (/blog → /blog/page/1/) aren't worth listing.
+      if (!title || title.startsWith("Redirecting to")) continue;
+      items.push({ href: pathname, title, meta: pathname, icon: "page" });
+    }
+    return items;
+  }
+
+  function fill(section: HTMLElement, items: Item[]) {
+    const list = section.querySelector<HTMLElement>("[data-list]");
+    const template = document.querySelector<HTMLTemplateElement>(
+      "[data-item-template]",
+    );
+    if (!list || !template) return;
+    list.replaceChildren(
+      ...items.map((item) => {
+        const node = template.content.cloneNode(true) as DocumentFragment;
+        // Records live in a same-origin cache, but only ever link on-site.
+        const href = new URL(item.href, location.origin);
+        node.querySelector("a")!.href =
+          href.origin === location.origin ? href.pathname : "/";
+        node.querySelector("[data-item-title]")!.textContent = item.title;
+        node.querySelector("[data-item-meta]")!.textContent = item.meta;
+        node
+          .querySelectorAll<SVGElement>("[data-icon]")
+          .forEach((icon) =>
+            icon.classList.toggle("hidden", icon.dataset.icon !== item.icon),
+          );
+        return node;
+      }),
+    );
+    section.hidden = items.length === 0;
+  }
+
+  document.addEventListener("astro:page-load", async () => {
+    const root = document.querySelector<HTMLElement>('[data-page="offline"]');
+    if (!root) return;
+
+    // Served in place of a page that isn't saved: say so.
+    if (location.pathname !== OFFLINE_PATH) {
+      root.querySelector("[data-offline-heading]")!.textContent =
+        "This page isn't saved yet";
+      root.querySelector("[data-offline-intro]")!.textContent =
+        "You're offline, and this page hasn't been saved on this device. Try again when you're connected, or open something that is saved.";
+    }
+
+    root
+      .querySelector("[data-offline-retry]")
+      ?.addEventListener("click", () => location.reload());
+
+    if (!("caches" in window)) return;
+    try {
+      const saved = await savedCourses();
+      const courses = saved.items;
+      const pages = await recentPages(saved.pages);
+      fill(root.querySelector("[data-saved-courses]")!, courses);
+      fill(root.querySelector("[data-recent-pages]")!, pages);
+      root.querySelector<HTMLElement>("[data-nothing-saved]")!.hidden =
+        courses.length + pages.length > 0;
+    } catch {
+      // Storage unavailable: the static text still explains the page.
+    }
+
+    try {
+      const usage = root.querySelector<HTMLElement>("[data-storage-usage]")!;
+      const [{ usage: bytes = 0 }, persisted] = await Promise.all([
+        navigator.storage.estimate(),
+        navigator.storage.persisted(),
+      ]);
+      if (bytes > 0) {
+        usage.textContent = `This site is using ${formatFileSize(bytes)} on this device${
+          persisted
+            ? ", kept until you remove it."
+            : ". The browser may clear it if the device runs low on space."
+        }`;
+        usage.hidden = false;
+      }
+    } catch {
+      // StorageManager unsupported: leave the line out.
+    }
+  });
+</script>

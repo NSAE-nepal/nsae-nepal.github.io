@@ -1,0 +1,70 @@
+---
+import { IconShare2, IconSquarePlus } from "@tabler/icons-astro";
+
+/**
+ * "Add to Home Screen" steps for iPhone and iPad, which have no install API.
+ * Opened by src/scripts/install-app.ts.
+ */
+---
+
+<dialog
+  data-install-ios
+  aria-labelledby="install-ios-title"
+  data-pagefind-ignore="all"
+  data-lenis-prevent
+  class="m-auto w-[min(26rem,calc(100vw-2rem))] rounded-2xl border border-border bg-popover p-6 text-popover-foreground shadow-lg backdrop:bg-black/50"
+>
+  <h2
+    id="install-ios-title"
+    class="font-sans text-xl font-medium tracking-tight"
+  >
+    Install the NSAE app
+  </h2>
+  <p class="mt-2 text-sm text-muted-foreground">
+    Add NSAE to your home screen. It opens like an app, and pages and courses
+    you've saved work without a connection.
+  </p>
+  <ol class="mt-5 space-y-3 text-sm">
+    <li class="flex items-start gap-3">
+      <span
+        class="flex size-7 shrink-0 items-center justify-center rounded-full bg-secondary font-mono text-xs"
+        >1</span
+      >
+      <span class="pt-1">
+        Tap the Share button
+        <IconShare2
+          class="mx-0.5 inline size-4 align-text-bottom text-primary"
+          aria-label="(a square with an arrow pointing up)"
+        />
+        in your browser's toolbar.
+      </span>
+    </li>
+    <li class="flex items-start gap-3">
+      <span
+        class="flex size-7 shrink-0 items-center justify-center rounded-full bg-secondary font-mono text-xs"
+        >2</span
+      >
+      <span class="pt-1">
+        Choose <strong class="font-medium">Add to Home Screen</strong>
+        <IconSquarePlus
+          class="mx-0.5 inline size-4 align-text-bottom text-primary"
+          aria-hidden="true"
+        />. You may need to scroll down to find it.
+      </span>
+    </li>
+    <li class="flex items-start gap-3">
+      <span
+        class="flex size-7 shrink-0 items-center justify-center rounded-full bg-secondary font-mono text-xs"
+        >3</span
+      >
+      <span class="pt-1">Tap <strong class="font-medium">Add</strong>.</span>
+    </li>
+  </ol>
+  <form method="dialog" class="mt-6 flex justify-end">
+    <button
+      class="inline-flex h-9 cursor-pointer items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+    >
+      Got it
+    </button>
+  </form>
+</dialog>

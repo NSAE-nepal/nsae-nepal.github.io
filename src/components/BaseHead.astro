@@ -23,6 +23,8 @@ interface Props {
   /** Alt text for the social image; defaults to the page title. */
   imageAlt?: string;
   type?: "website" | "article" | "profile";
+  /** Keep the page out of search engines (e.g. /offline/). */
+  noindex?: boolean;
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -33,6 +35,7 @@ const {
   image = SITE_CARD,
   imageAlt,
   type = "website",
+  noindex = false,
 } = Astro.props;
 
 const title =
@@ -72,6 +75,22 @@ const socialImageAlt =
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta name="apple-mobile-web-app-title" content="NSAE" />
+<!--
+  The page background (global.css --background). Both tags follow the site's
+  own theme toggle once the theme script below runs.
+-->
+<meta
+  name="theme-color"
+  content="#ffffff"
+  media="(prefers-color-scheme: light)"
+/>
+<meta
+  name="theme-color"
+  content="#0a0a0a"
+  media="(prefers-color-scheme: dark)"
+/>
 <link rel="sitemap" href="/sitemap-index.xml" />
 <link
   rel="alternate"
@@ -135,6 +154,7 @@ const socialImageAlt =
 <!-- Primary Meta Tags -->
 <title>{title}</title>
 <meta name="description" content={description} />
+{noindex && <meta name="robots" content="noindex" />}
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content={type} />
@@ -157,6 +177,8 @@ const socialImageAlt =
 <script>
   import { ScrollTrigger } from "@/utils/gsap-init";
   import { destroyLenis, startLenis } from "@/utils/lenis";
+  import "@/scripts/service-worker";
+  import "@/scripts/install-app";
 
   function cleanup() {
     // Safety net: every page script reverts its own context through onPage(),
@@ -181,12 +203,27 @@ const socialImageAlt =
       : "light";
   };
 
+  // Status/title bar colour of the installed app and mobile browsers.
+  const syncThemeColor = () => {
+    const isDark = document.documentElement.classList.contains("dark");
+    document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
+      meta.setAttribute("content", isDark ? "#0a0a0a" : "#ffffff");
+    });
+  };
+
   window.__applyTheme = () => {
     const isDark = getThemePreference() === "dark";
     document.documentElement.classList[isDark ? "add" : "remove"]("dark");
+    syncThemeColor();
   };
 
   window.__applyTheme();
+
+  // The footer's theme toggle flips the class directly.
+  new MutationObserver(syncThemeColor).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["class"],
+  });
 </script>
 
 <script is:inline>
