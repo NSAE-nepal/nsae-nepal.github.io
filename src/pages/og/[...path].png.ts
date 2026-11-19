@@ -31,6 +31,15 @@ export const getStaticPaths: GetStaticPaths = async () => {
 		value ? formatDate(new Date(value)) : undefined;
 
 	const cards: { path: string; card: OgCard }[] = [
+		// Default preview for pages without an image of their own (BaseHead).
+		{
+			path: "site",
+			card: {
+				kicker: "Since 1990",
+				title: "Engineering the future of agriculture in Nepal",
+				meta: "Professional society of agricultural engineers",
+			},
+		},
 		...(posts ?? []).map((post) => ({
 			path: `${post.type === "notice" ? "notices" : "blog"}/${post.slug}`,
 			card: {

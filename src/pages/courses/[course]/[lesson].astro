@@ -66,6 +66,7 @@ const pagePath = lessonPath(course, lesson);
   title={`${lesson.title} – ${course.title}`}
   description={lesson.summary || course.summary}
   image={course.coverImage || `/og/courses/${course.slug}.png`}
+  imageAlt={course.coverImage ? course.coverImageAlt : undefined}
   type="article"
 >
   <JsonLd

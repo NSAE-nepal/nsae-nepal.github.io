@@ -9,13 +9,15 @@ interface Props {
   description: string;
   /** Social preview image: a local import or a Sanity image URL. */
   image?: ImageMetadata | string;
+  /** Alt text for `image`; defaults to the page title. */
+  imageAlt?: string;
   type?: "website" | "article" | "profile";
   dataPagefindIgnore?: "index" | "all";
   /** Sets `data-page` on <main>: the root that page scripts scope to (see onPage). */
   page?: string;
 }
 
-const { title, description, image, type, dataPagefindIgnore, page } =
+const { title, description, image, imageAlt, type, dataPagefindIgnore, page } =
   Astro.props;
 ---
 
@@ -25,6 +27,7 @@ const { title, description, image, type, dataPagefindIgnore, page } =
       title={title}
       description={description}
       image={image}
+      imageAlt={imageAlt}
       type={type}
     />
     <ClientRouter />

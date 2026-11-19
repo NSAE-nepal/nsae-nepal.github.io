@@ -91,6 +91,7 @@ const stats = [
   title={course.title}
   description={course.summary}
   image={course.coverImage || `/og/courses/${course.slug}.png`}
+  imageAlt={course.coverImage ? course.coverImageAlt : undefined}
 >
   <JsonLd
     slot="head"
