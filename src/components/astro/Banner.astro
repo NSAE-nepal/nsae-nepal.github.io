@@ -92,76 +92,81 @@ const subtleVignette = `radial-gradient(
 </section>
 
 <script>
-  function initializeCountdowns() {
-    const countdownElements =
-      document.querySelectorAll<HTMLElement>(".countdown");
-    if (countdownElements.length === 0) return;
+  // Countdown banners live on the home page only. One interval per countdown,
+  // all cleared before the page is swapped out.
+  const intervals: Array<ReturnType<typeof setInterval>> = [];
 
-    countdownElements.forEach((countdownElement) => {
-      const oldIntervalId = Number(countdownElement.dataset.intervalId);
-      if (oldIntervalId) {
-        clearInterval(oldIntervalId);
+  const UNITS = ["Days", "Hrs", "Min", "Sec"] as const;
+  const DAY = 24 * 60 * 60 * 1000;
+  const HOUR = 60 * 60 * 1000;
+  const MINUTE = 60 * 1000;
+
+  // Builds the markup once; each tick only updates the four numbers.
+  function buildCountdown(container: HTMLElement): HTMLElement[] {
+    container.replaceChildren();
+    return UNITS.map((unit, i) => {
+      if (i > 0) {
+        const separator = document.createElement("span");
+        separator.className = "mt-1 text-2xl opacity-50 md:mt-2 md:text-4xl";
+        separator.setAttribute("aria-hidden", "true");
+        separator.textContent = ":";
+        container.append(separator);
       }
-
-      const targetDateStr = countdownElement.dataset.targetDate;
-      if (!targetDateStr) return;
-
-      const targetDate = new Date(targetDateStr).getTime();
-
-      const updateCountdown = () => {
-        const now = new Date().getTime();
-        const distance = targetDate - now;
-
-        if (distance < 0) {
-          countdownElement.innerHTML = "EVENT STARTED";
-          const intervalId = Number(countdownElement.dataset.intervalId);
-          if (intervalId) clearInterval(intervalId);
-          return;
-        }
-
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor(
-          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
-        );
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        countdownElement.innerHTML = `
-          <div class="text-center">
-            ${String(days).padStart(2, "0")}
-            <span class="block text-[10px] uppercase tracking-widest opacity-70 font-mono mt-1">Days</span>
-          </div>
-          <span class="opacity-50 text-2xl md:text-4xl mt-1 md:mt-2">:</span>
-          <div class="text-center">
-            ${String(hours).padStart(2, "0")}
-            <span class="block text-[10px] uppercase tracking-widest opacity-70 font-mono mt-1">Hrs</span>
-          </div>
-          <span class="opacity-50 text-2xl md:text-4xl mt-1 md:mt-2">:</span>
-          <div class="text-center">
-            ${String(minutes).padStart(2, "0")}
-            <span class="block text-[10px] uppercase tracking-widest opacity-70 font-mono mt-1">Min</span>
-          </div>
-          <span class="opacity-50 text-2xl md:text-4xl mt-1 md:mt-2">:</span>
-          <div class="text-center">
-            ${String(seconds).padStart(2, "0")}
-            <span class="block text-[10px] uppercase tracking-widest opacity-70 font-mono mt-1">Sec</span>
-          </div>
-        `;
-      };
-
-      updateCountdown();
-
-      const newIntervalId = setInterval(updateCountdown, 1000);
-      countdownElement.dataset.intervalId = String(newIntervalId);
+      const cell = document.createElement("div");
+      cell.className = "text-center";
+      const value = document.createElement("span");
+      const label = document.createElement("span");
+      label.className =
+        "mt-1 block font-mono text-[10px] tracking-widest uppercase opacity-70";
+      label.textContent = unit;
+      cell.append(value, label);
+      container.append(cell);
+      return value;
     });
   }
 
-  document.addEventListener("astro:page-load", initializeCountdowns);
-  document.addEventListener("DOMContentLoaded", initializeCountdowns);
+  function startCountdown(container: HTMLElement) {
+    const target = new Date(container.dataset.targetDate ?? "").getTime();
+    if (!Number.isFinite(target)) return;
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initializeCountdowns);
-  } else {
-    initializeCountdowns();
+    const values = buildCountdown(container);
+    let intervalId: ReturnType<typeof setInterval> | undefined;
+
+    const tick = () => {
+      const distance = target - Date.now();
+      if (distance < 0) {
+        clearInterval(intervalId);
+        container.textContent = "EVENT STARTED";
+        return false;
+      }
+      const parts = [
+        Math.floor(distance / DAY),
+        Math.floor((distance % DAY) / HOUR),
+        Math.floor((distance % HOUR) / MINUTE),
+        Math.floor((distance % MINUTE) / 1000),
+      ];
+      parts.forEach((part, i) => {
+        values[i].textContent = String(part).padStart(2, "0");
+      });
+      return true;
+    };
+
+    if (tick()) {
+      intervalId = setInterval(tick, 1000);
+      intervals.push(intervalId);
+    }
   }
+
+  function stopCountdowns() {
+    intervals.splice(0).forEach(clearInterval);
+  }
+
+  // astro:page-load also fires on the first load.
+  document.addEventListener("astro:page-load", () => {
+    stopCountdowns();
+    document
+      .querySelectorAll<HTMLElement>(".countdown[data-target-date]")
+      .forEach(startCountdown);
+  });
+  document.addEventListener("astro:before-swap", stopCountdowns);
 </script>

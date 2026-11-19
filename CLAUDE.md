@@ -70,8 +70,9 @@ Package manager is **bun** (`bun.lock`).
 
 ### Client-side scripts and animation
 
-- `ClientRouter` (view transitions) is enabled, so module `<script>`s run once per session. Put per-page setup in an `astro:page-load` listener and clean up on `astro:before-swap`.
-- GSAP + Lenis smooth scroll. Always import GSAP from `@/utils/gsap-init` (registers plugins and makes all tweens instant under `prefers-reduced-motion`). Wrap page animations in `gsap.context()` and `revert()` on `astro:before-swap`.
+- `ClientRouter` (view transitions) is enabled, so module `<script>`s run once per session and their `astro:page-load` listeners fire on every page visited afterwards. Write page/section scripts with `onPage(rootSelector, setup)` from `src/utils/page-script.ts`: it runs only where the root exists, scopes GSAP selector strings to that root (pass `root` itself as a ScrollTrigger trigger, since selectors only match descendants), and on `astro:before-swap` aborts `signal` (pass it to every `addEventListener`), runs `onCleanup` callbacks and reverts the context. Page roots are `<main data-page>` via `PageLayout`'s `page` prop; home sections use `data-section`. Keep root selectors unique across the site.
+- Listing headers (badge → title words → intro → section heading) use `animateListingHeader()` from `src/utils/animations/listing-header.ts`. Card title hover (`.split-card`/`.split-target`) is wired globally by `src/scripts/card-hover.ts`; sections that reveal cards with their own timeline are marked `[data-manual-card-anim]` and call `startCardHover(scope, selector)` from a timeline `.add()`.
+- GSAP + Lenis smooth scroll. Always import GSAP from `@/utils/gsap-init` (registers plugins and makes all tweens instant under `prefers-reduced-motion`). `onPage()` reverts each page's GSAP context on `astro:before-swap`; scripts outside it (e.g. `TableOfContents`, `ShareBar`) manage their own `gsap.context()`.
 - Elements hidden until animated use Tailwind `opacity-0` / `invisible`; `BaseHead.astro` has a `<noscript>` fallback that reveals them. Don't hide content with inline styles.
 
 ### Styling

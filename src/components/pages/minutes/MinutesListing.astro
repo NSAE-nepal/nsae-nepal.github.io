@@ -46,6 +46,7 @@ const pageDescription =
   title={pageTitle}
   description={pageDescription}
   dataPagefindIgnore="all"
+  page="minutes-listing"
 >
   <header
     class="flex flex-col items-center justify-center py-16 text-center md:py-24"
@@ -133,105 +134,48 @@ const pageDescription =
 </PageLayout>
 
 <script>
-  import { gsap, SplitText } from "@/utils/gsap-init";
-  import { initCardSplitTextAnimation } from "@/utils/animations/cards-split-text-animation";
-  let ctx: gsap.Context | undefined;
-  function initMinutesPage() {
-    ctx = gsap.context(() => {
-      const mainTl = gsap.timeline({
-        defaults: { ease: "power3.out" },
-      });
+  import { startCardHover } from "@/utils/animations/cards-split-text-animation";
+  import { animateListingHeader } from "@/utils/animations/listing-header";
+  import { gsap } from "@/utils/gsap-init";
+  import { onPage } from "@/utils/page-script";
 
-      const titleSplit = SplitText.create(".anim-header-title", {
-        type: "lines, words",
-        linesClass: "overflow-hidden",
-      });
+  onPage('[data-page="minutes-listing"]', (scope) => {
+    const { root } = scope;
+    const mainTl = animateListingHeader(
+      gsap.timeline({ defaults: { ease: "power3.out" } }),
+      root,
+      {
+        description: { at: "-=0.6", duration: 0.5 },
+        sectionTitle: { at: "-=0.5" },
+      },
+    );
 
+    if (root.querySelector(".anim-minutes-card")) {
       mainTl
-        .to(".anim-header-badge", {
-          scale: 1,
-          opacity: 1,
-          duration: 0.6,
-          ease: "back.out(1.5)",
-        })
-        .set(".anim-header-title", { autoAlpha: 1 }, "-=0.3")
-        .from(
-          titleSplit.words,
-          {
-            yPercent: 100,
-            opacity: 0,
-            duration: 0.8,
-            stagger: 0.04,
-            ease: "power4.out",
-          },
-          "<",
-        );
-
-      if (document.querySelector(".anim-header-desc")) {
-        mainTl.to(
-          ".anim-header-desc",
+        .to(
+          ".anim-minutes-card, .anim-divider",
           {
             y: 0,
             opacity: 1,
             duration: 0.5,
-          },
-          "-=0.6",
-        );
-      }
-
-      mainTl.to(
-        ".anim-section-title",
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.5,
-        },
-        "-=0.5",
-      );
-
-      if (document.querySelector(".anim-minutes-card")) {
-        mainTl
-          .to(
-            ".anim-minutes-card, .anim-divider",
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.5,
-              stagger: 0.06,
-              ease: "power2.out",
-            },
-            "-=0.3",
-          )
-          .add(() => {
-            initCardSplitTextAnimation({ cardSelector: ".anim-minutes-card" });
-          }, "<");
-      }
-
-      if (document.querySelector(".anim-pagination")) {
-        mainTl.to(
-          ".anim-pagination",
-          {
-            opacity: 1,
-            duration: 0.5,
-          },
-          "-=0.2",
-        );
-      }
-
-      if (document.querySelector(".anim-empty-state")) {
-        mainTl.to(
-          ".anim-empty-state",
-          {
-            scale: 1,
-            opacity: 1,
-            duration: 0.6,
-            ease: "back.out(1.2)",
+            stagger: 0.06,
+            ease: "power2.out",
           },
           "-=0.3",
-        );
-      }
-    });
-  }
-  document.addEventListener("astro:page-load", initMinutesPage);
-  document.addEventListener("astro:before-swap", () => ctx?.revert());
+        )
+        .add(startCardHover(scope, ".anim-minutes-card"), "<");
+    }
+
+    if (root.querySelector(".anim-pagination")) {
+      mainTl.to(".anim-pagination", { opacity: 1, duration: 0.5 }, "-=0.2");
+    }
+
+    if (root.querySelector(".anim-empty-state")) {
+      mainTl.to(
+        ".anim-empty-state",
+        { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.2)" },
+        "-=0.3",
+      );
+    }
+  });
 </script>

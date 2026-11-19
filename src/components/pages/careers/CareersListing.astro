@@ -40,6 +40,7 @@ const pageDescription =
   title={pageTitle}
   description={pageDescription}
   dataPagefindIgnore="all"
+  page="opportunities-listing"
 >
   <header
     class="flex flex-col items-center justify-center py-16 text-center md:py-24"
@@ -65,7 +66,7 @@ const pageDescription =
     </p>
   </header>
 
-  <section class="mb-12" data-manual-card-anim data-opportunities-listing>
+  <section class="mb-12" data-manual-card-anim>
     <h2
       class="anim-section-title mb-8 translate-y-4 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase opacity-0 md:text-2xl"
     >
@@ -124,75 +125,35 @@ const pageDescription =
 </PageLayout>
 
 <script>
-  import { initCardSplitTextAnimation } from "@/utils/animations/cards-split-text-animation";
-  import { gsap, SplitText } from "@/utils/gsap-init";
+  import { startCardHover } from "@/utils/animations/cards-split-text-animation";
+  import { animateListingHeader } from "@/utils/animations/listing-header";
+  import { gsap } from "@/utils/gsap-init";
+  import { onPage } from "@/utils/page-script";
 
-  let ctx: gsap.Context | undefined;
+  onPage('[data-page="opportunities-listing"]', (scope) => {
+    const { root } = scope;
+    const tl = animateListingHeader(
+      gsap.timeline({ defaults: { ease: "power3.out" } }),
+      root,
+      { sectionTitle: { ease: "power2.out" } },
+    );
 
-  document.addEventListener("astro:page-load", () => {
-    if (!document.querySelector("[data-opportunities-listing]")) return;
+    if (root.querySelector(".anim-card")) {
+      tl.to(
+        ".anim-card, .anim-divider",
+        { y: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: "power2.out" },
+        "-=0.3",
+      ).add(startCardHover(scope), "<");
+    } else {
+      tl.to(
+        ".anim-empty-state",
+        { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.2)" },
+        "-=0.2",
+      );
+    }
 
-    ctx = gsap.context(() => {
-      const titleSplit = SplitText.create(".anim-header-title", {
-        type: "lines, words",
-        linesClass: "overflow-hidden",
-      });
-
-      const tl = gsap
-        .timeline({ defaults: { ease: "power3.out" } })
-        .to(".anim-header-badge", {
-          scale: 1,
-          opacity: 1,
-          duration: 0.6,
-          ease: "back.out(1.5)",
-        })
-        .set(".anim-header-title", { autoAlpha: 1 }, "-=0.3")
-        .from(
-          titleSplit.words,
-          {
-            yPercent: 100,
-            opacity: 0,
-            duration: 0.8,
-            stagger: 0.04,
-            ease: "power4.out",
-          },
-          "<",
-        )
-        .to(".anim-header-desc", { y: 0, opacity: 1, duration: 0.6 }, "-=0.4")
-        .to(
-          ".anim-section-title",
-          { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
-          "-=0.4",
-        );
-
-      if (document.querySelector(".anim-card")) {
-        tl.to(
-          ".anim-card, .anim-divider",
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.5,
-            stagger: 0.08,
-            ease: "power2.out",
-          },
-          "-=0.3",
-        ).add(() => initCardSplitTextAnimation(), "<");
-      } else {
-        tl.to(
-          ".anim-empty-state",
-          { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.2)" },
-          "-=0.2",
-        );
-      }
-
-      if (document.querySelector(".anim-pagination")) {
-        tl.to(".anim-pagination", { opacity: 1, duration: 0.5 }, "-=0.2");
-      }
-    });
-  });
-
-  document.addEventListener("astro:before-swap", () => {
-    ctx?.revert();
-    ctx = undefined;
+    if (root.querySelector(".anim-pagination")) {
+      tl.to(".anim-pagination", { opacity: 1, duration: 0.5 }, "-=0.2");
+    }
   });
 </script>

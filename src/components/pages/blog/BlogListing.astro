@@ -33,6 +33,7 @@ const pageDescription = activeCategory
   title={pageTitle}
   description={pageDescription}
   dataPagefindIgnore="all"
+  page="blog-listing"
 >
   <header class="flex flex-col items-center justify-center py-16 md:py-24">
     <div class="anim-header-badge scale-50 opacity-0">
@@ -53,7 +54,7 @@ const pageDescription = activeCategory
 
   {
     featuredPosts.length > 0 && page.currentPage === 1 && (
-      <section class="mb-12">
+      <section class="mb-12" data-manual-card-anim>
         <div class="mb-6 flex items-center justify-between border-b border-border/50 pb-2">
           <h2 class="anim-featured-title translate-y-4 font-sans text-xl font-medium tracking-wider uppercase opacity-0 md:text-2xl">
             Featured Posts
@@ -140,163 +141,110 @@ const pageDescription = activeCategory
 </PageLayout>
 
 <script>
-  import { gsap, SplitText } from "@/utils/gsap-init";
-  import { initCardSplitTextAnimation } from "@/utils/animations/cards-split-text-animation";
-  let ctx: gsap.Context | undefined;
-  function initBlogPage() {
-    ctx = gsap.context(() => {
-      const mainTl = gsap.timeline({
-        defaults: { ease: "power3.out" },
-      });
+  import { startCardHover } from "@/utils/animations/cards-split-text-animation";
+  import { animateListingHeader } from "@/utils/animations/listing-header";
+  import { gsap } from "@/utils/gsap-init";
+  import { onPage } from "@/utils/page-script";
 
-      const titleSplit = SplitText.create(".anim-header-title", {
-        type: "lines, words",
-        linesClass: "overflow-hidden",
-      });
+  onPage('[data-page="blog-listing"]', (scope) => {
+    const { root, signal } = scope;
+    const hasFeatured = Boolean(root.querySelector(".anim-featured-title"));
 
+    const mainTl = animateListingHeader(
+      gsap.timeline({ defaults: { ease: "power3.out" } }),
+      root,
+      { sectionTitle: false },
+    );
+
+    if (hasFeatured) {
       mainTl
-        .to(".anim-header-badge", {
-          scale: 1,
-          opacity: 1,
-          duration: 0.6,
-          ease: "back.out(1.5)",
-        })
-        .set(".anim-header-title", { autoAlpha: 1 }, "-=0.3")
-        .from(
-          titleSplit.words,
-          {
-            yPercent: 100,
-            opacity: 0,
-            duration: 0.8,
-            stagger: 0.04,
-            ease: "power4.out",
-          },
-          "<",
+        .to(
+          ".anim-featured-title",
+          { y: 0, opacity: 1, duration: 0.5 },
+          "-=0.6",
+        )
+        .to(
+          ".anim-featured-card",
+          { y: 0, opacity: 1, duration: 0.6, stagger: 0.1 },
+          "-=0.3",
+        )
+        .add(startCardHover(scope, ".anim-featured-card"), "<");
+    }
+
+    const featuredCarousel = root.querySelector<HTMLElement>(
+      ".anim-featured-carousel",
+    );
+    const prevBtn = root.querySelector(".featured-prev");
+    const nextBtn = root.querySelector(".featured-next");
+
+    if (featuredCarousel && prevBtn && nextBtn) {
+      const firstCard = featuredCarousel.querySelector<HTMLElement>(
+        ".anim-featured-card",
+      );
+
+      const scrollByCard = (direction: 1 | -1) => {
+        const gap = parseFloat(
+          getComputedStyle(featuredCarousel).columnGap || "0",
         );
-
-      if (document.querySelector(".anim-featured-title")) {
-        mainTl
-          .to(
-            ".anim-featured-title",
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.5,
-            },
-            "-=0.6",
-          )
-          .to(
-            ".anim-featured-card",
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.6,
-              stagger: 0.1,
-            },
-            "-=0.3",
-          )
-          .add(() => {
-            initCardSplitTextAnimation({ cardSelector: ".anim-featured-card" });
-          }, "<");
-      }
-
-      const featuredCarousel = document.querySelector(
-        ".anim-featured-carousel",
-      );
-      const prevBtn = document.querySelector(".featured-prev");
-      const nextBtn = document.querySelector(".featured-next");
-
-      if (featuredCarousel && prevBtn && nextBtn) {
-        const cards = featuredCarousel.querySelectorAll(".anim-featured-card");
-
-        const scrollByCard = (direction: 1 | -1) => {
-          const card = cards[0] as HTMLElement;
-          const gap = parseFloat(
-            getComputedStyle(featuredCarousel).columnGap || "0",
-          );
-          const amount =
-            (card?.offsetWidth ?? featuredCarousel.clientWidth) + gap;
-          featuredCarousel.scrollBy({
-            left: amount * direction,
-            behavior: "smooth",
-          });
-        };
-
-        const updateButtons = () => {
-          const maxScroll =
-            featuredCarousel.scrollWidth - featuredCarousel.clientWidth;
-          prevBtn.toggleAttribute("disabled", featuredCarousel.scrollLeft <= 4);
-          nextBtn.toggleAttribute(
-            "disabled",
-            featuredCarousel.scrollLeft >= maxScroll - 4,
-          );
-        };
-
-        prevBtn.addEventListener("click", () => scrollByCard(-1));
-        nextBtn.addEventListener("click", () => scrollByCard(1));
-        featuredCarousel.addEventListener("scroll", updateButtons, {
-          passive: true,
+        const amount =
+          (firstCard?.offsetWidth ?? featuredCarousel.clientWidth) + gap;
+        featuredCarousel.scrollBy({
+          left: amount * direction,
+          behavior: "smooth",
         });
-        updateButtons();
-      }
+      };
 
-      const regularPostOffset = document.querySelector(".anim-featured-title")
-        ? "-=0.3"
-        : "-=0.6";
+      const updateButtons = () => {
+        const maxScroll =
+          featuredCarousel.scrollWidth - featuredCarousel.clientWidth;
+        prevBtn.toggleAttribute("disabled", featuredCarousel.scrollLeft <= 4);
+        nextBtn.toggleAttribute(
+          "disabled",
+          featuredCarousel.scrollLeft >= maxScroll - 4,
+        );
+      };
 
-      mainTl.to(
-        ".anim-all-title",
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.5,
-        },
-        regularPostOffset,
-      );
+      prevBtn.addEventListener("click", () => scrollByCard(-1), { signal });
+      nextBtn.addEventListener("click", () => scrollByCard(1), { signal });
+      featuredCarousel.addEventListener("scroll", updateButtons, {
+        passive: true,
+        signal,
+      });
+      updateButtons();
+    }
 
-      if (document.querySelector(".anim-regular-card")) {
-        mainTl
-          .to(
-            ".anim-regular-card",
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.5,
-              stagger: 0.08,
-              ease: "power2.out",
-            },
-            "-=0.3",
-          )
-          .add(() => {
-            initCardSplitTextAnimation({ cardSelector: ".anim-regular-card" });
-          }, "<");
-      }
+    mainTl.to(
+      ".anim-all-title",
+      { y: 0, opacity: 1, duration: 0.5 },
+      hasFeatured ? "-=0.3" : "-=0.6",
+    );
 
-      if (document.querySelector(".anim-pagination")) {
-        mainTl.to(
-          ".anim-pagination",
+    if (root.querySelector(".anim-regular-card")) {
+      mainTl
+        .to(
+          ".anim-regular-card",
           {
+            y: 0,
             opacity: 1,
             duration: 0.5,
-          },
-          "-=0.2",
-        );
-      }
-
-      if (document.querySelector(".anim-empty-state")) {
-        mainTl.to(
-          ".anim-empty-state",
-          {
-            scale: 1,
-            opacity: 1,
-            duration: 0.6,
-            ease: "back.out(1.2)",
+            stagger: 0.08,
+            ease: "power2.out",
           },
           "-=0.3",
-        );
-      }
-    });
-  }
-  document.addEventListener("astro:page-load", initBlogPage);
-  document.addEventListener("astro:before-swap", () => ctx?.revert());
+        )
+        .add(startCardHover(scope, ".anim-regular-card"), "<");
+    }
+
+    if (root.querySelector(".anim-pagination")) {
+      mainTl.to(".anim-pagination", { opacity: 1, duration: 0.5 }, "-=0.2");
+    }
+
+    if (root.querySelector(".anim-empty-state")) {
+      mainTl.to(
+        ".anim-empty-state",
+        { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.2)" },
+        "-=0.3",
+      );
+    }
+  });
 </script>

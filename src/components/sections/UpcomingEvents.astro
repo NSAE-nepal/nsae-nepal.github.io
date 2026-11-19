@@ -52,6 +52,7 @@ const locationLabel = (event: (typeof upcoming)[number]) => {
 {
   upcoming.length > 0 && (
     <section
+      data-section="upcoming-events"
       class="upcoming-events-section pt-24 md:pt-32"
       aria-labelledby="upcoming-events-heading"
     >
@@ -196,6 +197,7 @@ const locationLabel = (event: (typeof upcoming)[number]) => {
 
 <script>
   import { gsap } from "@/utils/gsap-init";
+  import { onPage } from "@/utils/page-script";
 
   const TZ = "Asia/Kathmandu";
   const DAY_MS = 24 * 60 * 60 * 1000;
@@ -217,10 +219,8 @@ const locationLabel = (event: (typeof upcoming)[number]) => {
     return `In ${days} days`;
   };
 
-  let ctx: gsap.Context | undefined;
-
-  document.addEventListener("astro:page-load", () => {
-    document.querySelectorAll<HTMLElement>("[data-countdown]").forEach((el) => {
+  onPage('[data-section="upcoming-events"]', ({ root }) => {
+    root.querySelectorAll<HTMLElement>("[data-countdown]").forEach((el) => {
       const start = Date.parse(el.dataset.start ?? "");
       const end = Date.parse(el.dataset.end ?? "");
       if (Number.isFinite(start) && Number.isFinite(end)) {
@@ -228,38 +228,30 @@ const locationLabel = (event: (typeof upcoming)[number]) => {
       }
     });
 
-    if (!document.querySelector(".upcoming-events-section")) return;
-    ctx = gsap.context(() => {
-      gsap
-        .timeline({
-          scrollTrigger: {
-            trigger: ".upcoming-events-section",
-            start: "top 75%",
-          },
-        })
-        .to(".anim-events-header", {
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: root,
+          start: "top 75%",
+        },
+      })
+      .to(".anim-events-header", {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: "power3.out",
+      })
+      .to(
+        ".anim-event-card",
+        {
           y: 0,
           opacity: 1,
           duration: 0.8,
-          stagger: 0.1,
-          ease: "power3.out",
-        })
-        .to(
-          ".anim-event-card",
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.8,
-            stagger: 0.15,
-            ease: "power2.out",
-          },
-          "-=0.4",
-        );
-    });
-  });
-
-  document.addEventListener("astro:before-swap", () => {
-    ctx?.revert();
-    ctx = undefined;
+          stagger: 0.15,
+          ease: "power2.out",
+        },
+        "-=0.4",
+      );
   });
 </script>
