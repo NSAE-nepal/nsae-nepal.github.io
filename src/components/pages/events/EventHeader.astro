@@ -7,6 +7,7 @@ import {
   IconCalendarWeek,
   IconDownload,
   IconMapPin,
+  IconPhoto,
   IconWorld,
 } from "@tabler/icons-astro";
 import Badge from "@/components/astro/Badge.astro";
@@ -188,13 +189,20 @@ import ShareBar from "@/components/ShareBar.astro";
           </div>
         ) : (
           (hasEnded || data.registrationLink) && (
-            <Badge
-              variant="outline"
-              size={"lg"}
-              class="font-mono text-xs uppercase tracking-widest text-muted-foreground"
-            >
-              {hasEnded ? "Event ended" : "Registration closed"}
-            </Badge>
+            <div class="flex flex-col gap-3 md:items-end">
+              <Badge
+                variant="outline"
+                size={"lg"}
+                class="font-mono text-xs uppercase tracking-widest text-muted-foreground"
+              >
+                {hasEnded ? "Event ended" : "Registration closed"}
+              </Badge>
+              {hasEnded && data.hasRecap && (
+                <Button href="#event-recap" class="w-full md:w-auto font-sans font-medium">
+                  <IconPhoto class="size-4" /> View recap
+                </Button>
+              )}
+            </div>
           )
         )
       }

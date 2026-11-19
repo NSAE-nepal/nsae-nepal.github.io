@@ -1,4 +1,4 @@
-import { defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType } from "sanity";
 
 export const scheduleItemType = defineType({
 	name: "scheduleItem",
@@ -430,6 +430,7 @@ export const eventType = defineType({
 		{ name: "program", title: "Schedule & Speakers" },
 		{ name: "registration", title: "Registration & Contact" },
 		{ name: "content", title: "Description" },
+		{ name: "recap", title: "After the Event" },
 	],
 	fieldsets: [
 		{
@@ -595,6 +596,94 @@ export const eventType = defineType({
 			type: "array",
 			group: "content",
 			of: [{ type: "block" }, { type: "image", options: { hotspot: true } }],
+		}),
+
+		// Shown on the event page only once the event has ended.
+		defineField({
+			name: "recapSummary",
+			title: "Recap",
+			description:
+				"Highlights, outcomes and thanks. Shown on the event page after the event ends.",
+			type: "blockContentSimple",
+			group: "recap",
+		}),
+		defineField({
+			name: "attendance",
+			title: "Attendance",
+			description: "Number of participants (optional).",
+			type: "number",
+			group: "recap",
+			validation: (Rule) => Rule.integer().min(0),
+		}),
+		defineField({
+			name: "gallery",
+			title: "Photo Gallery",
+			type: "array",
+			group: "recap",
+			options: { layout: "grid" },
+			of: [
+				defineArrayMember({
+					type: "image",
+					options: { hotspot: true },
+					fields: [
+						defineField({
+							name: "alt",
+							title: "Alternative Text",
+							description: "Describe the photo for people who can't see it.",
+							type: "string",
+							validation: (Rule) => Rule.required(),
+						}),
+						defineField({
+							name: "caption",
+							title: "Caption",
+							type: "string",
+						}),
+					],
+				}),
+			],
+		}),
+		defineField({
+			name: "recordings",
+			title: "Recordings",
+			description: "YouTube, Vimeo or Loom links. Other links are shown as plain links.",
+			type: "array",
+			group: "recap",
+			of: [
+				defineArrayMember({
+					name: "recording",
+					title: "Recording",
+					type: "object",
+					fields: [
+						defineField({
+							name: "url",
+							title: "Video URL",
+							type: "url",
+							validation: (Rule) =>
+								Rule.required().uri({ scheme: ["http", "https"] }),
+						}),
+						defineField({
+							name: "caption",
+							title: "Title (Optional)",
+							type: "string",
+						}),
+					],
+					preview: {
+						select: { title: "caption", subtitle: "url" },
+						prepare: ({ title, subtitle }) => ({
+							title: title || "Recording",
+							subtitle,
+						}),
+					},
+				}),
+			],
+		}),
+		defineField({
+			name: "materials",
+			title: "Slides & Materials",
+			description: "Presentations, handouts and reports to download.",
+			type: "array",
+			group: "recap",
+			of: [defineArrayMember({ type: "courseResource" })],
 		}),
 	],
 	preview: {

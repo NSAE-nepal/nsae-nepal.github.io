@@ -1,0 +1,245 @@
+---
+import { Image } from "astro:assets";
+import { IconChevronLeft, IconChevronRight, IconX } from "@tabler/icons-astro";
+import type { GalleryImage } from "@/sanity/lib/queries/events";
+import { sanityImage, urlForImage } from "@/sanity/lib/url-for-image";
+
+/**
+ * Photo grid with a full-screen viewer (native <dialog>): arrow keys, swipe,
+ * Esc to close. Full-size photos come straight from Sanity's CDN and are only
+ * downloaded when opened; the thumbnails are optimised at build time.
+ */
+interface Props {
+  images: GalleryImage[];
+  title: string;
+}
+
+const { images, title } = Astro.props;
+
+const THUMB = { width: 640, height: 480 };
+const FULL_WIDTHS = [960, 1600, 2400];
+
+const fullSize = (image: GalleryImage) => {
+  const widths = FULL_WIDTHS.filter((width) => !image.width || width <= image.width);
+  if (widths.length === 0) widths.push(image.width ?? FULL_WIDTHS[0]);
+  const url = (width: number) =>
+    urlForImage(image.url).width(width).fit("max").auto("format").url();
+  const width = widths.at(-1)!;
+
+  return {
+    src: url(width),
+    srcset: widths.map((w) => `${url(w)} ${w}w`).join(", "),
+    width,
+    height:
+      image.width && image.height
+        ? Math.round((image.height / image.width) * width)
+        : undefined,
+  };
+};
+---
+
+{
+  images.length > 0 && (
+    <div data-event-gallery>
+      <ul class="grid grid-cols-2 sm:grid-cols-3 gap-2 md:gap-3" role="list">
+        {images.map((image, index) => {
+          const full = fullSize(image);
+          return (
+            <li>
+              <button
+                type="button"
+                class="group relative block aspect-[4/3] w-full cursor-zoom-in overflow-hidden rounded-xl bg-secondary outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                aria-label={`Open photo ${index + 1} of ${images.length}${image.alt ? `: ${image.alt}` : ""}`}
+                data-gallery-index={index}
+                data-src={full.src}
+                data-srcset={full.srcset}
+                data-width={full.width}
+                data-height={full.height}
+                data-alt={image.alt ?? ""}
+                data-caption={image.caption ?? ""}
+              >
+                <Image
+                  src={sanityImage(image.url, THUMB)}
+                  width={THUMB.width}
+                  height={THUMB.height}
+                  widths={[320, 640]}
+                  sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw"
+                  alt={image.alt ?? ""}
+                  class="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+
+      <dialog
+        data-gallery-dialog
+        data-lenis-prevent
+        aria-label={`Photos from ${title}`}
+        class="m-0 h-dvh max-h-none w-dvw max-w-none flex-col items-center justify-center gap-3 bg-black/95 p-4 text-white open:flex backdrop:bg-black/80 md:p-10"
+      >
+        <figure class="flex min-h-0 w-full flex-1 flex-col items-center justify-center gap-3">
+          <img
+            data-gallery-image
+            alt=""
+            sizes="100vw"
+            decoding="async"
+            class="max-h-full min-h-0 max-w-full rounded-lg object-contain transition-opacity duration-200"
+          />
+          <figcaption class="max-w-2xl text-center text-sm text-white/80">
+            <span data-gallery-caption></span>
+          </figcaption>
+        </figure>
+        <p data-gallery-counter class="font-mono text-xs uppercase tracking-widest text-white/60" aria-live="polite"></p>
+
+        <button
+          type="button"
+          data-gallery-close
+          aria-label="Close photos"
+          class="absolute right-3 top-3 rounded-full bg-white/10 p-2 transition-colors hover:bg-white/20 md:right-6 md:top-6"
+        >
+          <IconX class="size-6" />
+        </button>
+        {images.length > 1 && (
+          <>
+            <button
+              type="button"
+              data-gallery-prev
+              aria-label="Previous photo"
+              class="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 transition-colors hover:bg-white/20 md:left-6"
+            >
+              <IconChevronLeft class="size-6" />
+            </button>
+            <button
+              type="button"
+              data-gallery-next
+              aria-label="Next photo"
+              class="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 transition-colors hover:bg-white/20 md:right-6"
+            >
+              <IconChevronRight class="size-6" />
+            </button>
+          </>
+        )}
+      </dialog>
+    </div>
+  )
+}
+
+<style is:global>
+  html:has(dialog[data-gallery-dialog][open]) {
+    overflow: hidden;
+  }
+</style>
+
+<script>
+  let controller: AbortController | undefined;
+
+  document.addEventListener("astro:page-load", () => {
+    const root = document.querySelector<HTMLElement>("[data-event-gallery]");
+    const dialog = root?.querySelector<HTMLDialogElement>("[data-gallery-dialog]");
+    const image = dialog?.querySelector<HTMLImageElement>("[data-gallery-image]");
+    if (!root || !dialog || !image) return;
+
+    controller = new AbortController();
+    const { signal } = controller;
+    const caption = dialog.querySelector<HTMLElement>("[data-gallery-caption]")!;
+    const counter = dialog.querySelector<HTMLElement>("[data-gallery-counter]")!;
+    const items = [...root.querySelectorAll<HTMLButtonElement>("[data-gallery-index]")];
+    let current = 0;
+
+    const preload = (index: number) => {
+      const data = items[(index + items.length) % items.length]?.dataset;
+      if (!data?.src) return;
+      const next = new Image();
+      next.sizes = "100vw";
+      next.srcset = data.srcset ?? "";
+      next.src = data.src;
+    };
+
+    const show = (index: number) => {
+      current = (index + items.length) % items.length;
+      const data = items[current].dataset;
+
+      image.classList.add("opacity-0");
+      image.onload = () => image.classList.remove("opacity-0");
+      image.srcset = data.srcset ?? "";
+      image.src = data.src ?? "";
+      if (data.width) image.width = Number(data.width);
+      if (data.height) image.height = Number(data.height);
+      image.alt = data.alt ?? "";
+      caption.textContent = data.caption ?? "";
+      caption.hidden = !data.caption;
+      counter.textContent = `${current + 1} / ${items.length}`;
+
+      if (items.length > 1) {
+        preload(current + 1);
+        preload(current - 1);
+      }
+    };
+
+    for (const item of items) {
+      item.addEventListener(
+        "click",
+        () => {
+          show(Number(item.dataset.galleryIndex));
+          dialog.showModal();
+        },
+        { signal },
+      );
+    }
+
+    dialog
+      .querySelector("[data-gallery-prev]")
+      ?.addEventListener("click", () => show(current - 1), { signal });
+    dialog
+      .querySelector("[data-gallery-next]")
+      ?.addEventListener("click", () => show(current + 1), { signal });
+    dialog
+      .querySelector("[data-gallery-close]")
+      ?.addEventListener("click", () => dialog.close(), { signal });
+
+    dialog.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.key === "ArrowLeft") show(current - 1);
+        else if (event.key === "ArrowRight") show(current + 1);
+      },
+      { signal },
+    );
+
+    // Clicking the empty area around the photo closes the viewer.
+    dialog.addEventListener(
+      "click",
+      (event) => {
+        if (event.target === dialog) dialog.close();
+      },
+      { signal },
+    );
+
+    // Horizontal swipe on touch screens.
+    let startX: number | null = null;
+    dialog.addEventListener(
+      "pointerdown",
+      (event) => {
+        startX = event.pointerType === "touch" ? event.clientX : null;
+      },
+      { signal },
+    );
+    dialog.addEventListener(
+      "pointerup",
+      (event) => {
+        if (startX === null || items.length < 2) return;
+        const dx = event.clientX - startX;
+        startX = null;
+        if (Math.abs(dx) > 50) show(dx < 0 ? current + 1 : current - 1);
+      },
+      { signal },
+    );
+  });
+
+  document.addEventListener("astro:before-swap", () => {
+    controller?.abort();
+    controller = undefined;
+  });
+</script>

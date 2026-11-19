@@ -5,6 +5,7 @@ import EventContact from "@/components/pages/events/EventContact.astro";
 import EventHeader from "@/components/pages/events/EventHeader.astro";
 import EventInstructors from "@/components/pages/events/EventInstructors.astro";
 import EventLocation from "@/components/pages/events/EventLocation.astro";
+import EventRecap from "@/components/pages/events/EventRecap.astro";
 import EventSchedule from "@/components/pages/events/EventSchedule.astro";
 import { SITE_DESCRIPTION } from "@/consts";
 import JsonLd from "@/components/seo/JsonLd.astro";
@@ -26,7 +27,9 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 
 const event = await getEventDetails(slug!);
-const { isRegistrationOpen } = getEventStatus(event);
+const { hasEnded, isRegistrationOpen } = getEventStatus(event);
+// Recap content stays hidden until the event is over, even if added early.
+const showRecap = hasEnded && event.hasRecap;
 const site = Astro.site!;
 ---
 
@@ -64,6 +67,8 @@ const site = Astro.site!;
 
     <div class="grid grid-cols-1 lg:grid-cols-[3fr_1.5fr] gap-8 lg:gap-12">
       <div class="flex flex-col gap-10">
+        {showRecap && <EventRecap data={event} />}
+
         <section>
           <h2 class="font-sans text-2xl font-medium tracking-tight mb-4">
             About the Event

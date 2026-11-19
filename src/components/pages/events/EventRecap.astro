@@ -1,0 +1,67 @@
+---
+import { IconUsers } from "@tabler/icons-astro";
+import PortableText from "@/components/PortableText.astro";
+import PortableVideoEmbed from "@/components/PortableVideoEmbed.astro";
+import ResourceList from "@/components/pages/courses/ResourceList.astro";
+import type { EventDetails } from "@/sanity/lib/queries/events";
+import EventGallery from "./EventGallery.astro";
+
+/** "After the event" content: summary, photos, recordings and materials. */
+interface Props {
+  data: EventDetails;
+}
+
+const { data } = Astro.props;
+const { recapSummary, attendance, gallery, recordings, materials } = data;
+const heading = "font-sans text-xl font-medium tracking-tight mb-4";
+---
+
+<section id="event-recap" aria-labelledby="event-recap-title" class="scroll-mt-8 space-y-8">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <h2 id="event-recap-title" class="font-sans text-2xl font-medium tracking-tight">
+      Event recap
+    </h2>
+    {
+      attendance ? (
+        <p class="flex items-center gap-2 rounded-full border border-border/60 px-3 py-1 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+          <IconUsers class="size-4 text-primary" aria-hidden="true" />
+          {attendance.toLocaleString("en-US")} participants
+        </p>
+      ) : null
+    }
+  </div>
+
+  {
+    recapSummary && recapSummary.length > 0 && (
+      <div class="prose prose-lg prose-headings:font-sans prose-p:font-sans dark:prose-invert max-w-none">
+        <PortableText portableText={recapSummary} />
+      </div>
+    )
+  }
+
+  {
+    gallery.length > 0 && (
+      <div data-pagefind-ignore>
+        <h3 class={heading}>
+          Photos <span class="font-mono text-sm text-muted-foreground">({gallery.length})</span>
+        </h3>
+        <EventGallery images={gallery} title={data.title} />
+      </div>
+    )
+  }
+
+  {
+    recordings.length > 0 && (
+      <div data-pagefind-ignore>
+        <h3 class={heading}>{recordings.length === 1 ? "Recording" : "Recordings"}</h3>
+        <div class="space-y-6">
+          {recordings.map((recording) => (
+            <PortableVideoEmbed node={recording} />
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  <ResourceList resources={materials} title="Slides & materials" headingLevel="h3" />
+</section>
