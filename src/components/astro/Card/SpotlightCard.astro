@@ -1,0 +1,72 @@
+---
+import { Image } from "astro:assets";
+import { IconMapPin, IconUserCircle } from "@tabler/icons-astro";
+import NewBadge from "@/components/NewBadge.astro";
+import { cn, formatName } from "@/lib/utils";
+import type { Spotlight } from "@/sanity/lib/queries/spotlight";
+import { sanityImage } from "@/sanity/lib/url-for-image";
+
+/** Member spotlight card: photo, member, headline, specializations. */
+interface Props {
+  data: Spotlight;
+  class?: string;
+}
+
+const { data, class: className } = Astro.props;
+const { member } = data;
+const photo = data.coverImage ?? member.profileImage;
+const photoAlt = data.coverImage ? data.coverImageAlt : member.profileImageAlt;
+const role = [member.position, member.company].filter(Boolean).join(" · ");
+---
+
+<article class={cn("flex h-full flex-col overflow-hidden", className)}>
+  <div class="relative aspect-[4/3] overflow-hidden bg-secondary">
+    {
+      photo ? (
+        <Image
+          src={sanityImage(photo, { width: 800, height: 600 })}
+          width={800}
+          height={600}
+          widths={[400, 800]}
+          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+          alt={photoAlt ?? ""}
+          class="size-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+        />
+      ) : (
+        <div class="flex size-full items-center justify-center" aria-hidden="true">
+          <IconUserCircle class="size-16 text-muted-foreground/40" />
+        </div>
+      )
+    }
+    <NewBadge date={data.publishedAt} class="absolute left-3 top-3" />
+  </div>
+
+  <div class="flex flex-1 flex-col gap-3 p-5">
+    <div>
+      <p class="font-medium">{formatName(member.name, member.prefix)}</p>
+      {role && <p class="text-sm text-muted-foreground">{role}</p>}
+    </div>
+    <h3 class="font-sans text-xl font-medium leading-snug tracking-tight transition-colors group-hover:text-primary">
+      {data.headline}
+    </h3>
+    <p class="line-clamp-3 text-sm text-muted-foreground">{data.summary}</p>
+
+    <div class="mt-auto flex flex-wrap items-center gap-2 pt-2">
+      {
+        data.specializations.slice(0, 3).map((tag) => (
+          <span class="rounded-full border border-border/60 px-2 py-0.5 text-xs text-muted-foreground">
+            {tag}
+          </span>
+        ))
+      }
+      {
+        data.location && (
+          <span class="ml-auto flex items-center gap-1 font-mono text-xs uppercase tracking-wider text-muted-foreground">
+            <IconMapPin class="size-3.5" aria-hidden="true" />
+            {data.location}
+          </span>
+        )
+      }
+    </div>
+  </div>
+</article>

@@ -1,0 +1,127 @@
+---
+import { IconUserStar } from "@tabler/icons-astro";
+import type { GetStaticPaths } from "astro";
+import Badge from "@/components/astro/Badge.astro";
+import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
+import SpotlightCard from "@/components/astro/Card/SpotlightCard.astro";
+import Empty from "@/components/astro/Empty.astro";
+import Pagination from "@/components/astro/Pagination.astro";
+import { PAGE_SIZE } from "@/consts";
+import PageLayout from "@/layouts/PageLayout.astro";
+import { getSpotlights, spotlightPath } from "@/sanity/lib/queries/spotlight";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  return paginate(await getSpotlights(), { pageSize: PAGE_SIZE });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+const pageTitle =
+  page.currentPage === 1 ? "Member Spotlight" : `Member Spotlight, page ${page.currentPage}`;
+const pageDescription =
+  "Meet NSAE members and the work they do: irrigation, farm machinery, post-harvest, renewable energy and more.";
+---
+
+<PageLayout title={pageTitle} description={pageDescription} dataPagefindIgnore="all">
+  <header class="flex flex-col items-center justify-center py-16 md:py-24 text-center">
+    <div class="anim-header-badge opacity-0 scale-50">
+      <Badge
+        variant="secondary"
+        size="sm"
+        class="font-mono uppercase tracking-widest text-xs mb-3 border border-border/50"
+      >
+        Member Spotlight
+      </Badge>
+    </div>
+    <h1
+      class="anim-header-title invisible font-sans text-5xl md:text-7xl font-medium tracking-tighter pt-4 max-w-4xl leading-tight"
+    >
+      The engineers behind the work
+    </h1>
+    <p
+      class="anim-header-desc mt-6 max-w-2xl font-sans text-lg text-muted-foreground opacity-0 translate-y-4"
+    >
+      {pageDescription}
+    </p>
+  </header>
+
+  <section class="mb-16" aria-labelledby="spotlight-heading" data-spotlight-listing>
+    <h2
+      id="spotlight-heading"
+      class="anim-section-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
+    >
+      All spotlights
+    </h2>
+
+    {
+      page.data.length > 0 ? (
+        <>
+          <ul class="grid gap-6 md:grid-cols-2 lg:grid-cols-3" role="list">
+            {page.data.map((spotlight) => (
+              <li class="anim-card opacity-0 translate-y-4">
+                <ClickableCard
+                  href={spotlightPath(spotlight)}
+                  label={spotlight.headline}
+                  class="h-full overflow-hidden rounded-2xl border border-border/60 bg-secondary/30 transition-colors hover:bg-secondary/70"
+                >
+                  <SpotlightCard data={spotlight} />
+                </ClickableCard>
+              </li>
+            ))}
+          </ul>
+          <div class="anim-pagination flex justify-center mt-16 opacity-0">
+            <Pagination url={page.url} class="font-mono text-sm uppercase tracking-widest" />
+          </div>
+        </>
+      ) : (
+        <div class="anim-empty-state opacity-0 scale-95">
+          <Empty
+            title="Spotlights are coming"
+            description="We'll soon be sharing the stories of NSAE members and their work. Please check back."
+          >
+            <IconUserStar slot="icon" class="size-8 text-muted-foreground" />
+          </Empty>
+        </div>
+      )
+    }
+  </section>
+</PageLayout>
+
+<script>
+  import { gsap, SplitText } from "@/utils/gsap-init";
+
+  let ctx: gsap.Context | undefined;
+
+  document.addEventListener("astro:page-load", () => {
+    if (!document.querySelector("[data-spotlight-listing]")) return;
+
+    ctx = gsap.context(() => {
+      const titleSplit = SplitText.create(".anim-header-title", {
+        type: "lines, words",
+        linesClass: "overflow-hidden",
+      });
+
+      const tl = gsap
+        .timeline({ defaults: { ease: "power3.out" } })
+        .to(".anim-header-badge", { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.5)" })
+        .set(".anim-header-title", { autoAlpha: 1 }, "-=0.3")
+        .from(titleSplit.words, { yPercent: 100, opacity: 0, duration: 0.8, stagger: 0.04, ease: "power4.out" }, "<")
+        .to(".anim-header-desc", { y: 0, opacity: 1, duration: 0.6 }, "-=0.4")
+        .to(".anim-section-title", { y: 0, opacity: 1, duration: 0.5 }, "-=0.4");
+
+      if (document.querySelector(".anim-card")) {
+        tl.to(".anim-card", { y: 0, opacity: 1, duration: 0.6, stagger: 0.08 }, "-=0.2");
+      } else {
+        tl.to(".anim-empty-state", { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.2)" }, "-=0.2");
+      }
+
+      if (document.querySelector(".anim-pagination")) {
+        tl.to(".anim-pagination", { opacity: 1, duration: 0.5 }, "-=0.2");
+      }
+    });
+  });
+
+  document.addEventListener("astro:before-swap", () => {
+    ctx?.revert();
+    ctx = undefined;
+  });
+</script>

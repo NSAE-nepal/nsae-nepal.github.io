@@ -8,6 +8,7 @@ import {
 	IconInfoCircle,
 	IconMail,
 	IconPhoto,
+	IconUserStar,
 } from "@tabler/icons-react";
 import { navigate } from "astro:transitions/client";
 import { useEffect, useRef, useState } from "react";
@@ -66,6 +67,7 @@ const SUGGESTIONS = [
 	{ href: "/minutes/page/1", label: "Minutes", Icon: IconFileText },
 	{ href: "/resources/page/1", label: "Resources", Icon: IconBooks },
 	{ href: "/careers/page/1", label: "Opportunities", Icon: IconBriefcase },
+	{ href: "/spotlight/page/1", label: "Member Spotlight", Icon: IconUserStar },
 ];
 
 const ABOUT_LINKS = [
