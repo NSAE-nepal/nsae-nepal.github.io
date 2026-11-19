@@ -4,6 +4,8 @@ import {
   IconArrowDown,
   IconChevronLeft,
   IconChevronRight,
+  IconPlayerPause,
+  IconPlayerPlay,
 } from "@tabler/icons-astro";
 import Badge from "../astro/Badge.astro";
 import Button from "../astro/Button/Button.astro";
@@ -126,7 +128,12 @@ const {
     <div class="scroll-line h-[1px] w-0 bg-white/30"></div>
   </div>
 
-  <div class="absolute inset-0 z-10">
+  <div
+    class="absolute inset-0 z-10"
+    role="region"
+    aria-roledescription="carousel"
+    aria-label="Photos from NSAE"
+  >
     <div
       class="absolute inset-0 z-20 rounded-2xl bg-linear-to-r from-black/80 via-black/50 to-transparent"
     >
@@ -142,6 +149,11 @@ const {
         <div
           class="hero-carousel-slide absolute inset-0 will-change-[opacity]"
           data-index={index}
+          role="group"
+          aria-roledescription="slide"
+          aria-label={`${index + 1} of ${slides.length}`}
+          aria-hidden={index === 0 ? undefined : "true"}
+          inert={index !== 0}
           style={`opacity:${index === 0 ? 1 : 0}; z-index:${index === 0 ? 1 : 0};`}
         >
           <Image
@@ -168,6 +180,15 @@ const {
             aria-label="Previous slide"
           >
             <IconChevronLeft class="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            class="hero-carousel-toggle inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-white/20 bg-black/20 text-white transition-colors hover:bg-black/40"
+            aria-label="Pause slideshow"
+            aria-pressed="false"
+          >
+            <IconPlayerPause class="hero-carousel-pause-icon h-4 w-4" />
+            <IconPlayerPlay class="hero-carousel-play-icon hidden h-4 w-4" />
           </button>
           <button
             type="button"
@@ -202,11 +223,31 @@ const {
     const nextBtn = section.querySelector<HTMLButtonElement>(
       ".hero-carousel-next",
     );
+    const toggleBtn = section.querySelector<HTMLButtonElement>(
+      ".hero-carousel-toggle",
+    );
     const delay = Number(section.dataset.autoplayDelay) || 4000;
     const revealDuration = Math.max(delay / 1000 + 2, 4);
 
     let current = 0;
     let timerId: ReturnType<typeof setInterval> | undefined;
+
+    // Autoplay runs only while nothing asks it to stop (WCAG 2.2.2): the
+    // pause button (sticky until pressed again), pointer or keyboard focus in
+    // the hero, a hidden tab, or the hero being scrolled out of view.
+    const canAutoplay = slides.length > 1 && !reduceMotion;
+    let pausedByUser = false;
+    let hovered = false;
+    let focused = false;
+    let inView = true;
+
+    const shouldPlay = () =>
+      canAutoplay &&
+      !pausedByUser &&
+      !hovered &&
+      !focused &&
+      inView &&
+      document.visibilityState === "visible";
 
     function showSlide(targetIndex: number) {
       const nextIndex =
@@ -219,6 +260,10 @@ const {
 
       gsap.set(incoming, { zIndex: 1 });
       gsap.set(outgoing, { zIndex: 0 });
+      outgoing.inert = true;
+      outgoing.setAttribute("aria-hidden", "true");
+      incoming.inert = false;
+      incoming.removeAttribute("aria-hidden");
 
       if (reduceMotion) {
         gsap.set(outgoing, { opacity: 0 });
@@ -239,38 +284,97 @@ const {
       current = nextIndex;
     }
 
-    const next = () => showSlide(current + 1);
-    const prev = () => showSlide(current - 1);
-
     function stopAutoplay() {
       clearInterval(timerId);
       timerId = undefined;
     }
-    function startAutoplay() {
+    // Starts, restarts (after a manual step) or stops the timer to match state.
+    function syncAutoplay({ restart = false } = {}) {
+      if (!shouldPlay()) return stopAutoplay();
+      if (timerId !== undefined && !restart) return;
       stopAutoplay();
-      if (slides.length > 1 && !reduceMotion) {
-        timerId = setInterval(next, delay);
-      }
+      timerId = setInterval(() => showSlide(current + 1), delay);
     }
 
     nextBtn?.addEventListener(
       "click",
       () => {
-        next();
-        startAutoplay();
+        showSlide(current + 1);
+        syncAutoplay({ restart: true });
       },
       { signal },
     );
     prevBtn?.addEventListener(
       "click",
       () => {
-        prev();
-        startAutoplay();
+        showSlide(current - 1);
+        syncAutoplay({ restart: true });
       },
       { signal },
     );
-    section.addEventListener("mouseenter", stopAutoplay, { signal });
-    section.addEventListener("mouseleave", startAutoplay, { signal });
+
+    if (toggleBtn) {
+      // Nothing to pause when autoplay is off (reduced motion).
+      toggleBtn.hidden = !canAutoplay;
+      toggleBtn.addEventListener(
+        "click",
+        () => {
+          pausedByUser = !pausedByUser;
+          toggleBtn.setAttribute("aria-pressed", String(pausedByUser));
+          toggleBtn
+            .querySelector(".hero-carousel-pause-icon")
+            ?.classList.toggle("hidden", pausedByUser);
+          toggleBtn
+            .querySelector(".hero-carousel-play-icon")
+            ?.classList.toggle("hidden", !pausedByUser);
+          syncAutoplay();
+        },
+        { signal },
+      );
+    }
+
+    section.addEventListener(
+      "mouseenter",
+      () => {
+        hovered = true;
+        syncAutoplay();
+      },
+      { signal },
+    );
+    section.addEventListener(
+      "mouseleave",
+      () => {
+        hovered = false;
+        syncAutoplay();
+      },
+      { signal },
+    );
+    section.addEventListener(
+      "focusin",
+      () => {
+        focused = true;
+        syncAutoplay();
+      },
+      { signal },
+    );
+    section.addEventListener(
+      "focusout",
+      (event) => {
+        if (section.contains(event.relatedTarget as Node | null)) return;
+        focused = false;
+        syncAutoplay();
+      },
+      { signal },
+    );
+    document.addEventListener("visibilitychange", () => syncAutoplay(), {
+      signal,
+    });
+
+    const observer = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      syncAutoplay();
+    });
+    observer.observe(section);
 
     if (images[0] && !reduceMotion) {
       gsap.fromTo(
@@ -280,8 +384,11 @@ const {
       );
     }
 
-    startAutoplay();
-    onCleanup(stopAutoplay);
+    syncAutoplay();
+    onCleanup(() => {
+      observer.disconnect();
+      stopAutoplay();
+    });
   }
 
   onPage('[data-section="hero"]', (scope) => {
@@ -290,7 +397,7 @@ const {
 
     const subtitleInner = SplitText.create(".subtitle-lines", {
       type: "lines",
-      linesClass: "line-inner will-change-transform",
+      linesClass: "line-inner",
     });
 
     const tl = gsap.timeline({

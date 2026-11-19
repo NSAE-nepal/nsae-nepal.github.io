@@ -237,6 +237,7 @@ const totalPoints = quiz.questions
 
 <script>
   import { atom } from "nanostores";
+  import { scrollToTarget } from "@/utils/lenis";
 
   const shuffle = <T,>(array: T[]): T[] => {
     const copy = [...array];
@@ -395,7 +396,7 @@ const totalPoints = quiz.questions
           btn.addEventListener("click", () => {
             currentPage.set(pageOf(i));
             requestAnimationFrame(() => {
-              question.scrollIntoView({ behavior: "smooth", block: "center" });
+              scrollToTarget(question, { block: "center" });
             });
           });
           navEl.appendChild(btn);
@@ -481,7 +482,7 @@ const totalPoints = quiz.questions
 
         const goToPage = (page: number) => {
           currentPage.set(Math.min(Math.max(page, 0), totalPages - 1));
-          container.scrollIntoView({ behavior: "smooth", block: "start" });
+          scrollToTarget(container);
         };
 
         const findFirstUnanswered = (qs: HTMLFieldSetElement[]) => {
@@ -551,8 +552,7 @@ const totalPoints = quiz.questions
               currentPage.set(targetPage);
             }
             requestAnimationFrame(() => {
-              (firstUnanswered as HTMLElement).scrollIntoView({
-                behavior: "smooth",
+              scrollToTarget(firstUnanswered as HTMLElement, {
                 block: "center",
               });
             });
@@ -714,7 +714,7 @@ const totalPoints = quiz.questions
           submitBtn.hidden = true;
           updateAllNavItems();
 
-          resultEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          scrollToTarget(resultEl, { block: "nearest" });
         });
 
         resultEl.addEventListener("click", (e) => {
@@ -729,7 +729,7 @@ const totalPoints = quiz.questions
           goToPage(0);
           updateNavButtons(currentPage.get());
           updateNavCurrentPage(currentPage.get());
-          form.scrollIntoView({ behavior: "smooth", block: "start" });
+          scrollToTarget(form);
         });
       });
 
