@@ -17,7 +17,7 @@ import { getContactsDetails } from "@/sanity/lib/queries/contacts";
 
 const data = await getContactsDetails();
 const socials = data?.socials;
-const socialIcons: Record<string, any> = {
+const socialIcons: Record<string, typeof IconBrandX> = {
   linkedin: IconBrandLinkedin,
   twitter: IconBrandX,
   x: IconBrandX,
@@ -34,36 +34,36 @@ const socialIcons: Record<string, any> = {
   dataPagefindIgnore="all"
 >
   <header
-    class="contact-header flex flex-col items-center justify-center py-16 md:py-24 text-center px-4"
+    class="contact-header flex flex-col items-center justify-center px-4 py-16 text-center md:py-24"
   >
-    <div class="anim-header-badge opacity-0 scale-50">
+    <div class="anim-header-badge scale-50 opacity-0">
       <Badge
         variant={"secondary"}
         size={"sm"}
-        class="font-mono text-xs uppercase tracking-widest mb-6"
+        class="mb-6 font-mono text-xs tracking-widest uppercase"
       >
         Contact us
       </Badge>
     </div>
     <h1
-      class="anim-header-title invisible font-sans text-5xl md:text-7xl font-medium tracking-tighter pb-4"
+      class="anim-header-title invisible pb-4 font-sans text-5xl font-medium tracking-tighter md:text-7xl"
     >
       Get in touch
     </h1>
     <p
-      class="anim-header-desc font-sans text-xl text-muted-foreground max-w-2xl leading-relaxed opacity-0 translate-y-4"
+      class="anim-header-desc max-w-2xl translate-y-4 font-sans text-xl leading-relaxed text-muted-foreground opacity-0"
     >
       Have a question or a project in mind? We'd love to hear from you.
     </p>
   </header>
 
-  <section class="pb-24 px-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <section class="grid grid-cols-1 gap-6 px-4 pb-24 lg:grid-cols-3">
     <div
-      class="anim-contact-card col-span-1 rounded-2xl p-8 bg-secondary/30 border border-border/50 flex flex-col justify-between gap-12 hover:bg-secondary/50 transition-colors opacity-0 translate-y-8"
+      class="anim-contact-card col-span-1 flex translate-y-8 flex-col justify-between gap-12 rounded-2xl border border-border/50 bg-secondary/30 p-8 opacity-0 transition-colors hover:bg-secondary/50"
     >
       <div class="space-y-6">
         <span
-          class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground"
+          class="flex items-center gap-2 font-mono text-xs tracking-widest text-muted-foreground uppercase"
         >
           <IconMail class="size-4" /> Email
         </span>
@@ -73,7 +73,7 @@ const socialIcons: Record<string, any> = {
               {data.emails.map((email) => (
                 <a
                   href={`mailto:${email}`}
-                  class="font-sans text-2xl  font-medium tracking-tight hover:text-primary transition-colors block w-fit"
+                  class="block w-fit font-sans text-2xl font-medium tracking-tight transition-colors hover:text-primary"
                 >
                   {email}
                 </a>
@@ -88,11 +88,11 @@ const socialIcons: Record<string, any> = {
     </div>
 
     <div
-      class="anim-contact-card col-span-1 rounded-2xl p-8 bg-secondary/30 border border-border/50 flex flex-col justify-between gap-12 hover:bg-secondary/50 transition-colors opacity-0 translate-y-8"
+      class="anim-contact-card col-span-1 flex translate-y-8 flex-col justify-between gap-12 rounded-2xl border border-border/50 bg-secondary/30 p-8 opacity-0 transition-colors hover:bg-secondary/50"
     >
       <div class="space-y-6">
         <span
-          class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground"
+          class="flex items-center gap-2 font-mono text-xs tracking-widest text-muted-foreground uppercase"
         >
           <IconPhone class="size-4" /> Phone
         </span>
@@ -102,7 +102,7 @@ const socialIcons: Record<string, any> = {
               {data.phoneNumbers.map((phone) => (
                 <a
                   href={`tel:${phone}`}
-                  class="font-sans text-2xl  font-medium tracking-tight hover:text-primary transition-colors block w-fit"
+                  class="block w-fit font-sans text-2xl font-medium tracking-tight transition-colors hover:text-primary"
                 >
                   {phone}
                 </a>
@@ -117,11 +117,11 @@ const socialIcons: Record<string, any> = {
     </div>
 
     <div
-      class="anim-contact-card col-span-1 rounded-2xl p-8 bg-secondary/30 border border-border/50 flex flex-col justify-between gap-12 hover:bg-secondary/50 transition-colors opacity-0 translate-y-8"
+      class="anim-contact-card col-span-1 flex translate-y-8 flex-col justify-between gap-12 rounded-2xl border border-border/50 bg-secondary/30 p-8 opacity-0 transition-colors hover:bg-secondary/50"
     >
       <div class="space-y-6">
         <span
-          class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground"
+          class="flex items-center gap-2 font-mono text-xs tracking-widest text-muted-foreground uppercase"
         >
           <IconMap class="size-4" /> Visit us
         </span>
@@ -132,10 +132,10 @@ const socialIcons: Record<string, any> = {
                 href={data.addressLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="hover:text-primary transition-colors flex items-start gap-2 group"
+                class="group flex items-start gap-2 transition-colors hover:text-primary"
               >
                 {data.address ?? "View on map"}
-                <IconArrowUpRight class="size-6 text-muted-foreground group-hover:text-primary transition-colors mt-1 shrink-0" />
+                <IconArrowUpRight class="mt-1 size-6 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
               </a>
             ) : (
               <span>{data.address ?? "Address not provided"}</span>
@@ -150,8 +150,8 @@ const socialIcons: Record<string, any> = {
 
     {
       socials && (
-        <div class="anim-socials-wrapper col-span-1 lg:col-span-3 rounded-2xl p-8 bg-secondary/30 border border-border/50 flex flex-col md:flex-row items-center justify-between gap-6 mt-4 opacity-0 translate-y-8">
-          <span class="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+        <div class="anim-socials-wrapper col-span-1 mt-4 flex translate-y-8 flex-col items-center justify-between gap-6 rounded-2xl border border-border/50 bg-secondary/30 p-8 opacity-0 md:flex-row lg:col-span-3">
+          <span class="font-mono text-xs tracking-widest text-muted-foreground uppercase">
             Follow our socials
           </span>
           <div class="flex flex-wrap justify-center gap-4">
@@ -164,14 +164,14 @@ const socialIcons: Record<string, any> = {
                   href={socialData.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="anim-social-icon opacity-0 scale-50 p-3 rounded-full bg-background border border-border/50 hover:border-primary hover:text-primary transition-all duration-300"
+                  class="anim-social-icon scale-50 rounded-full border border-border/50 bg-background p-3 opacity-0 transition-all duration-300 hover:border-primary hover:text-primary"
                   aria-label={`Follow on ${platform}`}
                   title={socialData.handle ? `@${socialData.handle}` : platform}
                 >
                   {Icon ? (
                     <Icon class="size-5" />
                   ) : (
-                    <span class="capitalize font-mono text-xs">{platform}</span>
+                    <span class="font-mono text-xs capitalize">{platform}</span>
                   )}
                 </a>
               );

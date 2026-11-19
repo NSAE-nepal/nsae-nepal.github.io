@@ -20,7 +20,9 @@ const THUMB = { width: 640, height: 480 };
 const FULL_WIDTHS = [960, 1600, 2400];
 
 const fullSize = (image: GalleryImage) => {
-  const widths = FULL_WIDTHS.filter((width) => !image.width || width <= image.width);
+  const widths = FULL_WIDTHS.filter(
+    (width) => !image.width || width <= image.width,
+  );
   if (widths.length === 0) widths.push(image.width ?? FULL_WIDTHS[0]);
   const url = (width: number) =>
     urlForImage(image.url).width(width).fit("max").auto("format").url();
@@ -41,7 +43,7 @@ const fullSize = (image: GalleryImage) => {
 {
   images.length > 0 && (
     <div data-event-gallery>
-      <ul class="grid grid-cols-2 sm:grid-cols-3 gap-2 md:gap-3" role="list">
+      <ul class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:gap-3" role="list">
         {images.map((image, index) => {
           const full = fullSize(image);
           return (
@@ -77,7 +79,7 @@ const fullSize = (image: GalleryImage) => {
         data-gallery-dialog
         data-lenis-prevent
         aria-label={`Photos from ${title}`}
-        class="m-0 h-dvh max-h-none w-dvw max-w-none flex-col items-center justify-center gap-3 bg-black/95 p-4 text-white open:flex backdrop:bg-black/80 md:p-10"
+        class="m-0 h-dvh max-h-none w-dvw max-w-none flex-col items-center justify-center gap-3 bg-black/95 p-4 text-white backdrop:bg-black/80 open:flex md:p-10"
       >
         <figure class="flex min-h-0 w-full flex-1 flex-col items-center justify-center gap-3">
           <img
@@ -88,16 +90,20 @@ const fullSize = (image: GalleryImage) => {
             class="max-h-full min-h-0 max-w-full rounded-lg object-contain transition-opacity duration-200"
           />
           <figcaption class="max-w-2xl text-center text-sm text-white/80">
-            <span data-gallery-caption></span>
+            <span data-gallery-caption />
           </figcaption>
         </figure>
-        <p data-gallery-counter class="font-mono text-xs uppercase tracking-widest text-white/60" aria-live="polite"></p>
+        <p
+          data-gallery-counter
+          class="font-mono text-xs tracking-widest text-white/60 uppercase"
+          aria-live="polite"
+        />
 
         <button
           type="button"
           data-gallery-close
           aria-label="Close photos"
-          class="absolute right-3 top-3 rounded-full bg-white/10 p-2 transition-colors hover:bg-white/20 md:right-6 md:top-6"
+          class="absolute top-3 right-3 rounded-full bg-white/10 p-2 transition-colors hover:bg-white/20 md:top-6 md:right-6"
         >
           <IconX class="size-6" />
         </button>
@@ -107,7 +113,7 @@ const fullSize = (image: GalleryImage) => {
               type="button"
               data-gallery-prev
               aria-label="Previous photo"
-              class="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 transition-colors hover:bg-white/20 md:left-6"
+              class="absolute top-1/2 left-2 -translate-y-1/2 rounded-full bg-white/10 p-2 transition-colors hover:bg-white/20 md:left-6"
             >
               <IconChevronLeft class="size-6" />
             </button>
@@ -115,7 +121,7 @@ const fullSize = (image: GalleryImage) => {
               type="button"
               data-gallery-next
               aria-label="Next photo"
-              class="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 transition-colors hover:bg-white/20 md:right-6"
+              class="absolute top-1/2 right-2 -translate-y-1/2 rounded-full bg-white/10 p-2 transition-colors hover:bg-white/20 md:right-6"
             >
               <IconChevronRight class="size-6" />
             </button>
@@ -137,15 +143,25 @@ const fullSize = (image: GalleryImage) => {
 
   document.addEventListener("astro:page-load", () => {
     const root = document.querySelector<HTMLElement>("[data-event-gallery]");
-    const dialog = root?.querySelector<HTMLDialogElement>("[data-gallery-dialog]");
-    const image = dialog?.querySelector<HTMLImageElement>("[data-gallery-image]");
+    const dialog = root?.querySelector<HTMLDialogElement>(
+      "[data-gallery-dialog]",
+    );
+    const image = dialog?.querySelector<HTMLImageElement>(
+      "[data-gallery-image]",
+    );
     if (!root || !dialog || !image) return;
 
     controller = new AbortController();
     const { signal } = controller;
-    const caption = dialog.querySelector<HTMLElement>("[data-gallery-caption]")!;
-    const counter = dialog.querySelector<HTMLElement>("[data-gallery-counter]")!;
-    const items = [...root.querySelectorAll<HTMLButtonElement>("[data-gallery-index]")];
+    const caption = dialog.querySelector<HTMLElement>(
+      "[data-gallery-caption]",
+    )!;
+    const counter = dialog.querySelector<HTMLElement>(
+      "[data-gallery-counter]",
+    )!;
+    const items = [
+      ...root.querySelectorAll<HTMLButtonElement>("[data-gallery-index]"),
+    ];
     let current = 0;
 
     const preload = (index: number) => {

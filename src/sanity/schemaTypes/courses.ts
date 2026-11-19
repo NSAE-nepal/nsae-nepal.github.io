@@ -100,7 +100,8 @@ export const courseType = defineType({
 		defineField({
 			name: "summary",
 			title: "Summary",
-			description: "One or two sentences, shown on course cards and in search results.",
+			description:
+				"One or two sentences, shown on course cards and in search results.",
 			type: "text",
 			rows: 3,
 			group: "overview",
@@ -145,12 +146,15 @@ export const courseType = defineType({
 			name: "categories",
 			type: "array",
 			group: "overview",
-			of: [defineArrayMember({ type: "reference", to: [{ type: "category" }] })],
+			of: [
+				defineArrayMember({ type: "reference", to: [{ type: "category" }] }),
+			],
 		}),
 		defineField({
 			name: "outcomes",
 			title: "What you'll learn",
-			description: "Short outcomes, e.g. \"Size a drip irrigation system for a 1 ha plot\".",
+			description:
+				'Short outcomes, e.g. "Size a drip irrigation system for a 1 ha plot".',
 			type: "array",
 			group: "syllabus",
 			of: [defineArrayMember({ type: "string" })],
@@ -190,7 +194,8 @@ export const courseType = defineType({
 		defineField({
 			name: "resources",
 			title: "Course resources",
-			description: "Downloads for the whole course (handbooks, templates, data sheets).",
+			description:
+				"Downloads for the whole course (handbooks, templates, data sheets).",
 			type: "array",
 			group: "extras",
 			of: [defineArrayMember({ type: "courseResource" })],
@@ -217,7 +222,12 @@ export const courseType = defineType({
 		},
 	],
 	preview: {
-		select: { title: "title", level: "level", media: "coverImage", modules: "modules" },
+		select: {
+			title: "title",
+			level: "level",
+			media: "coverImage",
+			modules: "modules",
+		},
 		prepare({ title, level, media, modules }) {
 			const count = Array.isArray(modules)
 				? (modules as CourseModule[]).reduce(
@@ -252,7 +262,9 @@ export const courseResourceType = defineType({
 			validation: (Rule) => Rule.required(),
 		}),
 	],
-	preview: { select: { title: "title", subtitle: "file.asset.originalFilename" } },
+	preview: {
+		select: { title: "title", subtitle: "file.asset.originalFilename" },
+	},
 });
 
 export const lessonType = defineType({
@@ -287,7 +299,8 @@ export const lessonType = defineType({
 		defineField({
 			name: "body",
 			title: "Lesson content",
-			description: "Text, images, video embeds, code, tables and at most one quiz.",
+			description:
+				"Text, images, video embeds, code, tables and at most one quiz.",
 			type: "blockContent",
 			validation: (Rule) => Rule.required(),
 		}),

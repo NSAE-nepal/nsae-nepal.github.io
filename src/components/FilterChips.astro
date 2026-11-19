@@ -22,13 +22,18 @@ const noneActive = !options.some((option) => option.active);
 
 const chip =
   "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-xs uppercase tracking-wider transition-colors";
-const idle = "border-border/60 text-muted-foreground hover:border-primary hover:text-primary";
+const idle =
+  "border-border/60 text-muted-foreground hover:border-primary hover:text-primary";
 const current = "border-primary bg-primary text-primary-foreground";
 ---
 
 {
   options.length > 0 && (
-    <nav aria-label={label} class:list={["mb-8", className]} data-pagefind-ignore>
+    <nav
+      aria-label={label}
+      class:list={["mb-8", className]}
+      data-pagefind-ignore
+    >
       <ul class="flex flex-wrap gap-2">
         <li>
           <a

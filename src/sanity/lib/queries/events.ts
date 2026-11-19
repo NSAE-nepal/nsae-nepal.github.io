@@ -38,11 +38,7 @@ export type ContactPerson = {
 };
 
 export type EventRole =
-	| "speaker"
-	| "panelist"
-	| "moderator"
-	| "guest"
-	| "instructor";
+	"speaker" | "panelist" | "moderator" | "guest" | "instructor";
 
 export type InstructorNsaeMember = {
 	_type: "instructorNsaeMember";
@@ -86,9 +82,7 @@ export type InstructorOrganization = {
 };
 
 export type Instructor =
-	| InstructorNsaeMember
-	| InstructorExternal
-	| InstructorOrganization;
+	InstructorNsaeMember | InstructorExternal | InstructorOrganization;
 
 export type EventCategoryType =
 	| "training"
@@ -195,7 +189,10 @@ export async function getEvents(): Promise<Event[]> {
 		query: EVENTS_QUERY,
 	});
 
-	return (data ?? []).map((event) => ({ ...event, hasRecap: Boolean(event.hasRecap) }));
+	return (data ?? []).map((event) => ({
+		...event,
+		hasRecap: Boolean(event.hasRecap),
+	}));
 }
 
 export async function getEventDetails(slug: string): Promise<EventDetails> {

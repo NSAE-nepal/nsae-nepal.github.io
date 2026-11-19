@@ -34,17 +34,28 @@ import {
 import { sanityImage } from "@/sanity/lib/url-for-image";
 
 export const getStaticPaths = (async () => {
-  const [spotlights, authors] = await Promise.all([getSpotlights(), getAuthorsWithPosts()]);
+  const [spotlights, authors] = await Promise.all([
+    getSpotlights(),
+    getAuthorsWithPosts(),
+  ]);
   const authorSlugs = new Set(authors.map((author) => author.slug));
 
   return spotlights.map((spotlight) => {
-    const tags = new Set(spotlight.specializations.map((tag) => tag.toLowerCase()));
+    const tags = new Set(
+      spotlight.specializations.map((tag) => tag.toLowerCase()),
+    );
     // Others sharing specializations first, then the newest; never the same member.
     const related = spotlights
-      .filter((other) => other._id !== spotlight._id && other.member._id !== spotlight.member._id)
+      .filter(
+        (other) =>
+          other._id !== spotlight._id &&
+          other.member._id !== spotlight.member._id,
+      )
       .map((other) => ({
         other,
-        shared: other.specializations.filter((tag) => tags.has(tag.toLowerCase())).length,
+        shared: other.specializations.filter((tag) =>
+          tags.has(tag.toLowerCase()),
+        ).length,
       }))
       .sort((a, b) => b.shared - a.shared)
       .slice(0, 3)
@@ -54,7 +65,9 @@ export const getStaticPaths = (async () => {
       params: { slug: spotlight.slug },
       props: {
         related,
-        hasAuthorPage: Boolean(spotlight.member.slug && authorSlugs.has(spotlight.member.slug)),
+        hasAuthorPage: Boolean(
+          spotlight.member.slug && authorSlugs.has(spotlight.member.slug),
+        ),
       },
     };
   });
@@ -76,7 +89,8 @@ const initials = member.name
 
 const body = spotlight.body ?? [];
 const headingCount = body.filter(
-  (block) => block._type === "block" && /^h[1-6]$/.test(String(block.style ?? "")),
+  (block) =>
+    block._type === "block" && /^h[1-6]$/.test(String(block.style ?? "")),
 ).length;
 
 const socialIcons = {
@@ -86,10 +100,12 @@ const socialIcons = {
   youtube: { Icon: IconBrandYoutube, label: "YouTube" },
   bluesky: { Icon: IconBrandBluesky, label: "Bluesky" },
 } as const;
-const socials = Object.entries(member.socials ?? {}).flatMap(([platform, social]) => {
-  const meta = socialIcons[platform as keyof typeof socialIcons];
-  return meta && social?.link ? [{ ...meta, link: social.link }] : [];
-});
+const socials = Object.entries(member.socials ?? {}).flatMap(
+  ([platform, social]) => {
+    const meta = socialIcons[platform as keyof typeof socialIcons];
+    return meta && social?.link ? [{ ...meta, link: social.link }] : [];
+  },
+);
 ---
 
 <ArticleLayout
@@ -120,7 +136,10 @@ const socials = Object.entries(member.socials ?? {}).flatMap(([platform, social]
     ]}
   />
 
-  <div slot="byline" class="flex flex-wrap items-center justify-center gap-3 pt-2">
+  <div
+    slot="byline"
+    class="flex flex-wrap items-center justify-center gap-3 pt-2"
+  >
     <Avatar size="md">
       {member.profileImage && <AvatarImage src={member.profileImage} alt="" />}
       <AvatarFallback class="text-xs">{initials}</AvatarFallback>
@@ -144,7 +163,11 @@ const socials = Object.entries(member.socials ?? {}).flatMap(([platform, social]
 
   {
     spotlight.specializations.length > 0 ? (
-      <Categories slot="meta-start" categories={specializationTags(spotlight)} showAll />
+      <Categories
+        slot="meta-start"
+        categories={specializationTags(spotlight)}
+        showAll
+      />
     ) : (
       <div slot="meta-start" />
     )
@@ -152,7 +175,7 @@ const socials = Object.entries(member.socials ?? {}).flatMap(([platform, social]
 
   <span
     slot="meta-end"
-    class="font-mono text-xs text-muted-foreground uppercase tracking-wider border-l border-border/50 pl-6"
+    class="border-l border-border/50 pl-6 font-mono text-xs tracking-wider text-muted-foreground uppercase"
     data-pagefind-meta={`date:${spotlight.publishedAt}`}
     data-pagefind-ignore
   >
@@ -173,7 +196,7 @@ const socials = Object.entries(member.socials ?? {}).flatMap(([platform, social]
         <Image
           data-pagefind-meta="image[src], image_alt[alt]"
           inferSize
-          class="object-cover rounded-xl max-h-1/2"
+          class="max-h-1/2 rounded-xl object-cover"
           src={sanityImage(spotlight.coverImage, { width: 1600 })}
           widths={[640, 1024, 1600]}
           sizes="(min-width: 1280px) 1280px, 100vw"
@@ -189,8 +212,14 @@ const socials = Object.entries(member.socials ?? {}).flatMap(([platform, social]
 
   {
     spotlight.projects.length > 0 && (
-      <section class="not-prose mt-12 space-y-6" aria-labelledby="spotlight-projects">
-        <h2 id="spotlight-projects" class="font-sans text-2xl font-medium tracking-tight">
+      <section
+        class="not-prose mt-12 space-y-6"
+        aria-labelledby="spotlight-projects"
+      >
+        <h2
+          id="spotlight-projects"
+          class="font-sans text-2xl font-medium tracking-tight"
+        >
           Projects
         </h2>
         <ul class="grid gap-6 md:grid-cols-2" role="list">
@@ -199,7 +228,10 @@ const socials = Object.entries(member.socials ?? {}).flatMap(([platform, social]
               {project.image && (
                 <div class="aspect-[16/9] overflow-hidden bg-muted">
                   <Image
-                    src={sanityImage(project.image, { width: 960, height: 540 })}
+                    src={sanityImage(project.image, {
+                      width: 960,
+                      height: 540,
+                    })}
                     width={960}
                     height={540}
                     widths={[480, 960]}
@@ -210,7 +242,7 @@ const socials = Object.entries(member.socials ?? {}).flatMap(([platform, social]
                 </div>
               )}
               <div class="flex flex-1 flex-col gap-2 p-5">
-                <div class="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs uppercase tracking-wider text-muted-foreground">
+                <div class="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs tracking-wider text-muted-foreground uppercase">
                   {project.year && <span>{project.year}</span>}
                   {project.location && (
                     <span class="flex items-center gap-1">
@@ -219,9 +251,13 @@ const socials = Object.entries(member.socials ?? {}).flatMap(([platform, social]
                     </span>
                   )}
                 </div>
-                <h3 class="font-sans text-lg font-medium leading-snug">{project.title}</h3>
+                <h3 class="font-sans text-lg leading-snug font-medium">
+                  {project.title}
+                </h3>
                 {project.summary && (
-                  <p class="text-sm leading-relaxed text-muted-foreground">{project.summary}</p>
+                  <p class="text-sm leading-relaxed text-muted-foreground">
+                    {project.summary}
+                  </p>
                 )}
               </div>
             </li>
@@ -235,7 +271,9 @@ const socials = Object.entries(member.socials ?? {}).flatMap(([platform, social]
     class="not-prose mt-12 flex flex-col items-center gap-5 rounded-2xl border border-border/60 bg-secondary/30 p-6 text-center sm:flex-row sm:items-start sm:text-left"
     aria-label={`About ${member.name}`}
   >
-    <div class="size-20 shrink-0 overflow-hidden rounded-full border-2 border-border bg-muted">
+    <div
+      class="size-20 shrink-0 overflow-hidden rounded-full border-2 border-border bg-muted"
+    >
       {
         member.profileImage ? (
           <img
@@ -248,20 +286,36 @@ const socials = Object.entries(member.socials ?? {}).flatMap(([platform, social]
             class="size-full object-cover"
           />
         ) : (
-          <span class="flex size-full items-center justify-center font-medium text-muted-foreground" aria-hidden="true">
+          <span
+            class="flex size-full items-center justify-center font-medium text-muted-foreground"
+            aria-hidden="true"
+          >
             {initials}
           </span>
         )
       }
     </div>
     <div class="min-w-0 flex-1 space-y-2">
-      <p class="font-mono text-xs uppercase tracking-widest text-muted-foreground">About the member</p>
+      <p
+        class="font-mono text-xs tracking-widest text-muted-foreground uppercase"
+      >
+        About the member
+      </p>
       <p class="font-sans text-lg font-medium">{name}</p>
       {role && <p class="text-sm text-muted-foreground">{role}</p>}
-      {member.bio && <p class="text-sm leading-relaxed whitespace-pre-line">{member.bio}</p>}
+      {
+        member.bio && (
+          <p class="text-sm leading-relaxed whitespace-pre-line">
+            {member.bio}
+          </p>
+        )
+      }
       {
         (socials.length > 0 || member.portfolio || authorUrl) && (
-          <ul class="flex flex-wrap justify-center gap-2 pt-2 sm:justify-start" data-pagefind-ignore>
+          <ul
+            class="flex flex-wrap justify-center gap-2 pt-2 sm:justify-start"
+            data-pagefind-ignore
+          >
             {authorUrl && (
               <li>
                 <a
@@ -310,7 +364,7 @@ const socials = Object.entries(member.socials ?? {}).flatMap(([platform, social]
           <ClickableCard
             href={spotlightPath(item)}
             label={item.headline}
-            class="group relative overflow-hidden rounded-xl border border-border/60 hover:bg-secondary/60 transition-colors"
+            class="group relative overflow-hidden rounded-xl border border-border/60 transition-colors hover:bg-secondary/60"
           >
             <SpotlightCard data={item} />
           </ClickableCard>

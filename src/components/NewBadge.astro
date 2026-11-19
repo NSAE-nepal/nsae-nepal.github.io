@@ -22,11 +22,14 @@ const { date, class: className } = Astro.props;
       data-published={date}
       data-pagefind-ignore
       class={cn(
-        "inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-widest text-primary-foreground",
+        "inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 font-mono text-[10px] font-medium tracking-widest text-primary-foreground uppercase",
         className,
       )}
     >
-      <span class="size-1.5 rounded-full bg-primary-foreground/90" aria-hidden="true" />
+      <span
+        class="size-1.5 rounded-full bg-primary-foreground/90"
+        aria-hidden="true"
+      />
       New
     </span>
   )

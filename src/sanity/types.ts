@@ -1,6 +1,3 @@
-import type { PortableTextBlock } from "@portabletext/types";
-import type { Slug } from "@sanity/types";
-
 export interface SanityImage {
 	_type: "image";
 	asset?: { _ref: string; _type: "reference" };

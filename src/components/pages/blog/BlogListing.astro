@@ -35,17 +35,17 @@ const pageDescription = activeCategory
   dataPagefindIgnore="all"
 >
   <header class="flex flex-col items-center justify-center py-16 md:py-24">
-    <div class="anim-header-badge opacity-0 scale-50">
+    <div class="anim-header-badge scale-50 opacity-0">
       <Badge
         variant={"secondary"}
         size={"sm"}
-        class="font-mono uppercase tracking-widest text-xs mb-3 border border-border/50"
+        class="mb-3 border border-border/50 font-mono text-xs tracking-widest uppercase"
       >
         Blog & Articles
       </Badge>
     </div>
     <h1
-      class="anim-header-title invisible font-sans text-5xl md:text-7xl font-medium tracking-tighter pt-4 text-center max-w-4xl leading-tight"
+      class="anim-header-title invisible max-w-4xl pt-4 text-center font-sans text-5xl leading-tight font-medium tracking-tighter md:text-7xl"
     >
       Read our latest articles
     </h1>
@@ -54,22 +54,22 @@ const pageDescription = activeCategory
   {
     featuredPosts.length > 0 && page.currentPage === 1 && (
       <section class="mb-12">
-        <div class="flex items-center justify-between mb-6 border-b border-border/50 pb-2">
-          <h2 class="anim-featured-title font-sans text-xl md:text-2xl font-medium uppercase tracking-wider opacity-0 translate-y-4">
+        <div class="mb-6 flex items-center justify-between border-b border-border/50 pb-2">
+          <h2 class="anim-featured-title translate-y-4 font-sans text-xl font-medium tracking-wider uppercase opacity-0 md:text-2xl">
             Featured Posts
           </h2>
           {featuredPosts.length > 1 && (
-            <div class="anim-featured-title flex gap-2 opacity-0 translate-y-4">
+            <div class="anim-featured-title flex translate-y-4 gap-2 opacity-0">
               <button
                 type="button"
-                class="featured-prev size-8 bg-secondary text-secondary-foreground cursor-pointer flex items-center justify-center rounded-full border border-border/60 hover:bg-secondary/40 transition-colors disabled:opacity-30 disabled:pointer-events-none"
+                class="featured-prev flex size-8 cursor-pointer items-center justify-center rounded-full border border-border/60 bg-secondary text-secondary-foreground transition-colors hover:bg-secondary/40 disabled:pointer-events-none disabled:opacity-30"
                 aria-label="Previous featured post"
               >
                 ‹
               </button>
               <button
                 type="button"
-                class="featured-next size-8 bg-secondary text-secondary-foreground cursor-pointer flex items-center justify-center rounded-full border border-border/60 hover:bg-secondary/40 transition-colors disabled:opacity-30 disabled:pointer-events-none"
+                class="featured-next flex size-8 cursor-pointer items-center justify-center rounded-full border border-border/60 bg-secondary text-secondary-foreground transition-colors hover:bg-secondary/40 disabled:pointer-events-none disabled:opacity-30"
                 aria-label="Next featured post"
               >
                 ›
@@ -78,10 +78,10 @@ const pageDescription = activeCategory
           )}
         </div>
 
-        <div class="anim-featured-carousel flex gap-8 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        <div class="anim-featured-carousel flex snap-x snap-mandatory [scrollbar-width:none] gap-8 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {featuredPosts.map((post) => (
             <ClickableCard
-              class="anim-featured-card shrink-0 basis-full lg:basis-[85%] snap-start opacity-0 translate-y-4"
+              class="anim-featured-card shrink-0 basis-full translate-y-4 snap-start opacity-0 lg:basis-[85%]"
               href={`/blog/${post.slug}/`}
               label={post.title}
             >
@@ -95,7 +95,7 @@ const pageDescription = activeCategory
 
   <section class="mb-12" data-manual-card-anim>
     <h2
-      class="anim-all-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
+      class="anim-all-title mb-8 translate-y-4 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase opacity-0 md:text-2xl"
     >
       {activeCategory ? activeCategory.title : "All Posts"}
     </h2>
@@ -116,20 +116,20 @@ const pageDescription = activeCategory
             posts={page.data}
             cardClass="anim-regular-card opacity-0 translate-y-4"
           />
-          <div class="anim-pagination flex justify-center mt-16 opacity-0">
+          <div class="anim-pagination mt-16 flex justify-center opacity-0">
             <Pagination
               url={page.url}
-              class="font-mono text-sm uppercase tracking-widest"
+              class="font-mono text-sm tracking-widest uppercase"
             />
           </div>
         </>
       ) : (
-        <div class="anim-empty-state flex flex-col items-center justify-center py-8 text-center border border-dashed border-border/60 rounded-xl bg-secondary/5 opacity-0 scale-95">
-          <div class="p-4 bg-secondary rounded-full mb-4">
+        <div class="anim-empty-state flex scale-95 flex-col items-center justify-center rounded-xl border border-dashed border-border/60 bg-secondary/5 py-8 text-center opacity-0">
+          <div class="mb-4 rounded-full bg-secondary p-4">
             <IconMoodEmpty class="size-8 text-muted-foreground" />
           </div>
-          <h3 class="font-sans text-xl font-medium mb-2">No posts found</h3>
-          <p class="text-muted-foreground max-w-xs mx-auto">
+          <h3 class="mb-2 font-sans text-xl font-medium">No posts found</h3>
+          <p class="mx-auto max-w-xs text-muted-foreground">
             We haven't published any regular articles yet. Check back soon or
             explore our featured stories above.
           </p>

@@ -1,9 +1,17 @@
 ---
-import { IconArrowNarrowRight, IconUserCircle, IconUsersGroup } from "@tabler/icons-astro";
+import {
+  IconArrowNarrowRight,
+  IconUserCircle,
+  IconUsersGroup,
+} from "@tabler/icons-astro";
 import AvatarGroup from "@/components/astro/AvatarGroup.astro";
 import Badge from "@/components/astro/Badge.astro";
 import { cn, formatName, ordinal } from "@/lib/utils";
-import { type Committee, officeBearers, positionLabel } from "@/sanity/lib/queries/committee";
+import {
+  type Committee,
+  officeBearers,
+  positionLabel,
+} from "@/sanity/lib/queries/committee";
 import { sanityImage } from "@/sanity/lib/url-for-image";
 
 /**
@@ -22,7 +30,6 @@ const { data, isCurrent = false, class: className } = Astro.props;
 const { members, memberCount } = data;
 const bearers = officeBearers(members);
 const others = memberCount - bearers.length;
-
 ---
 
 <article
@@ -33,12 +40,14 @@ const others = memberCount - bearers.length;
 >
   <div class="flex flex-col gap-5">
     <div class="flex items-center gap-3">
-      <span class="font-sans text-5xl md:text-6xl font-medium leading-none tracking-tighter text-primary">
+      <span
+        class="font-sans text-5xl leading-none font-medium tracking-tighter text-primary md:text-6xl"
+      >
         {ordinal(data.committeeIteration)}
       </span>
       {
         isCurrent && (
-          <Badge size="xs" class="font-mono uppercase tracking-widest">
+          <Badge size="xs" class="font-mono tracking-widest uppercase">
             Current
           </Badge>
         )
@@ -46,12 +55,14 @@ const others = memberCount - bearers.length;
     </div>
 
     <h3
-      class="font-sans text-2xl md:text-3xl font-medium leading-snug tracking-tight transition-colors group-hover:text-primary"
+      class="font-sans text-2xl leading-snug font-medium tracking-tight transition-colors group-hover:text-primary md:text-3xl"
     >
       {data.title}
     </h3>
 
-    <div class="mt-auto flex flex-wrap items-center justify-between gap-4 border-t border-border/50 pt-5">
+    <div
+      class="mt-auto flex flex-wrap items-center justify-between gap-4 border-t border-border/50 pt-5"
+    >
       <div class="flex items-center gap-3">
         {
           members.length > 0 && (
@@ -65,17 +76,21 @@ const others = memberCount - bearers.length;
             />
           )
         }
-        <span class="flex items-center gap-1.5 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+        <span
+          class="flex items-center gap-1.5 font-mono text-xs tracking-widest text-muted-foreground uppercase"
+        >
           <IconUsersGroup class="size-4" aria-hidden="true" />
           {memberCount} member{memberCount === 1 ? "" : "s"}
         </span>
       </div>
       <span
-        class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest transition-colors group-hover:text-primary"
+        class="inline-flex items-center gap-2 font-mono text-xs tracking-widest uppercase transition-colors group-hover:text-primary"
         aria-hidden="true"
       >
         View committee
-        <IconArrowNarrowRight class="size-4 transition-transform group-hover:translate-x-1" />
+        <IconArrowNarrowRight
+          class="size-4 transition-transform group-hover:translate-x-1"
+        />
       </span>
     </div>
   </div>
@@ -83,7 +98,7 @@ const others = memberCount - bearers.length;
   {
     bearers.length > 0 && (
       <div class="hidden sm:block">
-        <p class="mb-4 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+        <p class="mb-4 font-mono text-xs tracking-widest text-muted-foreground uppercase">
           Office bearers
         </p>
         <ul class="grid grid-cols-3 gap-x-4 gap-y-6 md:grid-cols-5" role="list">
@@ -92,7 +107,10 @@ const others = memberCount - bearers.length;
               <span class="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-border bg-muted">
                 {member.profileImage ? (
                   <img
-                    src={sanityImage(member.profileImage, { width: 160, height: 160 })}
+                    src={sanityImage(member.profileImage, {
+                      width: 160,
+                      height: 160,
+                    })}
                     alt=""
                     width="80"
                     height="80"
@@ -101,14 +119,17 @@ const others = memberCount - bearers.length;
                     class="size-full object-cover"
                   />
                 ) : (
-                  <IconUserCircle class="size-10 text-muted-foreground" aria-hidden="true" />
+                  <IconUserCircle
+                    class="size-10 text-muted-foreground"
+                    aria-hidden="true"
+                  />
                 )}
               </span>
               <span class="min-w-0">
-                <span class="block text-sm font-medium leading-snug">
+                <span class="block text-sm leading-snug font-medium">
                   {formatName(member.name, member.prefix)}
                 </span>
-                <span class="mt-1 block font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
+                <span class="mt-1 block font-mono text-[11px] tracking-wider text-muted-foreground uppercase">
                   {positionLabel(member.position ?? "member")}
                 </span>
               </span>

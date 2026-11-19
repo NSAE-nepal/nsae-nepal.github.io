@@ -23,7 +23,9 @@ interface Props {
 }
 
 const { page, categories, activeCategory } = Astro.props;
-const pageTitle = activeCategory ? `${activeCategory.title} – Notices` : "Notices";
+const pageTitle = activeCategory
+  ? `${activeCategory.title} – Notices`
+  : "Notices";
 const pageDescription = activeCategory
   ? `NSAE notices about ${activeCategory.title}.`
   : "Updates, announcements, and official notices.";
@@ -35,17 +37,17 @@ const pageDescription = activeCategory
   dataPagefindIgnore="all"
 >
   <header class="flex flex-col items-center justify-center py-16 md:py-24">
-    <div class="anim-header-badge opacity-0 scale-50">
+    <div class="anim-header-badge scale-50 opacity-0">
       <Badge
         variant={"secondary"}
         size={"sm"}
-        class="font-mono uppercase tracking-widest text-xs mb-3 border border-border/50"
+        class="mb-3 border border-border/50 font-mono text-xs tracking-widest uppercase"
       >
         Announcements
       </Badge>
     </div>
     <h1
-      class="anim-header-title invisible font-sans text-5xl md:text-7xl font-medium tracking-tighter pt-4 text-center max-w-4xl leading-tight"
+      class="anim-header-title invisible max-w-4xl pt-4 text-center font-sans text-5xl leading-tight font-medium tracking-tighter md:text-7xl"
     >
       Notices & Updates
     </h1>
@@ -53,7 +55,7 @@ const pageDescription = activeCategory
 
   <section class="mb-12" data-manual-card-anim>
     <h2
-      class="anim-section-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
+      class="anim-section-title mb-8 translate-y-4 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase opacity-0 md:text-2xl"
     >
       {activeCategory ? activeCategory.title : "Latest Notices"}
     </h2>
@@ -75,7 +77,7 @@ const pageDescription = activeCategory
             {page.data.map((post: Post, index) => (
               <>
                 <ClickableCard
-                  class="anim-card group relative col-span-2 hover:bg-secondary/60 transition-colors opacity-0 translate-y-4"
+                  class="anim-card group relative col-span-2 translate-y-4 opacity-0 transition-colors hover:bg-secondary/60"
                   href={`/notices/${post.slug}/`}
                   label={post.title}
                 >
@@ -84,27 +86,27 @@ const pageDescription = activeCategory
                   {post.heroImage && (
                     <Image
                       inferSize
-                      class="absolute top-0 right-0 h-full w-1/4 object-cover z-0 hidden group-hover:block opacity-40 grayscale group-hover:grayscale-0 transition-all duration-500"
+                      class="absolute top-0 right-0 z-0 hidden h-full w-1/4 object-cover opacity-40 grayscale transition-all duration-500 group-hover:block group-hover:grayscale-0"
                       src={sanityImage(post.heroImage, { width: 480 })}
                       alt={post.heroImageAlt ?? ""}
                     />
                   )}
                 </ClickableCard>
                 {index < page.data.length - 1 && (
-                  <div class="anim-divider col-span-2 my-6 border-b-2 border-dashed border-secondary-foreground opacity-0 translate-y-4" />
+                  <div class="anim-divider col-span-2 my-6 translate-y-4 border-b-2 border-dashed border-secondary-foreground opacity-0" />
                 )}
               </>
             ))}
           </div>
-          <div class="anim-pagination flex justify-center mt-16 opacity-0">
+          <div class="anim-pagination mt-16 flex justify-center opacity-0">
             <Pagination
               url={page.url}
-              class="font-mono text-sm uppercase tracking-widest"
+              class="font-mono text-sm tracking-widest uppercase"
             />
           </div>
         </>
       ) : (
-        <div class="anim-empty-state opacity-0 scale-95">
+        <div class="anim-empty-state scale-95 opacity-0">
           <Empty
             description="We haven't published any official notices yet. Please check back later."
             title="No notices found"

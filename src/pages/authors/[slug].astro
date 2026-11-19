@@ -53,10 +53,14 @@ const socialIcons = {
   bluesky: { Icon: IconBrandBluesky, label: "Bluesky" },
 } as const;
 
-const socials = Object.entries(author.socials ?? {}).flatMap(([platform, social]) => {
-  const meta = socialIcons[platform as keyof typeof socialIcons];
-  return meta && social?.link ? [{ ...meta, link: social.link, handle: social.handle }] : [];
-});
+const socials = Object.entries(author.socials ?? {}).flatMap(
+  ([platform, social]) => {
+    const meta = socialIcons[platform as keyof typeof socialIcons];
+    return meta && social?.link
+      ? [{ ...meta, link: social.link, handle: social.handle }]
+      : [];
+  },
+);
 
 const description =
   author.bio?.slice(0, 160) ||
@@ -79,11 +83,15 @@ const description =
     ]}
   />
 
-  <article class="py-8 space-y-12" data-pagefind-body data-pagefind-filter="type:Author">
+  <article
+    class="space-y-12 py-8"
+    data-pagefind-body
+    data-pagefind-filter="type:Author"
+  >
     <a
       data-pagefind-ignore
       href="/blog/page/1"
-      class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors px-4"
+      class="inline-flex items-center gap-2 px-4 font-mono text-xs tracking-widest text-muted-foreground uppercase transition-colors hover:text-primary"
     >
       <IconArrowLeft class="size-4" /> Back to Blog
     </a>
@@ -97,7 +105,10 @@ const description =
         {
           author.profileImage ? (
             <Image
-              src={sanityImage(author.profileImage, { width: 320, height: 320 })}
+              src={sanityImage(author.profileImage, {
+                width: 320,
+                height: 320,
+              })}
               inferSize
               alt={author.profileImageAlt || `Portrait of ${author.name}`}
               class="size-full object-cover"
@@ -120,7 +131,7 @@ const description =
           <Badge
             variant="secondary"
             size="sm"
-            class="font-mono text-xs uppercase tracking-widest"
+            class="font-mono text-xs tracking-widest uppercase"
           >
             Author
           </Badge>
@@ -132,7 +143,10 @@ const description =
           </h1>
           {
             role && (
-              <p class="font-sans text-lg text-muted-foreground" data-pagefind-meta="sub_title">
+              <p
+                class="font-sans text-lg text-muted-foreground"
+                data-pagefind-meta="sub_title"
+              >
                 {role}
               </p>
             )
@@ -144,15 +158,25 @@ const description =
             <dl class="flex flex-wrap justify-center gap-2 md:justify-start">
               {author.neaRegNo && (
                 <div class="flex items-center gap-2 rounded-full border border-border px-3 py-1 font-mono text-xs">
-                  <IconId class="size-4 text-muted-foreground" aria-hidden="true" />
-                  <dt class="uppercase tracking-wider text-muted-foreground">NEA Reg. No.</dt>
+                  <IconId
+                    class="size-4 text-muted-foreground"
+                    aria-hidden="true"
+                  />
+                  <dt class="tracking-wider text-muted-foreground uppercase">
+                    NEA Reg. No.
+                  </dt>
                   <dd>{author.neaRegNo}</dd>
                 </div>
               )}
               {author.necRegNo && (
                 <div class="flex items-center gap-2 rounded-full border border-border px-3 py-1 font-mono text-xs">
-                  <IconId class="size-4 text-muted-foreground" aria-hidden="true" />
-                  <dt class="uppercase tracking-wider text-muted-foreground">NEC Reg. No.</dt>
+                  <IconId
+                    class="size-4 text-muted-foreground"
+                    aria-hidden="true"
+                  />
+                  <dt class="tracking-wider text-muted-foreground uppercase">
+                    NEC Reg. No.
+                  </dt>
                   <dd>{author.necRegNo}</dd>
                 </div>
               )}
@@ -162,7 +186,7 @@ const description =
 
         {
           author.bio && (
-            <p class="max-w-2xl font-sans text-base leading-relaxed text-foreground/90 whitespace-pre-line">
+            <p class="max-w-2xl font-sans text-base leading-relaxed whitespace-pre-line text-foreground/90">
               {author.bio}
             </p>
           )
@@ -170,7 +194,10 @@ const description =
 
         {
           (socials.length > 0 || author.portfolio) && (
-            <ul class="flex flex-wrap justify-center gap-2 md:justify-start" data-pagefind-ignore>
+            <ul
+              class="flex flex-wrap justify-center gap-2 md:justify-start"
+              data-pagefind-ignore
+            >
               {socials.map(({ Icon, label, link, handle }) => (
                 <li>
                   <a
@@ -208,14 +235,20 @@ const description =
               class="group flex max-w-2xl items-center gap-3 rounded-2xl border border-border/60 bg-secondary/30 p-4 text-left transition-colors hover:border-primary/50 hover:bg-secondary/60"
               data-pagefind-ignore
             >
-              <IconUserStar class="size-5 shrink-0 text-primary" aria-hidden="true" />
+              <IconUserStar
+                class="size-5 shrink-0 text-primary"
+                aria-hidden="true"
+              />
               <span class="min-w-0 flex-1">
-                <span class="block font-mono text-xs uppercase tracking-widest text-muted-foreground">
+                <span class="block font-mono text-xs tracking-widest text-muted-foreground uppercase">
                   Featured in Member Spotlight
                 </span>
                 <span class="block font-medium">{spotlight.headline}</span>
               </span>
-              <IconArrowRight class="size-4 shrink-0 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+              <IconArrowRight
+                class="size-4 shrink-0 transition-transform group-hover:translate-x-1"
+                aria-hidden="true"
+              />
             </a>
           ))
         }
@@ -231,10 +264,12 @@ const description =
     >
       <h2
         id="author-posts"
-        class="anim-all-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
+        class="anim-all-title mb-8 translate-y-4 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase opacity-0 md:text-2xl"
       >
         Posts by {author.name}
-        <span class="ml-2 font-mono text-sm text-muted-foreground">({author.posts.length})</span>
+        <span class="ml-2 font-mono text-sm text-muted-foreground"
+          >({author.posts.length})</span
+        >
       </h2>
       <PostGrid
         posts={author.posts}
@@ -258,7 +293,13 @@ const description =
       if (document.querySelector(".anim-regular-card")) {
         tl.to(
           ".anim-regular-card",
-          { y: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: "power2.out" },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.5,
+            stagger: 0.08,
+            ease: "power2.out",
+          },
           "-=0.3",
         ).add(() => {
           initCardSplitTextAnimation({ cardSelector: ".anim-regular-card" });

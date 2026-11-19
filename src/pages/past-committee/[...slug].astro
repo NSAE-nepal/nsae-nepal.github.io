@@ -73,38 +73,47 @@ const committeeHref = (iteration: number) => `/past-committee/${iteration}/`;
     )}
   />
 
-  <article class="py-8 space-y-16" data-pagefind-body data-pagefind-filter="type:Committee">
+  <article
+    class="space-y-16 py-8"
+    data-pagefind-body
+    data-pagefind-filter="type:Committee"
+  >
     <header class="space-y-8 border-b border-border pb-10">
       <a
         data-pagefind-ignore
         href="/past-committee/page/1/"
-        class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors px-4"
+        class="inline-flex items-center gap-2 px-4 font-mono text-xs tracking-widest text-muted-foreground uppercase transition-colors hover:text-primary"
       >
         <IconArrowLeft class="size-4" />
         Back to All Committees
       </a>
 
       <div class="space-y-4 text-center">
-        <div class="flex items-center justify-center gap-3" data-pagefind-ignore>
-          <span class="font-sans text-5xl md:text-6xl font-medium leading-none tracking-tighter text-primary">
+        <div
+          class="flex items-center justify-center gap-3"
+          data-pagefind-ignore
+        >
+          <span
+            class="font-sans text-5xl leading-none font-medium tracking-tighter text-primary md:text-6xl"
+          >
             {ordinal(committee.committeeIteration)}
           </span>
           {
             isCurrent && (
-              <Badge size="xs" class="font-mono uppercase tracking-widest">
+              <Badge size="xs" class="font-mono tracking-widest uppercase">
                 Current
               </Badge>
             )
           }
         </div>
         <h1
-          class="font-sans text-3xl md:text-5xl font-medium tracking-tighter"
+          class="font-sans text-3xl font-medium tracking-tighter md:text-5xl"
           data-pagefind-meta="title"
         >
           {committee.title}
         </h1>
         <p
-          class="font-sans text-lg text-muted-foreground leading-relaxed max-w-3xl mx-auto"
+          class="mx-auto max-w-3xl font-sans text-lg leading-relaxed text-muted-foreground"
           data-pagefind-meta="sub_title"
         >
           {summary}.
@@ -112,7 +121,7 @@ const committeeHref = (iteration: number) => `/past-committee/${iteration}/`;
       </div>
 
       <div
-        class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-mono text-xs uppercase tracking-widest text-muted-foreground"
+        class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-mono text-xs tracking-widest text-muted-foreground uppercase"
         data-pagefind-ignore
       >
         <span>{term}</span>
@@ -126,10 +135,16 @@ const committeeHref = (iteration: number) => `/past-committee/${iteration}/`;
     {
       bearers.length > 0 && (
         <section aria-labelledby="office-bearers" class="space-y-8">
-          <h2 id="office-bearers" class="text-center font-sans text-2xl font-medium tracking-tight">
+          <h2
+            id="office-bearers"
+            class="text-center font-sans text-2xl font-medium tracking-tight"
+          >
             Office bearers
           </h2>
-          <ul class="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-5" role="list">
+          <ul
+            class="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-5"
+            role="list"
+          >
             {bearers.map((member) => (
               <li>
                 <CommitteeMemberCard member={member} />
@@ -143,10 +158,16 @@ const committeeHref = (iteration: number) => `/past-committee/${iteration}/`;
     {
       others.length > 0 && (
         <section aria-labelledby="committee-members" class="space-y-8">
-          <h2 id="committee-members" class="text-center font-sans text-2xl font-medium tracking-tight">
+          <h2
+            id="committee-members"
+            class="text-center font-sans text-2xl font-medium tracking-tight"
+          >
             Committee members
           </h2>
-          <ul class="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-5" role="list">
+          <ul
+            class="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-5"
+            role="list"
+          >
             {others.map((member) => (
               <li>
                 <CommitteeMemberCard member={member} />
@@ -169,7 +190,7 @@ const committeeHref = (iteration: number) => `/past-committee/${iteration}/`;
               href={committeeHref(older.iteration)}
               class="group flex flex-col gap-1 rounded-2xl border border-border/60 p-5 transition-colors hover:border-primary/50 hover:bg-secondary/50"
             >
-              <span class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+              <span class="flex items-center gap-2 font-mono text-xs tracking-widest text-muted-foreground uppercase">
                 <IconArrowNarrowLeft class="size-4 transition-transform group-hover:-translate-x-1" />
                 Previous committee
               </span>
@@ -183,7 +204,7 @@ const committeeHref = (iteration: number) => `/past-committee/${iteration}/`;
               href={committeeHref(newer.iteration)}
               class="group flex flex-col items-end gap-1 rounded-2xl border border-border/60 p-5 text-right transition-colors hover:border-primary/50 hover:bg-secondary/50"
             >
-              <span class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+              <span class="flex items-center gap-2 font-mono text-xs tracking-widest text-muted-foreground uppercase">
                 Next committee
                 <IconArrowNarrowRight class="size-4 transition-transform group-hover:translate-x-1" />
               </span>

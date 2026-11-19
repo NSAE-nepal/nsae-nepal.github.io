@@ -4,10 +4,7 @@ import { getOpportunityStatus } from "@/utils/datetime";
 import { loadQuery } from "../load-query";
 
 export type EmploymentType =
-	| "Full-time"
-	| "Part-time"
-	| "Contract"
-	| "Internship";
+	"Full-time" | "Part-time" | "Contract" | "Internship";
 
 export type VacancyStatus = "open" | "closed";
 
@@ -87,7 +84,9 @@ export async function getVacancies(status?: VacancyStatus): Promise<Vacancy[]> {
 	});
 
 	const isClosed = (vacancy: Vacancy) => getOpportunityStatus(vacancy).isClosed;
-	return [...(data ?? [])].sort((a, b) => Number(isClosed(a)) - Number(isClosed(b)));
+	return [...(data ?? [])].sort(
+		(a, b) => Number(isClosed(a)) - Number(isClosed(b)),
+	);
 }
 
 export async function getVacancyDetails(slug: string): Promise<VacancyDetails> {

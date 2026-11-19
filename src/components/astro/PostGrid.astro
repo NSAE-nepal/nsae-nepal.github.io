@@ -31,7 +31,7 @@ const postHref = (post: Post) =>
     posts.map((post) => (
       <ClickableCard
         class={cn(
-          "group relative col-span-2 lg:col-span-1 border-b border-border last:border-b-0 lg:[&:nth-last-child(2)]:border-b-0 hover:bg-secondary/60 transition-colors",
+          "group relative col-span-2 border-b border-border transition-colors last:border-b-0 hover:bg-secondary/60 lg:col-span-1 lg:[&:nth-last-child(2)]:border-b-0",
           cardClass,
         )}
         href={postHref(post)}
@@ -41,7 +41,7 @@ const postHref = (post: Post) =>
         {post.heroImage && (
           <Image
             inferSize
-            class="absolute top-0 right-0 h-full w-1/4 object-cover z-0 hidden group-hover:block opacity-40 grayscale group-hover:grayscale-0 transition-all duration-500"
+            class="absolute top-0 right-0 z-0 hidden h-full w-1/4 object-cover opacity-40 grayscale transition-all duration-500 group-hover:block group-hover:grayscale-0"
             src={sanityImage(post.heroImage, { width: 480 })}
             alt={post.heroImageAlt ?? ""}
           />

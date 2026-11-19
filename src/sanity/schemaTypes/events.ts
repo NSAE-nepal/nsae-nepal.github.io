@@ -645,7 +645,8 @@ export const eventType = defineType({
 		defineField({
 			name: "recordings",
 			title: "Recordings",
-			description: "YouTube, Vimeo or Loom links. Other links are shown as plain links.",
+			description:
+				"YouTube, Vimeo or Loom links. Other links are shown as plain links.",
 			type: "array",
 			group: "recap",
 			of: [

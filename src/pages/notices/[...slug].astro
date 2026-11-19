@@ -2,7 +2,11 @@
 import PortableText from "@/components/PortableText.astro";
 import TableOfContents from "@/components/TableOfContents.astro";
 import { getRelatedPosts } from "@/lib/related-posts";
-import { getPosts, getPostsDetails, type Post } from "@/sanity/lib/queries/posts";
+import {
+  getPosts,
+  getPostsDetails,
+  type Post,
+} from "@/sanity/lib/queries/posts";
 import PostLayout from "../../layouts/PostLayout.astro";
 
 export async function getStaticPaths() {

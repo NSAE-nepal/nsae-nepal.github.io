@@ -28,12 +28,12 @@ const pillButton =
 ---
 
 <header
-  class="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex flex-row gap-2 items-center"
+  class="fixed bottom-4 left-1/2 z-40 flex -translate-x-1/2 flex-row items-center gap-2"
   data-pagefind-ignore="all"
 >
   <nav
     aria-label="Main"
-    class="flex flex-nowrap whitespace-nowrap gap-1 items-center bg-foreground text-background rounded-full p-2"
+    class="flex flex-nowrap items-center gap-1 rounded-full bg-foreground p-2 whitespace-nowrap text-background"
   >
     <HeaderLink href="/">Home</HeaderLink>
     <HeaderLink class="hidden xs:block" href="/about">About us</HeaderLink>
@@ -48,16 +48,16 @@ const pillButton =
     aria-label="More pages"
     class={`${pillButton} flex`}
   >
-    <IconDots class="w-4 h-4 shrink-0" />
+    <IconDots class="h-4 w-4 shrink-0" />
   </Button>
 
   <Button
-    class="rounded-full items-center pr-2 bg-foreground hover:bg-foreground h-fit hidden xs:flex"
+    class="hidden h-fit items-center rounded-full bg-foreground pr-2 hover:bg-foreground xs:flex"
     href={"/contact"}
   >
     Contact
-    <span class="bg-primary text-primary-foreground rounded-full p-1">
-      <IconArrowUpRight class="w-4 h-4 shrink-0" />
+    <span class="rounded-full bg-primary p-1 text-primary-foreground">
+      <IconArrowUpRight class="h-4 w-4 shrink-0" />
     </span>
   </Button>
 
@@ -68,7 +68,7 @@ const pillButton =
     aria-keyshortcuts="Control+K Meta+K"
     class={`${pillButton} flex`}
   >
-    <IconSearch class="w-4 h-4 shrink-0" />
+    <IconSearch class="h-4 w-4 shrink-0" />
   </Button>
 </header>
 
@@ -81,7 +81,7 @@ const pillButton =
   popover
   aria-label="More pages"
   data-pagefind-ignore="all"
-  class="inset-auto bottom-20 left-1/2 -translate-x-1/2 m-0 w-[min(20rem,calc(100vw-2rem))] rounded-2xl border border-border bg-popover p-2 text-popover-foreground shadow-lg"
+  class="inset-auto bottom-20 left-1/2 m-0 w-[min(20rem,calc(100vw-2rem))] -translate-x-1/2 rounded-2xl border border-border bg-popover p-2 text-popover-foreground shadow-lg"
 >
   <ul class="grid gap-1">
     {

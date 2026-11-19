@@ -41,7 +41,7 @@ const totalPoints = quiz.questions
     0}
 >
   <header class="mb-6">
-    <h2 class="text-2xl font-semibold tracking-tight mb-1">{quiz.title}</h2>
+    <h2 class="mb-1 text-2xl font-semibold tracking-tight">{quiz.title}</h2>
     <div class="flex flex-wrap items-center gap-2 text-sm">
       <span
         class="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
@@ -58,7 +58,7 @@ const totalPoints = quiz.questions
       </span>
 
       <span
-        class="inline-flex items-center rounded-md bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-400 border border-emerald-200/40 dark:border-emerald-800/30"
+        class="inline-flex items-center rounded-md border border-emerald-200/40 bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:border-emerald-800/30 dark:bg-emerald-950/40 dark:text-emerald-400"
       >
         {quiz.settings.passingScore}
         {quiz.settings.passingScore === 1 ? "point" : "points"} to pass
@@ -67,7 +67,7 @@ const totalPoints = quiz.questions
       {
         quiz.settings.negativeMarkingPercentage !== undefined &&
           quiz.settings.negativeMarkingPercentage > 0 && (
-            <span class="inline-flex items-center rounded-md bg-destructive/10 px-2 py-0.5 text-xs font-medium text-destructive border border-destructive/20">
+            <span class="inline-flex items-center rounded-md border border-destructive/20 bg-destructive/10 px-2 py-0.5 text-xs font-medium text-destructive">
               {quiz.settings.negativeMarkingPercentage}% Negative Marking
             </span>
           )
@@ -75,9 +75,9 @@ const totalPoints = quiz.questions
     </div>
   </header>
 
-  <div class="mb-6 p-4 rounded-xl border border-border bg-card">
+  <div class="mb-6 rounded-xl border border-border bg-card p-4">
     <p
-      class="text-xs font-medium text-muted-foreground uppercase tracking-wide m-0! mb-3!"
+      class="m-0! mb-3! text-xs font-medium tracking-wide text-muted-foreground uppercase"
     >
       Questions
     </p>
@@ -98,16 +98,16 @@ const totalPoints = quiz.questions
           data-required={q.required}
           data-correct={JSON.stringify(q.correctOptionIds)}
         >
-          <legend class="flex flex-wrap items-baseline justify-between gap-2 w-full pb-2.5 font-semibold">
+          <legend class="flex w-full flex-wrap items-baseline justify-between gap-2 pb-2.5 font-semibold">
             <span>
-              <span class="question-number text-muted-foreground font-semibold">
+              <span class="question-number font-semibold text-muted-foreground">
                 {index + 1}.
               </span>{" "}
               {q.question}
               {q.required && (
                 <>
                   <span
-                    class="text-destructive font-bold ml-0.5"
+                    class="ml-0.5 font-bold text-destructive"
                     aria-hidden="true"
                   >
                     *
@@ -116,13 +116,13 @@ const totalPoints = quiz.questions
                 </>
               )}
             </span>
-            <span class="flex gap-2 items-center font-normal">
+            <span class="flex items-center gap-2 font-normal">
               {q.type === "multi-select" && (
-                <span class="text-xs font-medium text-muted-foreground bg-muted rounded-full px-2.5 py-0.5 whitespace-nowrap">
+                <span class="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium whitespace-nowrap text-muted-foreground">
                   Select all that apply
                 </span>
               )}
-              <span class="text-xs font-medium text-muted-foreground bg-muted rounded-full px-2.5 py-0.5 whitespace-nowrap">
+              <span class="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium whitespace-nowrap text-muted-foreground">
                 {q.points} {q.points === 1 ? "pt" : "pts"}
               </span>
             </span>
@@ -132,7 +132,7 @@ const totalPoints = quiz.questions
             {q.options.map((option) => (
               <label
                 data-option-id={option.id}
-                class="flex items-center gap-2.5 px-3 py-2 border border-input rounded-lg cursor-pointer transition-colors motion-reduce:transition-none hover:bg-accent hover:border-ring/40 group-[.is-submitted]:cursor-default group-[.is-submitted]:hover:bg-transparent group-[.is-submitted]:hover:border-input"
+                class="flex cursor-pointer items-center gap-2.5 rounded-lg border border-input px-3 py-2 transition-colors group-[.is-submitted]:cursor-default hover:border-ring/40 hover:bg-accent group-[.is-submitted]:hover:border-input group-[.is-submitted]:hover:bg-transparent motion-reduce:transition-none"
               >
                 <input
                   type={q.type === "single-select" ? "radio" : "checkbox"}
@@ -141,7 +141,7 @@ const totalPoints = quiz.questions
                   class="peer sr-only"
                 />
                 <span
-                  class={`option-control relative flex-none w-5 h-5 border border-muted-foreground/40 flex items-center justify-center transition-colors motion-reduce:transition-none peer-checked:border-primary peer-checked:[&>span]:scale-100 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-ring peer-focus-visible:outline-offset-2 ${
+                  class={`option-control relative flex h-5 w-5 flex-none items-center justify-center border border-muted-foreground/40 transition-colors peer-checked:border-primary peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ring motion-reduce:transition-none peer-checked:[&>span]:scale-100 ${
                     q.type === "single-select"
                       ? "rounded-full"
                       : "rounded-[5px]"
@@ -149,10 +149,10 @@ const totalPoints = quiz.questions
                   aria-hidden="true"
                 >
                   <span
-                    class={`option-fill block bg-primary scale-0 transition-transform duration-300 motion-reduce:transition-none motion-reduce:duration-0 ${
+                    class={`option-fill block scale-0 bg-primary transition-transform duration-300 motion-reduce:transition-none motion-reduce:duration-0 ${
                       q.type === "single-select"
-                        ? "w-2.5 h-2.5 rounded-full"
-                        : "w-3 h-3 rounded-[3px]"
+                        ? "h-2.5 w-2.5 rounded-full"
+                        : "h-3 w-3 rounded-[3px]"
                     }`}
                   />
                 </span>
@@ -171,7 +171,7 @@ const totalPoints = quiz.questions
 
           {q.hint && (
             <details class="mt-2.5 text-sm">
-              <summary class="cursor-pointer text-primary font-medium">
+              <summary class="cursor-pointer font-medium text-primary">
                 Show hint
               </summary>
               <p class="mt-1.5 text-muted-foreground">{q.hint}</p>
@@ -180,7 +180,7 @@ const totalPoints = quiz.questions
 
           {q.explanation && quiz.settings.showExplanations && (
             <p
-              class="explanation mt-2.5 px-3 py-2.5 bg-muted border-l-2 border-primary rounded text-sm text-foreground/80"
+              class="explanation mt-2.5 rounded border-l-2 border-primary bg-muted px-3 py-2.5 text-sm text-foreground/80"
               hidden
             >
               <strong class="text-foreground">Explanation:</strong>{" "}
@@ -191,17 +191,17 @@ const totalPoints = quiz.questions
       ))
     }
 
-    <div class="quiz-actions flex items-center justify-between gap-3 mt-6">
+    <div class="quiz-actions mt-6 flex items-center justify-between gap-3">
       <button
         type="button"
-        class="prev-page-btn inline-flex items-center justify-center rounded-md bg-secondary text-secondary-foreground font-semibold text-sm px-4 py-2 transition-opacity motion-reduce:transition-none hover:opacity-90 disabled:opacity-40 disabled:pointer-events-none"
+        class="prev-page-btn inline-flex items-center justify-center rounded-md bg-secondary px-4 py-2 text-sm font-semibold text-secondary-foreground transition-opacity hover:opacity-90 disabled:pointer-events-none disabled:opacity-40 motion-reduce:transition-none"
         disabled
       >
         Previous
       </button>
 
       <p
-        class="page-indicator text-sm text-muted-foreground m-0"
+        class="page-indicator m-0 text-sm text-muted-foreground"
         aria-live="polite"
       >
         Page <span class="current-page-num">1</span> of <span
@@ -211,14 +211,14 @@ const totalPoints = quiz.questions
 
       <button
         type="button"
-        class="next-page-btn inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground font-semibold text-sm px-5 py-2.5 transition-opacity motion-reduce:transition-none hover:opacity-90"
+        class="next-page-btn inline-flex items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 motion-reduce:transition-none"
       >
         Next
       </button>
 
       <button
         type="submit"
-        class="submit-btn inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground font-semibold text-sm px-5 py-2.5 transition-opacity motion-reduce:transition-none hover:opacity-90"
+        class="submit-btn inline-flex items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 motion-reduce:transition-none"
         hidden
       >
         Submit Quiz
@@ -227,7 +227,7 @@ const totalPoints = quiz.questions
   </form>
 
   <div
-    class="quiz-result mt-6 p-5 rounded-xl bg-card border border-border shadow-sm"
+    class="quiz-result mt-6 rounded-xl border border-border bg-card p-5 shadow-sm"
     role="status"
     aria-live="polite"
     hidden
@@ -289,347 +289,371 @@ const totalPoints = quiz.questions
     document
       .querySelectorAll<HTMLElement>(".quiz:not([data-quiz-ready])")
       .forEach((container) => {
-    container.dataset.quizReady = "true";
-    const form = container.querySelector<HTMLFormElement>(".quiz-form")!;
-    const resultEl = container.querySelector<HTMLElement>(".quiz-result")!;
-    const submitBtn =
-      container.querySelector<HTMLButtonElement>(".submit-btn")!;
-    const prevBtn =
-      container.querySelector<HTMLButtonElement>(".prev-page-btn")!;
-    const nextBtn =
-      container.querySelector<HTMLButtonElement>(".next-page-btn")!;
-    const currentPageNumEl =
-      container.querySelector<HTMLElement>(".current-page-num")!;
-    const totalPagesNumEl =
-      container.querySelector<HTMLElement>(".total-pages-num")!;
-    const pageIndicator =
-      container.querySelector<HTMLElement>(".page-indicator")!;
-    const actions = container.querySelector<HTMLElement>(".quiz-actions")!;
-    const navEl = container.querySelector<HTMLElement>(".question-nav")!;
+        container.dataset.quizReady = "true";
+        const form = container.querySelector<HTMLFormElement>(".quiz-form")!;
+        const resultEl = container.querySelector<HTMLElement>(".quiz-result")!;
+        const submitBtn =
+          container.querySelector<HTMLButtonElement>(".submit-btn")!;
+        const prevBtn =
+          container.querySelector<HTMLButtonElement>(".prev-page-btn")!;
+        const nextBtn =
+          container.querySelector<HTMLButtonElement>(".next-page-btn")!;
+        const currentPageNumEl =
+          container.querySelector<HTMLElement>(".current-page-num")!;
+        const totalPagesNumEl =
+          container.querySelector<HTMLElement>(".total-pages-num")!;
+        const pageIndicator =
+          container.querySelector<HTMLElement>(".page-indicator")!;
+        const actions = container.querySelector<HTMLElement>(".quiz-actions")!;
+        const navEl = container.querySelector<HTMLElement>(".question-nav")!;
 
-    const passingScore = Number(container.dataset.passingScore);
-    const showExplanations = container.dataset.showExplanations === "true";
-    const perPage = Math.max(1, Number(container.dataset.perPage) || 10);
-    const negativeMarkingPercentage =
-      Number(container.dataset.negativeMarkingPercentage) || 0;
+        const passingScore = Number(container.dataset.passingScore);
+        const showExplanations = container.dataset.showExplanations === "true";
+        const perPage = Math.max(1, Number(container.dataset.perPage) || 10);
+        const negativeMarkingPercentage =
+          Number(container.dataset.negativeMarkingPercentage) || 0;
 
-    const initialQuestions = [
-      ...form.querySelectorAll<HTMLFieldSetElement>(".question"),
-    ];
-    if (container.dataset.shuffleQuestions === "true") {
-      shuffle(initialQuestions).forEach((q) => form.insertBefore(q, actions));
-    }
-    const questions = [
-      ...form.querySelectorAll<HTMLFieldSetElement>(".question"),
-    ];
+        const initialQuestions = [
+          ...form.querySelectorAll<HTMLFieldSetElement>(".question"),
+        ];
+        if (container.dataset.shuffleQuestions === "true") {
+          shuffle(initialQuestions).forEach((q) =>
+            form.insertBefore(q, actions),
+          );
+        }
+        const questions = [
+          ...form.querySelectorAll<HTMLFieldSetElement>(".question"),
+        ];
 
-    const renumberQuestions = () => {
-      questions.forEach((question, i) => {
-        const numberEl = question.querySelector(".question-number");
-        if (numberEl) numberEl.textContent = `${i + 1}.`;
-      });
-    };
-    renumberQuestions();
+        const renumberQuestions = () => {
+          questions.forEach((question, i) => {
+            const numberEl = question.querySelector(".question-number");
+            if (numberEl) numberEl.textContent = `${i + 1}.`;
+          });
+        };
+        renumberQuestions();
 
-    if (container.dataset.shuffleOptions === "true") {
-      questions.forEach((question) => {
-        const optionsWrap = question.querySelector(".options")!;
-        const labels = [...optionsWrap.querySelectorAll("label")];
-        shuffle(labels).forEach((label) => optionsWrap.appendChild(label));
-      });
-    }
+        if (container.dataset.shuffleOptions === "true") {
+          questions.forEach((question) => {
+            const optionsWrap = question.querySelector(".options")!;
+            const labels = [...optionsWrap.querySelectorAll("label")];
+            shuffle(labels).forEach((label) => optionsWrap.appendChild(label));
+          });
+        }
 
-    const totalPages = Math.ceil(questions.length / perPage);
-    const currentPage = atom(0);
-    let submitted = false;
+        const totalPages = Math.ceil(questions.length / perPage);
+        const currentPage = atom(0);
+        let submitted = false;
 
-    const pageOf = (questionIndex: number) =>
-      Math.floor(questionIndex / perPage);
+        const pageOf = (questionIndex: number) =>
+          Math.floor(questionIndex / perPage);
 
-    const updateNavButtons = (page: number) => {
-      prevBtn.disabled = page === 0;
-      const isLastPage = page === totalPages - 1;
-      nextBtn.hidden = isLastPage;
-      submitBtn.hidden = !isLastPage || submitted;
-      currentPageNumEl.textContent = String(page + 1);
-    };
+        const updateNavButtons = (page: number) => {
+          prevBtn.disabled = page === 0;
+          const isLastPage = page === totalPages - 1;
+          nextBtn.hidden = isLastPage;
+          submitBtn.hidden = !isLastPage || submitted;
+          currentPageNumEl.textContent = String(page + 1);
+        };
 
-    const NAV_UNANSWERED = [
-      "border-input",
-      "text-muted-foreground",
-      "bg-transparent",
-      "hover:border-ring/50",
-      "hover:bg-accent",
-    ];
-    const NAV_ANSWERED = [
-      "bg-primary",
-      "text-primary-foreground",
-      "border-primary",
-    ];
-    const NAV_CORRECT = ["bg-emerald-600", "text-white", "border-emerald-600"];
-    const NAV_INCORRECT = [
-      "bg-destructive",
-      "text-white",
-      "border-destructive",
-    ];
-    const NAV_ALL_STATE = [
-      ...NAV_UNANSWERED,
-      ...NAV_ANSWERED,
-      ...NAV_CORRECT,
-      ...NAV_INCORRECT,
-    ];
+        const NAV_UNANSWERED = [
+          "border-input",
+          "text-muted-foreground",
+          "bg-transparent",
+          "hover:border-ring/50",
+          "hover:bg-accent",
+        ];
+        const NAV_ANSWERED = [
+          "bg-primary",
+          "text-primary-foreground",
+          "border-primary",
+        ];
+        const NAV_CORRECT = [
+          "bg-emerald-600",
+          "text-white",
+          "border-emerald-600",
+        ];
+        const NAV_INCORRECT = [
+          "bg-destructive",
+          "text-white",
+          "border-destructive",
+        ];
+        const NAV_ALL_STATE = [
+          ...NAV_UNANSWERED,
+          ...NAV_ANSWERED,
+          ...NAV_CORRECT,
+          ...NAV_INCORRECT,
+        ];
 
-    const navButtons: HTMLButtonElement[] = questions.map((question, i) => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.textContent = String(i + 1);
-      btn.className =
-        "question-nav-item inline-flex items-center justify-center w-8 h-8 rounded-full text-xs font-semibold border transition-colors motion-reduce:transition-none";
-      btn.classList.add(...NAV_UNANSWERED);
-      btn.addEventListener("click", () => {
-        currentPage.set(pageOf(i));
-        requestAnimationFrame(() => {
-          question.scrollIntoView({ behavior: "smooth", block: "center" });
-        });
-      });
-      navEl.appendChild(btn);
-      return btn;
-    });
-
-    const updateNavItem = (i: number) => {
-      const btn = navButtons[i];
-      const question = questions[i];
-      const selected = [
-        ...question.querySelectorAll<HTMLInputElement>("input:checked"),
-      ].map((input) => input.value);
-      const answered = selected.length > 0;
-
-      btn.classList.remove(...NAV_ALL_STATE);
-
-      if (submitted) {
-        const correct: string[] = JSON.parse(question.dataset.correct || "[]");
-        const isCorrect =
-          answered &&
-          selected.length === correct.length &&
-          selected.every((id) => correct.includes(id));
-        if (!answered) {
+        const navButtons: HTMLButtonElement[] = questions.map((question, i) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.textContent = String(i + 1);
+          btn.className =
+            "question-nav-item inline-flex items-center justify-center w-8 h-8 rounded-full text-xs font-semibold border transition-colors motion-reduce:transition-none";
           btn.classList.add(...NAV_UNANSWERED);
-          btn.setAttribute("aria-label", `Question ${i + 1}, not answered`);
-        } else if (isCorrect) {
-          btn.classList.add(...NAV_CORRECT);
-          btn.setAttribute("aria-label", `Question ${i + 1}, correct`);
-        } else {
-          btn.classList.add(...NAV_INCORRECT);
-          btn.setAttribute("aria-label", `Question ${i + 1}, incorrect`);
-        }
-      } else if (answered) {
-        btn.classList.add(...NAV_ANSWERED);
-        btn.setAttribute("aria-label", `Question ${i + 1}, answered`);
-      } else {
-        btn.classList.add(...NAV_UNANSWERED);
-        btn.setAttribute("aria-label", `Question ${i + 1}, not answered`);
-      }
-    };
-
-    const updateAllNavItems = () =>
-      questions.forEach((_, i) => updateNavItem(i));
-    updateAllNavItems();
-
-    const updateNavCurrentPage = (page: number) => {
-      navButtons.forEach((btn, i) => {
-        const onPage = pageOf(i) === page;
-        btn.classList.toggle("ring-2", onPage);
-        btn.classList.toggle("ring-ring", onPage);
-        btn.classList.toggle("ring-offset-2", onPage);
-        btn.classList.toggle("ring-offset-background", onPage);
-      });
-    };
-
-    form.addEventListener("change", (e) => {
-      const question = (e.target as HTMLElement).closest(
-        ".question",
-      ) as HTMLFieldSetElement | null;
-      if (!question) return;
-      const i = questions.indexOf(question);
-      if (i !== -1) updateNavItem(i);
-    });
-
-    currentPage.subscribe((page) => {
-      questions.forEach((question, i) => {
-        question.hidden = pageOf(i) !== page;
-      });
-      updateNavButtons(page);
-      updateNavCurrentPage(page);
-    });
-
-    if (totalPages <= 1) {
-      pageIndicator.hidden = true;
-      prevBtn.hidden = true;
-      nextBtn.hidden = true;
-      submitBtn.hidden = false;
-    } else {
-      totalPagesNumEl.textContent = String(totalPages);
-    }
-
-    const goToPage = (page: number) => {
-      currentPage.set(Math.min(Math.max(page, 0), totalPages - 1));
-      container.scrollIntoView({ behavior: "smooth", block: "start" });
-    };
-
-    const findFirstUnanswered = (qs: HTMLFieldSetElement[]) => {
-      let firstUnanswered: HTMLFieldSetElement | null = null;
-      qs.forEach((question) => {
-        const isRequired = question.dataset.required === "true";
-        const error = question.querySelector<HTMLElement>(".question-error")!;
-        const answered = question.querySelectorAll("input:checked").length > 0;
-
-        if (!isRequired) {
-          error.hidden = true;
-          return;
-        }
-
-        error.hidden = answered;
-        if (!answered && !firstUnanswered) firstUnanswered = question;
-      });
-      return firstUnanswered;
-    };
-
-    prevBtn.addEventListener("click", () => goToPage(currentPage.get() - 1));
-    nextBtn.addEventListener("click", () => goToPage(currentPage.get() + 1));
-
-    const clearGradingState = (question: HTMLElement) => {
-      question.querySelectorAll<HTMLLabelElement>("label").forEach((label) => {
-        label.classList.remove(...ALL_STATE_CLASSES);
-        label
-          .querySelector(".option-control")
-          ?.classList.remove(...CONTROL_CORRECT, ...CONTROL_INCORRECT);
-        label
-          .querySelector(".option-fill")
-          ?.classList.remove(...FILL_CORRECT, ...FILL_INCORRECT);
-      });
-    };
-
-    const resetQuestionUI = () => {
-      questions.forEach((question) => {
-        question.querySelectorAll("input").forEach((input) => {
-          (input as HTMLInputElement).disabled = false;
-          (input as HTMLInputElement).checked = false;
-        });
-        clearGradingState(question);
-        const error = question.querySelector<HTMLElement>(".question-error");
-        if (error) error.hidden = true;
-        const explanation = question.querySelector<HTMLElement>(".explanation");
-        if (explanation) explanation.hidden = true;
-      });
-    };
-
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-
-      const firstUnanswered = findFirstUnanswered(questions);
-      if (firstUnanswered) {
-        const targetPage = pageOf(questions.indexOf(firstUnanswered));
-        if (targetPage !== currentPage.get()) {
-          currentPage.set(targetPage);
-        }
-        requestAnimationFrame(() => {
-          (firstUnanswered as HTMLElement).scrollIntoView({
-            behavior: "smooth",
-            block: "center",
+          btn.addEventListener("click", () => {
+            currentPage.set(pageOf(i));
+            requestAnimationFrame(() => {
+              question.scrollIntoView({ behavior: "smooth", block: "center" });
+            });
           });
+          navEl.appendChild(btn);
+          return btn;
         });
-        return;
-      }
 
-      let earnedPoints = 0;
-      let totalPoints = 0;
-      let correctCount = 0;
-      let wrongCount = 0;
-      let unansweredCount = 0;
-      let penaltyDeducted = 0;
+        const updateNavItem = (i: number) => {
+          const btn = navButtons[i];
+          const question = questions[i];
+          const selected = [
+            ...question.querySelectorAll<HTMLInputElement>("input:checked"),
+          ].map((input) => input.value);
+          const answered = selected.length > 0;
 
-      questions.forEach((question) => {
-        const correct: string[] = JSON.parse(question.dataset.correct || "[]");
-        const points = Number(question.dataset.points);
-        totalPoints += points;
+          btn.classList.remove(...NAV_ALL_STATE);
 
-        const selected = [
-          ...question.querySelectorAll<HTMLInputElement>("input:checked"),
-        ].map((i) => i.value);
-
-        const answered = selected.length > 0;
-        const isCorrect =
-          answered &&
-          selected.length === correct.length &&
-          selected.every((id) => correct.includes(id));
-
-        if (answered) {
-          if (isCorrect) {
-            earnedPoints += points;
-            correctCount++;
+          if (submitted) {
+            const correct: string[] = JSON.parse(
+              question.dataset.correct || "[]",
+            );
+            const isCorrect =
+              answered &&
+              selected.length === correct.length &&
+              selected.every((id) => correct.includes(id));
+            if (!answered) {
+              btn.classList.add(...NAV_UNANSWERED);
+              btn.setAttribute("aria-label", `Question ${i + 1}, not answered`);
+            } else if (isCorrect) {
+              btn.classList.add(...NAV_CORRECT);
+              btn.setAttribute("aria-label", `Question ${i + 1}, correct`);
+            } else {
+              btn.classList.add(...NAV_INCORRECT);
+              btn.setAttribute("aria-label", `Question ${i + 1}, incorrect`);
+            }
+          } else if (answered) {
+            btn.classList.add(...NAV_ANSWERED);
+            btn.setAttribute("aria-label", `Question ${i + 1}, answered`);
           } else {
-            const penalty = points * (negativeMarkingPercentage / 100);
-            earnedPoints -= penalty;
-            penaltyDeducted += penalty;
-            wrongCount++;
+            btn.classList.add(...NAV_UNANSWERED);
+            btn.setAttribute("aria-label", `Question ${i + 1}, not answered`);
           }
+        };
+
+        const updateAllNavItems = () =>
+          questions.forEach((_, i) => updateNavItem(i));
+        updateAllNavItems();
+
+        const updateNavCurrentPage = (page: number) => {
+          navButtons.forEach((btn, i) => {
+            const onPage = pageOf(i) === page;
+            btn.classList.toggle("ring-2", onPage);
+            btn.classList.toggle("ring-ring", onPage);
+            btn.classList.toggle("ring-offset-2", onPage);
+            btn.classList.toggle("ring-offset-background", onPage);
+          });
+        };
+
+        form.addEventListener("change", (e) => {
+          const question = (e.target as HTMLElement).closest(
+            ".question",
+          ) as HTMLFieldSetElement | null;
+          if (!question) return;
+          const i = questions.indexOf(question);
+          if (i !== -1) updateNavItem(i);
+        });
+
+        currentPage.subscribe((page) => {
+          questions.forEach((question, i) => {
+            question.hidden = pageOf(i) !== page;
+          });
+          updateNavButtons(page);
+          updateNavCurrentPage(page);
+        });
+
+        if (totalPages <= 1) {
+          pageIndicator.hidden = true;
+          prevBtn.hidden = true;
+          nextBtn.hidden = true;
+          submitBtn.hidden = false;
         } else {
-          unansweredCount++;
+          totalPagesNumEl.textContent = String(totalPages);
         }
 
-        clearGradingState(question);
+        const goToPage = (page: number) => {
+          currentPage.set(Math.min(Math.max(page, 0), totalPages - 1));
+          container.scrollIntoView({ behavior: "smooth", block: "start" });
+        };
 
-        question
-          .querySelectorAll<HTMLLabelElement>("label")
-          .forEach((label) => {
-            const optionId = label.dataset.optionId!;
-            const isChecked = selected.includes(optionId);
-            const control = label.querySelector<HTMLElement>(".option-control");
-            const fill = label.querySelector<HTMLElement>(".option-fill");
+        const findFirstUnanswered = (qs: HTMLFieldSetElement[]) => {
+          let firstUnanswered: HTMLFieldSetElement | null = null;
+          qs.forEach((question) => {
+            const isRequired = question.dataset.required === "true";
+            const error =
+              question.querySelector<HTMLElement>(".question-error")!;
+            const answered =
+              question.querySelectorAll("input:checked").length > 0;
 
-            if (correct.includes(optionId)) {
-              label.classList.add(...LABEL_CORRECT);
-              if (isChecked) {
-                control?.classList.add(...CONTROL_CORRECT);
-                fill?.classList.add(...FILL_CORRECT);
-              }
+            if (!isRequired) {
+              error.hidden = true;
+              return;
             }
-            if (isChecked && !correct.includes(optionId)) {
-              label.classList.add(...LABEL_INCORRECT);
-              control?.classList.add(...CONTROL_INCORRECT);
-              fill?.classList.add(...FILL_INCORRECT);
+
+            error.hidden = answered;
+            if (!answered && !firstUnanswered) firstUnanswered = question;
+          });
+          return firstUnanswered;
+        };
+
+        prevBtn.addEventListener("click", () =>
+          goToPage(currentPage.get() - 1),
+        );
+        nextBtn.addEventListener("click", () =>
+          goToPage(currentPage.get() + 1),
+        );
+
+        const clearGradingState = (question: HTMLElement) => {
+          question
+            .querySelectorAll<HTMLLabelElement>("label")
+            .forEach((label) => {
+              label.classList.remove(...ALL_STATE_CLASSES);
+              label
+                .querySelector(".option-control")
+                ?.classList.remove(...CONTROL_CORRECT, ...CONTROL_INCORRECT);
+              label
+                .querySelector(".option-fill")
+                ?.classList.remove(...FILL_CORRECT, ...FILL_INCORRECT);
+            });
+        };
+
+        const resetQuestionUI = () => {
+          questions.forEach((question) => {
+            question.querySelectorAll("input").forEach((input) => {
+              (input as HTMLInputElement).disabled = false;
+              (input as HTMLInputElement).checked = false;
+            });
+            clearGradingState(question);
+            const error =
+              question.querySelector<HTMLElement>(".question-error");
+            if (error) error.hidden = true;
+            const explanation =
+              question.querySelector<HTMLElement>(".explanation");
+            if (explanation) explanation.hidden = true;
+          });
+        };
+
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+
+          const firstUnanswered = findFirstUnanswered(questions);
+          if (firstUnanswered) {
+            const targetPage = pageOf(questions.indexOf(firstUnanswered));
+            if (targetPage !== currentPage.get()) {
+              currentPage.set(targetPage);
+            }
+            requestAnimationFrame(() => {
+              (firstUnanswered as HTMLElement).scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+              });
+            });
+            return;
+          }
+
+          let earnedPoints = 0;
+          let totalPoints = 0;
+          let correctCount = 0;
+          let wrongCount = 0;
+          let unansweredCount = 0;
+          let penaltyDeducted = 0;
+
+          questions.forEach((question) => {
+            const correct: string[] = JSON.parse(
+              question.dataset.correct || "[]",
+            );
+            const points = Number(question.dataset.points);
+            totalPoints += points;
+
+            const selected = [
+              ...question.querySelectorAll<HTMLInputElement>("input:checked"),
+            ].map((i) => i.value);
+
+            const answered = selected.length > 0;
+            const isCorrect =
+              answered &&
+              selected.length === correct.length &&
+              selected.every((id) => correct.includes(id));
+
+            if (answered) {
+              if (isCorrect) {
+                earnedPoints += points;
+                correctCount++;
+              } else {
+                const penalty = points * (negativeMarkingPercentage / 100);
+                earnedPoints -= penalty;
+                penaltyDeducted += penalty;
+                wrongCount++;
+              }
+            } else {
+              unansweredCount++;
+            }
+
+            clearGradingState(question);
+
+            question
+              .querySelectorAll<HTMLLabelElement>("label")
+              .forEach((label) => {
+                const optionId = label.dataset.optionId!;
+                const isChecked = selected.includes(optionId);
+                const control =
+                  label.querySelector<HTMLElement>(".option-control");
+                const fill = label.querySelector<HTMLElement>(".option-fill");
+
+                if (correct.includes(optionId)) {
+                  label.classList.add(...LABEL_CORRECT);
+                  if (isChecked) {
+                    control?.classList.add(...CONTROL_CORRECT);
+                    fill?.classList.add(...FILL_CORRECT);
+                  }
+                }
+                if (isChecked && !correct.includes(optionId)) {
+                  label.classList.add(...LABEL_INCORRECT);
+                  control?.classList.add(...CONTROL_INCORRECT);
+                  fill?.classList.add(...FILL_INCORRECT);
+                }
+              });
+
+            if (showExplanations) {
+              const explanation =
+                question.querySelector<HTMLElement>(".explanation");
+              if (explanation) explanation.hidden = false;
             }
           });
 
-        if (showExplanations) {
-          const explanation =
-            question.querySelector<HTMLElement>(".explanation");
-          if (explanation) explanation.hidden = false;
-        }
-      });
+          const passed = earnedPoints >= passingScore;
 
-      const passed = earnedPoints >= passingScore;
+          const percentage =
+            totalPoints === 0 ? 0 : (earnedPoints / totalPoints) * 100;
+          const clampedPercentage = Math.min(Math.max(percentage, 0), 100);
 
-      const percentage =
-        totalPoints === 0 ? 0 : (earnedPoints / totalPoints) * 100;
-      const clampedPercentage = Math.min(Math.max(percentage, 0), 100);
+          // Lets course pages record a passed quiz (see course-progress.ts).
+          container.dispatchEvent(
+            new CustomEvent("quiz:complete", {
+              bubbles: true,
+              detail: { slug: container.dataset.quizSlug, passed, percentage },
+            }),
+          );
 
-      // Lets course pages record a passed quiz (see course-progress.ts).
-      container.dispatchEvent(
-        new CustomEvent("quiz:complete", {
-          bubbles: true,
-          detail: { slug: container.dataset.quizSlug, passed, percentage },
-        }),
-      );
+          const thresholdPercentage =
+            totalPoints === 0 ? 0 : (passingScore / totalPoints) * 100;
+          const clampedThreshold = Math.min(
+            Math.max(thresholdPercentage, 0),
+            100,
+          );
 
-      const thresholdPercentage =
-        totalPoints === 0 ? 0 : (passingScore / totalPoints) * 100;
-      const clampedThreshold = Math.min(Math.max(thresholdPercentage, 0), 100);
+          const summary = `${passed ? "Passed" : "Not passed"}. Score ${percentage.toFixed(1)}%, ${earnedPoints.toFixed(2)} of ${totalPoints} points, ${correctCount} correct, ${wrongCount} incorrect, ${unansweredCount} skipped. Required points to pass: ${passingScore}.`;
 
-      const summary = `${passed ? "Passed" : "Not passed"}. Score ${percentage.toFixed(1)}%, ${earnedPoints.toFixed(2)} of ${totalPoints} points, ${correctCount} correct, ${wrongCount} incorrect, ${unansweredCount} skipped. Required points to pass: ${passingScore}.`;
-
-      resultEl.hidden = false;
-      resultEl.innerHTML = `
+          resultEl.hidden = false;
+          resultEl.innerHTML = `
         <p class="sr-only">${summary}</p>
         <div class="flex items-center gap-3.5 px-4 py-3.5 rounded-lg mb-4 ${
           passed
@@ -675,39 +699,39 @@ const totalPoints = quiz.questions
         </button>
       `;
 
-      const fill = resultEl.querySelector<HTMLElement>(".result-bar-fill");
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          if (fill) fill.style.width = `${clampedPercentage}%`;
+          const fill = resultEl.querySelector<HTMLElement>(".result-bar-fill");
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              if (fill) fill.style.width = `${clampedPercentage}%`;
+            });
+          });
+
+          form
+            .querySelectorAll("input")
+            .forEach((input) => ((input as HTMLInputElement).disabled = true));
+          form.classList.add("is-submitted");
+          submitted = true;
+          submitBtn.hidden = true;
+          updateAllNavItems();
+
+          resultEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        });
+
+        resultEl.addEventListener("click", (e) => {
+          if (!(e.target as HTMLElement).closest(".retry-btn")) return;
+
+          resetQuestionUI();
+          form.classList.remove("is-submitted");
+          resultEl.hidden = true;
+          resultEl.innerHTML = "";
+          submitted = false;
+          updateAllNavItems();
+          goToPage(0);
+          updateNavButtons(currentPage.get());
+          updateNavCurrentPage(currentPage.get());
+          form.scrollIntoView({ behavior: "smooth", block: "start" });
         });
       });
-
-      form
-        .querySelectorAll("input")
-        .forEach((input) => ((input as HTMLInputElement).disabled = true));
-      form.classList.add("is-submitted");
-      submitted = true;
-      submitBtn.hidden = true;
-      updateAllNavItems();
-
-      resultEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    });
-
-    resultEl.addEventListener("click", (e) => {
-      if (!(e.target as HTMLElement).closest(".retry-btn")) return;
-
-      resetQuestionUI();
-      form.classList.remove("is-submitted");
-      resultEl.hidden = true;
-      resultEl.innerHTML = "";
-      submitted = false;
-      updateAllNavItems();
-      goToPage(0);
-      updateNavButtons(currentPage.get());
-      updateNavCurrentPage(currentPage.get());
-      form.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  });
 
   document.addEventListener("astro:page-load", initQuizzes);
 </script>

@@ -52,7 +52,10 @@ const structuredData = [
   breadcrumbLd(
     [
       { name: "Home", path: "/" },
-      { name: type === "notice" ? "Notices" : "Blog", path: `/${section}/page/1/` },
+      {
+        name: type === "notice" ? "Notices" : "Blog",
+        path: `/${section}/page/1/`,
+      },
       { name: title, path: `/${section}/${Astro.props.slug}/` },
     ],
     site,
@@ -76,11 +79,13 @@ const structuredData = [
 
   {/* Category filters for search (no visible content). */}
   <Fragment slot="filters">
-    {(categories ?? [])
-      .filter((category) => category?.title)
-      .map((category) => (
-        <span data-pagefind-filter={`category:${category.title}`} hidden />
-      ))}
+    {
+      (categories ?? [])
+        .filter((category) => category?.title)
+        .map((category) => (
+          <span data-pagefind-filter={`category:${category.title}`} hidden />
+        ))
+    }
   </Fragment>
 
   {
@@ -118,7 +123,11 @@ const structuredData = [
 
   {
     categories?.length > 0 ? (
-      <Categories slot="meta-start" categories={categories} basePath={`/${section}`} />
+      <Categories
+        slot="meta-start"
+        categories={categories}
+        basePath={`/${section}`}
+      />
     ) : (
       <div slot="meta-start" />
     )
@@ -128,7 +137,7 @@ const structuredData = [
     publishedAt && (
       <span
         slot="meta-end"
-        class="font-mono text-xs text-muted-foreground uppercase tracking-wider border-l border-border/50 pl-6"
+        class="border-l border-border/50 pl-6 font-mono text-xs tracking-wider text-muted-foreground uppercase"
         data-pagefind-meta={`date:${publishedAt}`}
         data-pagefind-ignore
       >
@@ -145,7 +154,7 @@ const structuredData = [
         <Image
           data-pagefind-meta="image[src], image_alt[alt]"
           inferSize
-          class="object-cover rounded-xl max-h-1/2"
+          class="max-h-1/2 rounded-xl object-cover"
           src={sanityImage(heroImage, { width: 1600 })}
           widths={[640, 1024, 1600]}
           sizes="(min-width: 1280px) 1280px, 100vw"
@@ -166,7 +175,7 @@ const structuredData = [
           <ClickableCard
             href={relatedHref(post)}
             label={post.title}
-            class="group relative rounded-xl border border-border/60 hover:bg-secondary/60 transition-colors"
+            class="group relative rounded-xl border border-border/60 transition-colors hover:bg-secondary/60"
           >
             <BlogCard data={post} href={relatedHref(post)} />
           </ClickableCard>

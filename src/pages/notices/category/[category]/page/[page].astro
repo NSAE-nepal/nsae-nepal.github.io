@@ -22,4 +22,8 @@ export const getStaticPaths = (async ({ paginate }) => {
 const { page, categories, activeCategory } = Astro.props;
 ---
 
-<NoticeListing page={page} categories={categories} activeCategory={activeCategory} />
+<NoticeListing
+  page={page}
+  categories={categories}
+  activeCategory={activeCategory}
+/>

@@ -29,17 +29,21 @@ const readingTime = formatReadingTime(data.readingMinutes);
 
 <article
   class={cn(
-    "split-card gap-4 gap-x-6 cursor-pointer group grid grid-cols-1 md:grid-cols-2 p-0 md:p-0 bg-secondary text-secondary-foreground rounded-2xl",
+    "split-card group grid cursor-pointer grid-cols-1 gap-4 gap-x-6 rounded-2xl bg-secondary p-0 text-secondary-foreground md:grid-cols-2 md:p-0",
     className,
   )}
 >
   <div
-    class="col-span-1 flex flex-col min-h-64 gap-2 p-4 md:p-6 order-2 md:order-1"
+    class="order-2 col-span-1 flex min-h-64 flex-col gap-2 p-4 md:order-1 md:p-6"
   >
-    <div class="flex flex-row flex-wrap gap-2 justify-between items-center">
+    <div class="flex flex-row flex-wrap items-center justify-between gap-2">
       {
         categories?.length > 0 ? (
-          <Categories badgeVariant={"outline"} categories={categories} basePath="/blog" />
+          <Categories
+            badgeVariant={"outline"}
+            categories={categories}
+            basePath="/blog"
+          />
         ) : (
           <div />
         )
@@ -47,7 +51,7 @@ const readingTime = formatReadingTime(data.readingMinutes);
 
       {
         publishedAt && (
-          <p class="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs uppercase tracking-wider text-muted-foreground">
+          <p class="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs tracking-wider text-muted-foreground uppercase">
             <NewBadge date={publishedAt} />
             <FormattedDate date={new Date(publishedAt)} />
             {readingTime && <span aria-hidden="true">·</span>}
@@ -56,9 +60,9 @@ const readingTime = formatReadingTime(data.readingMinutes);
         )
       }
     </div>
-    <div class="flex flex-col gap-2 grow">
+    <div class="flex grow flex-col gap-2">
       <a
-        class="split-target font-sans text-2xl md:text-3xl font-medium first-letter:capitalize leading-snug pb-1"
+        class="split-target pb-1 font-sans text-2xl leading-snug font-medium first-letter:capitalize md:text-3xl"
         href={`/blog/${data.slug}`}
       >
         {title}
@@ -72,22 +76,22 @@ const readingTime = formatReadingTime(data.readingMinutes);
       }
     </div>
     <Separator class={"my-4"} />
-    <div class="flex flex-row justify-between items-center">
+    <div class="flex flex-row items-center justify-between">
       <a
-        class="font-mono text-xs uppercase tracking-widest flex flex-row gap-2 items-center hover:text-primary transition-colors"
+        class="flex flex-row items-center gap-2 font-mono text-xs tracking-widest uppercase transition-colors hover:text-primary"
         href={`/blog/${data.slug}`}
       >
-        Read more <IconArrowNarrowRight class="w-4 h-4" />
+        Read more <IconArrowNarrowRight class="h-4 w-4" />
       </a>
       {authors?.length > 0 && <AvatarGroup data={authors} />}
     </div>
   </div>
   {
     heroImage && (
-      <div class="col-span-1 rounded-t-xl md:rounded-l-none md:rounded-r-xl max-h-64 lg:min-h-80 overflow-hidden order-1 md:order-2">
+      <div class="order-1 col-span-1 max-h-64 overflow-hidden rounded-t-xl md:order-2 md:rounded-l-none md:rounded-r-xl lg:min-h-80">
         <Image
           inferSize
-          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out"
+          class="h-full w-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
           src={sanityImage(heroImage, { width: 1200 })}
           widths={[480, 800, 1200]}
           sizes="(min-width: 1024px) 50vw, 100vw"

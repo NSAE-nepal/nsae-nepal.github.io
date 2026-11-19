@@ -36,12 +36,12 @@ const shouldShowBadge = !showAll && totalCount > visibleCategoriesCount;
 const remainingCount = totalCount - visibleCategoriesCount;
 ---
 
-<div class="flex flex-row gap-2 font-mono flex-wrap">
+<div class="flex flex-row flex-wrap gap-2 font-mono">
   {
     categoriesToDisplay.map((item) => {
       const badge = (
         <Badge variant={badgeVariant} size={badgeSize} class="capitalize">
-          <IconPoint class="fill-destructive text-destructive w-4 h-4" />
+          <IconPoint class="h-4 w-4 fill-destructive text-destructive" />
           {item.title}
         </Badge>
       );
@@ -61,7 +61,7 @@ const remainingCount = totalCount - visibleCategoriesCount;
   }
   {
     shouldShowBadge && (
-      <span class="text-xs bg-secondary text-secondary-foreground border rounded-3xl px-2 py-1 capitalize">
+      <span class="rounded-3xl border bg-secondary px-2 py-1 text-xs text-secondary-foreground capitalize">
         +{remainingCount}
       </span>
     )

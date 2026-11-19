@@ -52,11 +52,15 @@ const site = Astro.site!;
       ),
     ]}
   />
-  <article class="py-8 space-y-10" data-pagefind-body data-pagefind-filter="type:Event">
+  <article
+    class="space-y-10 py-8"
+    data-pagefind-body
+    data-pagefind-filter="type:Event"
+  >
     <a
       data-pagefind-ignore
       href="/events/page/1"
-      class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors px-4"
+      class="inline-flex items-center gap-2 px-4 font-mono text-xs tracking-widest text-muted-foreground uppercase transition-colors hover:text-primary"
     >
       <IconArrowLeft class="size-4" /> Back to All Events
     </a>
@@ -65,16 +69,16 @@ const site = Astro.site!;
 
     <hr class="my-8 border-muted" />
 
-    <div class="grid grid-cols-1 lg:grid-cols-[3fr_1.5fr] gap-8 lg:gap-12">
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-[3fr_1.5fr] lg:gap-12">
       <div class="flex flex-col gap-10">
         {showRecap && <EventRecap data={event} />}
 
         <section>
-          <h2 class="font-sans text-2xl font-medium tracking-tight mb-4">
+          <h2 class="mb-4 font-sans text-2xl font-medium tracking-tight">
             About the Event
           </h2>
           <div
-            class="prose prose-lg prose-headings:font-sans prose-p:font-sans dark:prose-invert max-w-none"
+            class="prose prose-lg max-w-none dark:prose-invert prose-headings:font-sans prose-p:font-sans"
           >
             <PortableText portableText={event.body} />
           </div>
@@ -85,7 +89,7 @@ const site = Astro.site!;
 
       <aside
         data-pagefind-ignore
-        class="flex flex-col gap-6 lg:sticky lg:top-24 h-fit"
+        class="flex h-fit flex-col gap-6 lg:sticky lg:top-24"
       >
         <EventLocation location={event.location} />
         <EventContact contactPersons={event.contactPersons} />

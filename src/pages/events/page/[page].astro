@@ -41,24 +41,30 @@ const { page, upcoming } = Astro.props;
 const isFirstPage = page.currentPage === 1;
 const hasAnyEvents = upcoming.length > 0 || page.total > 0;
 
-const pageTitle = isFirstPage ? "Events" : `Past Events, page ${page.currentPage}`;
+const pageTitle = isFirstPage
+  ? "Events"
+  : `Past Events, page ${page.currentPage}`;
 const pageDescription =
   "Explore upcoming and past events organized by our community.";
 ---
 
-<PageLayout title={pageTitle} description={pageDescription} dataPagefindIgnore="all">
+<PageLayout
+  title={pageTitle}
+  description={pageDescription}
+  dataPagefindIgnore="all"
+>
   <header class="flex flex-col items-center justify-center py-16 md:py-24">
-    <div class="anim-header-badge opacity-0 scale-50">
+    <div class="anim-header-badge scale-50 opacity-0">
       <Badge
         variant={"secondary"}
         size={"sm"}
-        class="font-mono uppercase tracking-widest text-xs mb-3 border border-border/50"
+        class="mb-3 border border-border/50 font-mono text-xs tracking-widest uppercase"
       >
         Events Archive
       </Badge>
     </div>
     <h1
-      class="anim-header-title invisible font-sans text-5xl md:text-7xl font-medium tracking-tighter pt-4 text-center max-w-4xl leading-tight"
+      class="anim-header-title invisible max-w-4xl pt-4 text-center font-sans text-5xl leading-tight font-medium tracking-tighter md:text-7xl"
     >
       Explore our latest events
     </h1>
@@ -66,12 +72,12 @@ const pageDescription =
 
   {
     !hasAnyEvents && (
-      <div class="anim-empty-state mb-24 flex flex-col items-center justify-center py-16 text-center border border-dashed border-border/60 rounded-xl bg-secondary/5 opacity-0 scale-95">
-        <div class="p-4 bg-secondary rounded-full mb-4">
+      <div class="anim-empty-state mb-24 flex scale-95 flex-col items-center justify-center rounded-xl border border-dashed border-border/60 bg-secondary/5 py-16 text-center opacity-0">
+        <div class="mb-4 rounded-full bg-secondary p-4">
           <IconMoodEmpty class="size-8 text-muted-foreground" />
         </div>
-        <h3 class="font-sans text-xl font-medium mb-2">No events yet</h3>
-        <p class="text-muted-foreground max-w-xs mx-auto">
+        <h3 class="mb-2 font-sans text-xl font-medium">No events yet</h3>
+        <p class="mx-auto max-w-xs text-muted-foreground">
           Our events will be listed here. Check back later for updates.
         </p>
       </div>
@@ -80,10 +86,14 @@ const pageDescription =
 
   {
     hasAnyEvents && isFirstPage && (
-      <section class="mb-16" data-manual-card-anim aria-labelledby="upcoming-events">
+      <section
+        class="mb-16"
+        data-manual-card-anim
+        aria-labelledby="upcoming-events"
+      >
         <h2
           id="upcoming-events"
-          class="anim-all-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
+          class="anim-all-title mb-8 translate-y-4 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase opacity-0 md:text-2xl"
         >
           Upcoming Events
         </h2>
@@ -93,18 +103,23 @@ const pageDescription =
               <ClickableCard
                 href={`/events/${event.slug}/`}
                 label={event.title}
-                class="anim-event-card group bg-secondary text-secondary-foreground rounded-2xl transition-colors overflow-hidden opacity-0 translate-y-4"
+                class="anim-event-card group translate-y-4 overflow-hidden rounded-2xl bg-secondary text-secondary-foreground opacity-0 transition-colors"
               >
                 <EventCard data={event} />
               </ClickableCard>
             ))}
           </div>
         ) : (
-          <div class="anim-all-title flex items-center gap-4 rounded-2xl border border-dashed border-border/60 p-6 text-muted-foreground opacity-0 translate-y-4">
+          <div class="anim-all-title flex translate-y-4 items-center gap-4 rounded-2xl border border-dashed border-border/60 p-6 text-muted-foreground opacity-0">
             <IconCalendarOff class="size-6 shrink-0" />
             <p>
               No upcoming events are scheduled right now. Follow our{" "}
-              <a href="/notices/page/1" class="underline underline-offset-4 hover:text-primary">notices</a>{" "}
+              <a
+                href="/notices/page/1"
+                class="underline underline-offset-4 hover:text-primary"
+              >
+                notices
+              </a>{" "}
               for announcements.
             </p>
           </div>
@@ -115,28 +130,32 @@ const pageDescription =
 
   {
     page.data.length > 0 && (
-      <section class="mb-24" data-manual-card-anim aria-labelledby="past-events">
+      <section
+        class="mb-24"
+        data-manual-card-anim
+        aria-labelledby="past-events"
+      >
         <h2
           id="past-events"
-          class="anim-all-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
+          class="anim-all-title mb-8 translate-y-4 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase opacity-0 md:text-2xl"
         >
           Past Events
         </h2>
-        <div class="flex flex-col gap-6 mb-12">
+        <div class="mb-12 flex flex-col gap-6">
           {page.data.map((event) => (
             <ClickableCard
               href={`/events/${event.slug}/`}
               label={event.title}
-              class="anim-event-card group bg-secondary text-secondary-foreground rounded-2xl transition-colors overflow-hidden opacity-0 translate-y-4"
+              class="anim-event-card group translate-y-4 overflow-hidden rounded-2xl bg-secondary text-secondary-foreground opacity-0 transition-colors"
             >
               <EventCard data={event} />
             </ClickableCard>
           ))}
         </div>
-        <div class="anim-pagination flex justify-center mt-16 opacity-0">
+        <div class="anim-pagination mt-16 flex justify-center opacity-0">
           <Pagination
             url={page.url}
-            class="font-mono text-sm uppercase tracking-widest"
+            class="font-mono text-sm tracking-widest uppercase"
           />
         </div>
       </section>
@@ -147,74 +166,90 @@ const pageDescription =
 <script>
   import { gsap, SplitText } from "@/utils/gsap-init";
   import { initCardSplitTextAnimation } from "@/utils/animations/cards-split-text-animation";
- 
+
   let ctx: gsap.Context | undefined;
   function initEventsPage() {
     ctx = gsap.context(() => {
-    const mainTl = gsap.timeline({
-      defaults: { ease: "power3.out" },
-    });
+      const mainTl = gsap.timeline({
+        defaults: { ease: "power3.out" },
+      });
 
-    const titleSplit = SplitText.create(".anim-header-title", {
-      type: "lines, words",
-      linesClass: "overflow-hidden",
-    });
+      const titleSplit = SplitText.create(".anim-header-title", {
+        type: "lines, words",
+        linesClass: "overflow-hidden",
+      });
 
-    mainTl
-      .to(".anim-header-badge", {
-        scale: 1,
-        opacity: 1,
-        duration: 0.6,
-        ease: "back.out(1.5)",
-      })
-      .set(".anim-header-title", { autoAlpha: 1 }, "-=0.3")
-      .from(
-        titleSplit.words,
-        {
-          yPercent: 100,
-          opacity: 0,
-          duration: 0.8,
-          stagger: 0.04,
-          ease: "power4.out",
-        },
-        "<"
-      );
-      mainTl.to(".anim-all-title", {
-      y: 0,
-      opacity: 1,
-      duration: 0.5,
-    }, "-=0.6");
-
-    if (document.querySelector(".anim-event-card")) {
       mainTl
-        .to(".anim-event-card", {
+        .to(".anim-header-badge", {
+          scale: 1,
+          opacity: 1,
+          duration: 0.6,
+          ease: "back.out(1.5)",
+        })
+        .set(".anim-header-title", { autoAlpha: 1 }, "-=0.3")
+        .from(
+          titleSplit.words,
+          {
+            yPercent: 100,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.04,
+            ease: "power4.out",
+          },
+          "<",
+        );
+      mainTl.to(
+        ".anim-all-title",
+        {
           y: 0,
           opacity: 1,
           duration: 0.5,
-          stagger: 0.08,
-          ease: "power2.out",
-        }, "-=0.6")
-        .add(() => {
-          initCardSplitTextAnimation({ cardSelector: ".anim-event-card" });
-        }, "<");
-    }
+        },
+        "-=0.6",
+      );
 
-    if (document.querySelector(".anim-pagination")) {
-      mainTl.to(".anim-pagination", {
-        opacity: 1,
-        duration: 0.5,
-      }, "-=0.2");
-    }
+      if (document.querySelector(".anim-event-card")) {
+        mainTl
+          .to(
+            ".anim-event-card",
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.5,
+              stagger: 0.08,
+              ease: "power2.out",
+            },
+            "-=0.6",
+          )
+          .add(() => {
+            initCardSplitTextAnimation({ cardSelector: ".anim-event-card" });
+          }, "<");
+      }
 
-    if (document.querySelector(".anim-empty-state")) {
-      mainTl.to(".anim-empty-state", {
-        scale: 1,
-        opacity: 1,
-        duration: 0.6,
-        ease: "back.out(1.2)",
-      }, "-=0.4");
-    }
-  });
+      if (document.querySelector(".anim-pagination")) {
+        mainTl.to(
+          ".anim-pagination",
+          {
+            opacity: 1,
+            duration: 0.5,
+          },
+          "-=0.2",
+        );
+      }
+
+      if (document.querySelector(".anim-empty-state")) {
+        mainTl.to(
+          ".anim-empty-state",
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 0.6,
+            ease: "back.out(1.2)",
+          },
+          "-=0.4",
+        );
+      }
+    });
   }
   document.addEventListener("astro:page-load", initEventsPage);
   document.addEventListener("astro:before-swap", () => ctx?.revert());

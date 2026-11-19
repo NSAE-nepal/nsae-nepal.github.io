@@ -7,27 +7,29 @@ import PageLayout from "@/layouts/PageLayout.astro";
   description="Page Not Found"
   dataPagefindIgnore="all"
 >
-  <section class="min-h-screen w-full flex flex-col justify-center items-center">
-    <div class="text-center p-8">
+  <section
+    class="flex min-h-screen w-full flex-col items-center justify-center"
+  >
+    <div class="p-8 text-center">
       <h1
-        class="text-8xl sm:text-9xl font-bold text-foreground tracking-tighter"
+        class="text-8xl font-bold tracking-tighter text-foreground sm:text-9xl"
         aria-label="404 Error"
       >
-        <span class="digit inline-block invisible">4</span>
-        <span class="digit inline-block invisible">0</span>
-        <span class="digit inline-block invisible">4</span>
+        <span class="digit invisible inline-block">4</span>
+        <span class="digit invisible inline-block">0</span>
+        <span class="digit invisible inline-block">4</span>
       </h1>
 
       <h2
-        class="fade-in invisible mt-4 text-2xl sm:text-3xl font-semibold text-foreground/80"
+        class="invisible mt-4 text-2xl font-semibold text-foreground/80 fade-in sm:text-3xl"
       >
         Page Not Found
       </h2>
-      <p class="fade-in invisible mt-2 text-foreground/60">
+      <p class="invisible mt-2 text-foreground/60 fade-in">
         Sorry, the page you are looking for seems to have taken a wrong turn.
       </p>
 
-      <div class="fade-in invisible mt-8">
+      <div class="invisible mt-8 fade-in">
         <a
           href="/"
           class="rounded-full bg-primary px-8 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"

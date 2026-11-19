@@ -9,7 +9,11 @@ import FilterChips from "@/components/FilterChips.astro";
 import PageLayout from "@/layouts/PageLayout.astro";
 import type { Minutes } from "@/sanity/lib/queries/minutes";
 
-export type MinutesTypeSummary = { value: string; label: string; count: number };
+export type MinutesTypeSummary = {
+  value: string;
+  label: string;
+  count: number;
+};
 
 /**
  * Minutes listing, shared by /minutes/page/[page] and
@@ -31,7 +35,9 @@ const yearOf = (minute?: Minutes) =>
       })
     : undefined;
 
-const pageTitle = activeType ? `${activeType.label} Meeting Minutes` : "Meeting Minutes";
+const pageTitle = activeType
+  ? `${activeType.label} Meeting Minutes`
+  : "Meeting Minutes";
 const pageDescription =
   "Browse the minutes from our General, Executive, and Committee meetings.";
 ---
@@ -41,23 +47,25 @@ const pageDescription =
   description={pageDescription}
   dataPagefindIgnore="all"
 >
-  <header class="flex flex-col items-center justify-center py-16 md:py-24 text-center">
-    <div class="anim-header-badge opacity-0 scale-50">
+  <header
+    class="flex flex-col items-center justify-center py-16 text-center md:py-24"
+  >
+    <div class="anim-header-badge scale-50 opacity-0">
       <Badge
         variant={"secondary"}
         size={"sm"}
-        class="font-mono uppercase tracking-widest text-xs mb-3 border border-border/50"
+        class="mb-3 border border-border/50 font-mono text-xs tracking-widest uppercase"
       >
         Transparency
       </Badge>
     </div>
     <h1
-      class="anim-header-title invisible font-sans text-5xl md:text-7xl font-medium tracking-tighter pt-4 max-w-4xl leading-tight"
+      class="anim-header-title invisible max-w-4xl pt-4 font-sans text-5xl leading-tight font-medium tracking-tighter md:text-7xl"
     >
       Official Meeting Records
     </h1>
     <p
-      class="anim-header-desc mt-6 max-w-2xl font-sans text-lg text-muted-foreground opacity-0 translate-y-4"
+      class="anim-header-desc mt-6 max-w-2xl translate-y-4 font-sans text-lg text-muted-foreground opacity-0"
     >
       Browse the minutes from our General, Executive, and Committee meetings.
     </p>
@@ -65,7 +73,7 @@ const pageDescription =
 
   <section class="mb-12" data-manual-card-anim>
     <h2
-      class="anim-section-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
+      class="anim-section-title mb-8 translate-y-4 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase opacity-0 md:text-2xl"
     >
       {activeType ? activeType.label : "All Minutes"}
     </h2>
@@ -86,12 +94,12 @@ const pageDescription =
             {page.data.map((minute: Minutes, index) => (
               <>
                 {yearOf(minute) !== yearOf(page.data[index - 1]) && (
-                  <h3 class="anim-divider col-span-2 mb-4 mt-2 font-mono text-sm uppercase tracking-widest text-muted-foreground opacity-0 translate-y-4">
+                  <h3 class="anim-divider col-span-2 mt-2 mb-4 translate-y-4 font-mono text-sm tracking-widest text-muted-foreground uppercase opacity-0">
                     {yearOf(minute)}
                   </h3>
                 )}
                 <ClickableCard
-                  class="anim-minutes-card group relative col-span-2 hover:bg-secondary/60 transition-colors opacity-0 translate-y-4"
+                  class="anim-minutes-card group relative col-span-2 translate-y-4 opacity-0 transition-colors hover:bg-secondary/60"
                   href={`/minutes/${minute.slug}/`}
                   label={minute.title}
                 >
@@ -99,20 +107,20 @@ const pageDescription =
                 </ClickableCard>
                 {index < page.data.length - 1 &&
                   yearOf(minute) === yearOf(page.data[index + 1]) && (
-                  <div class="anim-divider col-span-2 my-6 border-b-2 border-dashed border-secondary-foreground opacity-0 translate-y-4" />
-                )}
+                    <div class="anim-divider col-span-2 my-6 translate-y-4 border-b-2 border-dashed border-secondary-foreground opacity-0" />
+                  )}
               </>
             ))}
           </div>
-          <div class="anim-pagination flex justify-center mt-16 opacity-0">
+          <div class="anim-pagination mt-16 flex justify-center opacity-0">
             <Pagination
               url={page.url}
-              class="font-mono text-sm uppercase tracking-widest"
+              class="font-mono text-sm tracking-widest uppercase"
             />
           </div>
         </>
       ) : (
-        <div class="anim-empty-state opacity-0 scale-95">
+        <div class="anim-empty-state scale-95 opacity-0">
           <Empty
             title="No minutes available"
             description="There are no minutes available at the moment. Check back later for

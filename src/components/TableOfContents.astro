@@ -32,8 +32,8 @@ const headings = (blocks as PortableTextBlock[])
 {
   headings.length > 0 && (
     <aside>
-      <div class="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar]:w-[6px] dark:[&::-webkit-scrollbar-thumb]:bg-neutral-600">
-        <h2 class="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
+      <div class="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-600">
+        <h2 class="mb-4 text-xs font-semibold tracking-[0.18em] text-neutral-500 uppercase dark:text-neutral-400">
           On this page
         </h2>
 
@@ -43,7 +43,7 @@ const headings = (blocks as PortableTextBlock[])
               <li class="p-0">
                 <a
                   href={`#${heading.id}`}
-                  class="toc-link relative block -ml-px py-1.5 text-sm leading-[1.35] text-neutral-500 no-underline transition-all duration-150 ease-in-out before:absolute before:-left-px before:inset-y-0 before:w-[2px] before:bg-transparent before:transition-colors before:duration-150 before:ease-in-out hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white [&.active]:font-semibold [&.active]:text-primary [&.active]:before:bg-primary dark:[&.active]:text-primary"
+                  class="toc-link relative -ml-px block py-1.5 text-sm leading-[1.35] text-neutral-500 no-underline transition-all duration-150 ease-in-out before:absolute before:inset-y-0 before:-left-px before:w-[2px] before:bg-transparent before:transition-colors before:duration-150 before:ease-in-out hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white [&.active]:font-semibold [&.active]:text-primary [&.active]:before:bg-primary dark:[&.active]:text-primary"
                   style={`padding-left:${0.75 + (heading.level - 1) * 0.9}rem`}
                 >
                   {heading.text}

@@ -10,7 +10,11 @@ import ResourceAttachments from "@/components/pages/resources/ResourceAttachment
 import JsonLd from "@/components/seo/JsonLd.astro";
 import TableOfContents from "@/components/TableOfContents.astro";
 import ArticleLayout from "@/layouts/ArticleLayout.astro";
-import { resourcePath, resourcesPath, resourceTypeLabel } from "@/lib/resources";
+import {
+  resourcePath,
+  resourcesPath,
+  resourceTypeLabel,
+} from "@/lib/resources";
 import { breadcrumbLd, resourceLd } from "@/lib/structured-data";
 import {
   getResourceDetails,
@@ -34,14 +38,16 @@ const typeLabel = resourceTypeLabel(resource.resourceType);
 const body = resource.body ?? [];
 // Same rule of thumb as a long blog post: a TOC once there's structure to it.
 const headingCount = body.filter(
-  (block) => block._type === "block" && /^h[1-6]$/.test(String(block.style ?? "")),
+  (block) =>
+    block._type === "block" && /^h[1-6]$/.test(String(block.style ?? "")),
 ).length;
 ---
 
 <ArticleLayout
   title={resource.title}
   subtitle={resource.description}
-  description={resource.description ?? `${typeLabel} from the NSAE resource library.`}
+  description={resource.description ??
+    `${typeLabel} from the NSAE resource library.`}
   image={`/og/resources/${resource.slug}.png`}
   backHref={resourcesPath()}
   backLabel="Back to All Resources"
@@ -72,7 +78,9 @@ const headingCount = body.filter(
         {resource.publisher ? (
           <>
             Published by{" "}
-            <span class="font-medium text-foreground">{resource.publisher}</span>
+            <span class="font-medium text-foreground">
+              {resource.publisher}
+            </span>
             {resource.year && <>, {resource.year}</>}
           </>
         ) : (
@@ -82,16 +90,24 @@ const headingCount = body.filter(
     )
   }
 
-  <div slot="meta-start" class="flex flex-wrap items-center gap-2" data-pagefind-ignore>
+  <div
+    slot="meta-start"
+    class="flex flex-wrap items-center gap-2"
+    data-pagefind-ignore
+  >
     <a href={resourcesPath(resource.resourceType)}>
       <Badge size="xs" class="tracking-wide">{typeLabel}</Badge>
     </a>
-    {resource.categories.length > 0 && <Categories categories={resource.categories} />}
+    {
+      resource.categories.length > 0 && (
+        <Categories categories={resource.categories} />
+      )
+    }
   </div>
 
   <span
     slot="meta-end"
-    class="font-mono text-xs text-muted-foreground uppercase tracking-wider border-l border-border/50 pl-6"
+    class="border-l border-border/50 pl-6 font-mono text-xs tracking-wider text-muted-foreground uppercase"
     data-pagefind-meta={`date:${resource.publishedAt}`}
     data-pagefind-ignore
   >
@@ -100,7 +116,11 @@ const headingCount = body.filter(
     <span>{resourceFormat(resource)}</span>
   </span>
 
-  <ResourceAttachments slot="hero" attachments={resource.attachments} class="mx-auto max-w-3xl" />
+  <ResourceAttachments
+    slot="hero"
+    attachments={resource.attachments}
+    class="mx-auto max-w-3xl"
+  />
 
   {body.length > 0 && <PortableText portableText={body} />}
   {headingCount >= 3 && <TableOfContents slot="toc" blocks={body} />}
@@ -112,7 +132,7 @@ const headingCount = body.filter(
           <ClickableCard
             href={resourcePath(item)}
             label={item.title}
-            class="group relative rounded-xl border border-border/60 hover:bg-secondary/60 transition-colors"
+            class="group relative rounded-xl border border-border/60 transition-colors hover:bg-secondary/60"
           >
             <ResourceCard data={item} />
           </ClickableCard>

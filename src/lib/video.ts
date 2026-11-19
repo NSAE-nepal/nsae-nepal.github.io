@@ -49,7 +49,9 @@ function youtube(url: URL, host: string): VideoEmbed | null {
 	if (!id || !YOUTUBE_ID.test(id)) return null;
 
 	const params = new URLSearchParams({ autoplay: "1", rel: "0" });
-	const start = parseStart(url.searchParams.get("t") ?? url.searchParams.get("start"));
+	const start = parseStart(
+		url.searchParams.get("t") ?? url.searchParams.get("start"),
+	);
 	if (start > 0) params.set("start", String(start));
 	return {
 		provider: "youtube",
@@ -88,7 +90,11 @@ function vimeo(url: URL, host: string): VideoEmbed | null {
 function loom(url: URL, host: string): VideoEmbed | null {
 	if (host !== "loom.com") return null;
 	const [, kind, id] = url.pathname.split("/");
-	if (!["share", "embed"].includes(kind ?? "") || !id || !/^[\da-f]{32}$/i.test(id)) {
+	if (
+		!["share", "embed"].includes(kind ?? "") ||
+		!id ||
+		!/^[\da-f]{32}$/i.test(id)
+	) {
 		return null;
 	}
 	return {
@@ -99,7 +105,9 @@ function loom(url: URL, host: string): VideoEmbed | null {
 	};
 }
 
-export function parseVideoUrl(value: string | undefined | null): VideoEmbed | null {
+export function parseVideoUrl(
+	value: string | undefined | null,
+): VideoEmbed | null {
 	if (!value) return null;
 	let url: URL;
 	try {

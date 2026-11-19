@@ -8,7 +8,11 @@ import Empty from "@/components/astro/Empty.astro";
 import Pagination from "@/components/astro/Pagination.astro";
 import FilterChips from "@/components/FilterChips.astro";
 import PageLayout from "@/layouts/PageLayout.astro";
-import { type ResourceTypeSummary, resourcePath, resourcesPath } from "@/lib/resources";
+import {
+  type ResourceTypeSummary,
+  resourcePath,
+  resourcesPath,
+} from "@/lib/resources";
 import type { Resource } from "@/sanity/lib/queries/resources";
 
 /**
@@ -33,33 +37,43 @@ const pageDescription =
   "Standards, manuals, guidelines, reports, templates and tools for agricultural engineers, free to download.";
 ---
 
-<PageLayout title={pageTitle} description={pageDescription} dataPagefindIgnore="all">
-  <header class="flex flex-col items-center justify-center py-16 md:py-24 text-center">
-    <div class="anim-header-badge opacity-0 scale-50">
+<PageLayout
+  title={pageTitle}
+  description={pageDescription}
+  dataPagefindIgnore="all"
+>
+  <header
+    class="flex flex-col items-center justify-center py-16 text-center md:py-24"
+  >
+    <div class="anim-header-badge scale-50 opacity-0">
       <Badge
         variant="secondary"
         size="sm"
-        class="font-mono uppercase tracking-widest text-xs mb-3 border border-border/50"
+        class="mb-3 border border-border/50 font-mono text-xs tracking-widest uppercase"
       >
         Resource library
       </Badge>
     </div>
     <h1
-      class="anim-header-title invisible font-sans text-5xl md:text-7xl font-medium tracking-tighter pt-4 max-w-4xl leading-tight"
+      class="anim-header-title invisible max-w-4xl pt-4 font-sans text-5xl leading-tight font-medium tracking-tighter md:text-7xl"
     >
       Tools of the trade
     </h1>
     <p
-      class="anim-header-desc mt-6 max-w-2xl font-sans text-lg text-muted-foreground opacity-0 translate-y-4"
+      class="anim-header-desc mt-6 max-w-2xl translate-y-4 font-sans text-lg text-muted-foreground opacity-0"
     >
       {pageDescription}
     </p>
   </header>
 
-  <section class="mb-16" aria-labelledby="resources-heading" data-resource-listing>
+  <section
+    class="mb-16"
+    aria-labelledby="resources-heading"
+    data-resource-listing
+  >
     <h2
       id="resources-heading"
-      class="anim-section-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
+      class="anim-section-title mb-8 translate-y-4 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase opacity-0 md:text-2xl"
     >
       {activeType ? activeType.label : "All resources"}
     </h2>
@@ -83,7 +97,7 @@ const pageDescription =
         <>
           <ul class="grid gap-6 md:grid-cols-2" role="list">
             {page.data.map((resource) => (
-              <li class="anim-card opacity-0 translate-y-4">
+              <li class="anim-card translate-y-4 opacity-0">
                 <ClickableCard
                   href={resourcePath(resource)}
                   label={resource.title}
@@ -94,12 +108,15 @@ const pageDescription =
               </li>
             ))}
           </ul>
-          <div class="anim-pagination flex justify-center mt-16 opacity-0">
-            <Pagination url={page.url} class="font-mono text-sm uppercase tracking-widest" />
+          <div class="anim-pagination mt-16 flex justify-center opacity-0">
+            <Pagination
+              url={page.url}
+              class="font-mono text-sm tracking-widest uppercase"
+            />
           </div>
         </>
       ) : (
-        <div class="anim-empty-state opacity-0 scale-95">
+        <div class="anim-empty-state scale-95 opacity-0">
           <Empty
             title="The library is being stocked"
             description="We're collecting standards, manuals and guidelines for members. Please check back soon."
@@ -128,16 +145,43 @@ const pageDescription =
 
       const tl = gsap
         .timeline({ defaults: { ease: "power3.out" } })
-        .to(".anim-header-badge", { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.5)" })
+        .to(".anim-header-badge", {
+          scale: 1,
+          opacity: 1,
+          duration: 0.6,
+          ease: "back.out(1.5)",
+        })
         .set(".anim-header-title", { autoAlpha: 1 }, "-=0.3")
-        .from(titleSplit.words, { yPercent: 100, opacity: 0, duration: 0.8, stagger: 0.04, ease: "power4.out" }, "<")
+        .from(
+          titleSplit.words,
+          {
+            yPercent: 100,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.04,
+            ease: "power4.out",
+          },
+          "<",
+        )
         .to(".anim-header-desc", { y: 0, opacity: 1, duration: 0.6 }, "-=0.4")
-        .to(".anim-section-title", { y: 0, opacity: 1, duration: 0.5 }, "-=0.4");
+        .to(
+          ".anim-section-title",
+          { y: 0, opacity: 1, duration: 0.5 },
+          "-=0.4",
+        );
 
       if (document.querySelector(".anim-card")) {
-        tl.to(".anim-card", { y: 0, opacity: 1, duration: 0.6, stagger: 0.08 }, "-=0.2");
+        tl.to(
+          ".anim-card",
+          { y: 0, opacity: 1, duration: 0.6, stagger: 0.08 },
+          "-=0.2",
+        );
       } else {
-        tl.to(".anim-empty-state", { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.2)" }, "-=0.2");
+        tl.to(
+          ".anim-empty-state",
+          { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.2)" },
+          "-=0.2",
+        );
       }
 
       if (document.querySelector(".anim-pagination")) {

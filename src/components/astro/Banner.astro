@@ -48,41 +48,41 @@ const subtleVignette = `radial-gradient(
 
 <section class="pt-4">
   <div
-    class="relative min-h-[400px] lg:min-h-[500px] bg-cover bg-center text-white flex items-center rounded-xl overflow-hidden shadow-sm"
+    class="relative flex min-h-[400px] items-center overflow-hidden rounded-xl bg-cover bg-center text-white shadow-sm lg:min-h-[500px]"
     style={`background-image: ${directionalScrim}, ${subtleVignette}, url(${optimizedImage.src})`}
   >
     <div class:list={contentBoxClasses}>
       {
         banner.countdownTarget && (
           <div
-            class="countdown flex items-start gap-x-4 md:gap-x-6 font-mono text-3xl md:text-5xl font-medium tracking-tighter my-4 border-b border-white/20 pb-4"
+            class="countdown my-4 flex items-start gap-x-4 border-b border-white/20 pb-4 font-mono text-3xl font-medium tracking-tighter md:gap-x-6 md:text-5xl"
             data-target-date={banner.countdownTarget}
           />
         )
       }
       {
         banner.subtitle && (
-          <p class="font-mono text-xs uppercase tracking-widest text-white/80 mb-3">
+          <p class="mb-3 font-mono text-xs tracking-widest text-white/80 uppercase">
             {banner.subtitle}
           </p>
         )
       }
 
       <h2
-        class="font-sans text-4xl md:text-6xl lg:text-7xl font-medium uppercase tracking-tighter leading-[0.9] my-2"
+        class="my-2 font-sans text-4xl leading-[0.9] font-medium tracking-tighter uppercase md:text-6xl lg:text-7xl"
       >
         {banner.title}
       </h2>
       {
         banner.description && (
-          <p class="font-sans text-lg text-white/90 mb-8 max-w-prose leading-relaxed">
+          <p class="mb-8 max-w-prose font-sans text-lg leading-relaxed text-white/90">
             {banner.description}
           </p>
         )
       }
       <Button
         href={banner.buttonLink}
-        class="rounded-full font-sans font-medium h-12 text-base shadow-sm hover:shadow-md transition-all px-5!"
+        class="h-12 rounded-full px-5! font-sans text-base font-medium shadow-sm transition-all hover:shadow-md"
       >
         {banner.buttonText}
         <IconArrowUpRight class={"ml-2 size-5"} />

@@ -66,12 +66,10 @@ export default defineConfig({
 						"/pagefind": {
 							target: "http://localhost:1414",
 							changeOrigin: true,
-							configure: (proxy, options) => {
-								proxy.on("error", (err, req, res) => {
-									console.log("proxy error", err);
-								});
-								proxy.on("proxyReq", (proxyReq, req, res) => {
-									console.log("Proxying:", req.method, req.url);
+							// Pagefind's dev server (`bun run dev:search`) may not be running.
+							configure: (proxy) => {
+								proxy.on("error", (err) => {
+									console.warn("Pagefind proxy error:", err.message);
 								});
 							},
 						},

@@ -25,7 +25,8 @@ const now = new Date();
 const upcoming = ((await getEvents()) || [])
   .filter((event) => !getEventStatus(event, now).hasEnded)
   .sort(
-    (a, b) => new Date(a.eventStart).getTime() - new Date(b.eventStart).getTime(),
+    (a, b) =>
+      new Date(a.eventStart).getTime() - new Date(b.eventStart).getTime(),
   )
   .slice(0, limit);
 
@@ -54,18 +55,18 @@ const locationLabel = (event: (typeof upcoming)[number]) => {
       class="upcoming-events-section pt-24 md:pt-32"
       aria-labelledby="upcoming-events-heading"
     >
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
-        <div class="anim-events-header space-y-4 opacity-0 translate-y-8">
+      <div class="mb-12 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
+        <div class="anim-events-header translate-y-8 space-y-4 opacity-0">
           <Badge
             variant="secondary"
             size="sm"
-            class="font-mono text-xs uppercase tracking-widest"
+            class="font-mono text-xs tracking-widest uppercase"
           >
             Events
           </Badge>
           <h2
             id="upcoming-events-heading"
-            class="font-sans text-4xl md:text-5xl font-medium tracking-tighter"
+            class="font-sans text-4xl font-medium tracking-tighter md:text-5xl"
           >
             Coming up next
           </h2>
@@ -73,7 +74,7 @@ const locationLabel = (event: (typeof upcoming)[number]) => {
 
         <a
           href="/events/page/1"
-          class="anim-events-header group flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors opacity-0 translate-y-8"
+          class="anim-events-header group flex translate-y-8 items-center gap-2 font-mono text-xs tracking-widest text-muted-foreground uppercase opacity-0 transition-colors hover:text-primary"
         >
           View all events
           <IconArrowRight class="size-4 transition-transform group-hover:translate-x-1" />
@@ -90,11 +91,11 @@ const locationLabel = (event: (typeof upcoming)[number]) => {
           const multiDay = formatDate(end) !== formatDate(start);
 
           return (
-            <li class="anim-event-card opacity-0 translate-y-12">
+            <li class="anim-event-card translate-y-12 opacity-0">
               <ClickableCard
                 href={`/events/${event.slug}/`}
                 label={event.title}
-                class="h-full rounded-2xl border border-border/60 bg-secondary/40 p-5 md:p-6 transition-colors hover:bg-secondary"
+                class="h-full rounded-2xl border border-border/60 bg-secondary/40 p-5 transition-colors hover:bg-secondary md:p-6"
               >
                 <article class="flex h-full flex-col gap-5">
                   <div class="flex items-start gap-4">
@@ -102,10 +103,10 @@ const locationLabel = (event: (typeof upcoming)[number]) => {
                       class="flex w-16 shrink-0 flex-col items-center rounded-xl border border-border/60 bg-background py-2"
                       aria-hidden="true"
                     >
-                      <span class="font-mono text-xs uppercase tracking-widest text-primary">
+                      <span class="font-mono text-xs tracking-widest text-primary uppercase">
                         {part(start, { month: "short" })}
                       </span>
-                      <span class="font-sans text-3xl font-medium leading-none tracking-tight">
+                      <span class="font-sans text-3xl leading-none font-medium tracking-tight">
                         {part(start, { day: "numeric" })}
                       </span>
                     </div>
@@ -113,7 +114,7 @@ const locationLabel = (event: (typeof upcoming)[number]) => {
                       <div class="flex flex-wrap items-center gap-2">
                         <Badge
                           variant="outline"
-                          class="font-mono text-[10px] uppercase tracking-widest border-border/50 bg-background/50"
+                          class="border-border/50 bg-background/50 font-mono text-[10px] tracking-widest uppercase"
                         >
                           {formatEventType(event.eventType)}
                         </Badge>
@@ -122,10 +123,10 @@ const locationLabel = (event: (typeof upcoming)[number]) => {
                           data-countdown
                           data-start={event.eventStart}
                           data-end={end.toISOString()}
-                          class="font-mono text-xs uppercase tracking-wider text-primary"
+                          class="font-mono text-xs tracking-wider text-primary uppercase"
                         />
                       </div>
-                      <h3 class="font-sans text-xl font-medium leading-snug line-clamp-3">
+                      <h3 class="line-clamp-3 font-sans text-xl leading-snug font-medium">
                         {event.title}
                       </h3>
                     </div>
@@ -136,16 +137,24 @@ const locationLabel = (event: (typeof upcoming)[number]) => {
                       <dt class="sr-only">When</dt>
                       <dd>
                         {formatDate(start)}
-                        {multiDay ? ` – ${formatDate(end)}` : `, ${formatTime(start)}`}
+                        {multiDay
+                          ? ` – ${formatDate(end)}`
+                          : `, ${formatTime(start)}`}
                       </dd>
                     </div>
                     {where && (
                       <div class="flex items-center gap-1.5">
                         <dt class="sr-only">Where</dt>
                         {isOnline ? (
-                          <IconVideo class="size-3.5 shrink-0" aria-hidden="true" />
+                          <IconVideo
+                            class="size-3.5 shrink-0"
+                            aria-hidden="true"
+                          />
                         ) : (
-                          <IconMapPin class="size-3.5 shrink-0" aria-hidden="true" />
+                          <IconMapPin
+                            class="size-3.5 shrink-0"
+                            aria-hidden="true"
+                          />
                         )}
                         <dd class="truncate">{where}</dd>
                       </div>
@@ -223,7 +232,10 @@ const locationLabel = (event: (typeof upcoming)[number]) => {
     ctx = gsap.context(() => {
       gsap
         .timeline({
-          scrollTrigger: { trigger: ".upcoming-events-section", start: "top 75%" },
+          scrollTrigger: {
+            trigger: ".upcoming-events-section",
+            start: "top 75%",
+          },
         })
         .to(".anim-events-header", {
           y: 0,
@@ -234,7 +246,13 @@ const locationLabel = (event: (typeof upcoming)[number]) => {
         })
         .to(
           ".anim-event-card",
-          { y: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: "power2.out" },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: "power2.out",
+          },
           "-=0.4",
         );
     });

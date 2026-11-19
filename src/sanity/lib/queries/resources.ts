@@ -88,7 +88,9 @@ export async function getResources(): Promise<Resource[]> {
 	return (data ?? []).map(normalize).filter(isUsable);
 }
 
-export async function getResourceDetails(slug: string): Promise<ResourceDetails> {
+export async function getResourceDetails(
+	slug: string,
+): Promise<ResourceDetails> {
 	const { data } = await loadQuery<ResourceDetails>({
 		query: `*[
       _type == "resource" &&
@@ -118,7 +120,9 @@ export const attachmentTitle = (item: ResourceAttachment) =>
 /** "PDF · 2.1 MB" for a file, the website ("fao.org") for a link. */
 export function attachmentMeta(item: ResourceAttachment) {
 	if (item._type === "resourceLink") return hostname(item.url);
-	return [item.extension?.toUpperCase(), formatFileSize(item.size)].filter(Boolean).join(" · ");
+	return [item.extension?.toUpperCase(), formatFileSize(item.size)]
+		.filter(Boolean)
+		.join(" · ");
 }
 
 /**
@@ -129,25 +133,35 @@ export function resourceFormat(resource: Pick<Resource, "attachments">) {
 	const { attachments } = resource;
 	if (attachments.length === 1) {
 		const [only] = attachments;
-		return only._type === "resourceFile" ? attachmentMeta(only) : "External link";
+		return only._type === "resourceFile"
+			? attachmentMeta(only)
+			: "External link";
 	}
-	const files = attachments.filter((item) => item._type === "resourceFile").length;
+	const files = attachments.filter(
+		(item) => item._type === "resourceFile",
+	).length;
 	const links = attachments.length - files;
-	const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
+	const plural = (n: number, word: string) =>
+		`${n} ${word}${n === 1 ? "" : "s"}`;
 	return [files && plural(files, "file"), links && plural(links, "link")]
 		.filter(Boolean)
 		.join(" · ");
 }
 
 /** Up to `count` other resources sharing the most topics, then the same type. */
-export function relatedResources(resource: Resource, all: Resource[], count = 3) {
+export function relatedResources(
+	resource: Resource,
+	all: Resource[],
+	count = 3,
+) {
 	const topics = new Set(resource.categories.map((category) => category._id));
 	return all
 		.filter((other) => other._id !== resource._id)
 		.map((other) => ({
 			other,
 			score:
-				other.categories.filter((category) => topics.has(category._id)).length * 2 +
+				other.categories.filter((category) => topics.has(category._id)).length *
+					2 +
 				Number(other.resourceType === resource.resourceType),
 		}))
 		.filter(({ score }) => score > 0)

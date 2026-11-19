@@ -41,23 +41,25 @@ const pageDescription =
   description={pageDescription}
   dataPagefindIgnore="all"
 >
-  <header class="flex flex-col items-center justify-center py-16 md:py-24 text-center">
-    <div class="anim-header-badge opacity-0 scale-50">
+  <header
+    class="flex flex-col items-center justify-center py-16 text-center md:py-24"
+  >
+    <div class="anim-header-badge scale-50 opacity-0">
       <Badge
         variant={"secondary"}
         size={"sm"}
-        class="font-mono uppercase tracking-widest text-xs mb-3 border border-border/50"
+        class="mb-3 border border-border/50 font-mono text-xs tracking-widest uppercase"
       >
         Opportunities
       </Badge>
     </div>
     <h1
-      class="anim-header-title invisible font-sans text-5xl md:text-7xl font-medium tracking-tighter pt-4 max-w-4xl leading-tight"
+      class="anim-header-title invisible max-w-4xl pt-4 font-sans text-5xl leading-tight font-medium tracking-tighter md:text-7xl"
     >
       Your Next Chapter Starts Here
     </h1>
     <p
-      class="anim-header-desc mt-6 max-w-2xl font-sans text-lg text-muted-foreground opacity-0 translate-y-4"
+      class="anim-header-desc mt-6 max-w-2xl translate-y-4 font-sans text-lg text-muted-foreground opacity-0"
     >
       {pageDescription}
     </p>
@@ -65,7 +67,7 @@ const pageDescription =
 
   <section class="mb-12" data-manual-card-anim data-opportunities-listing>
     <h2
-      class="anim-section-title font-sans text-xl md:text-2xl font-medium mb-8 uppercase tracking-wider border-b border-border/50 pb-2 opacity-0 translate-y-4"
+      class="anim-section-title mb-8 translate-y-4 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase opacity-0 md:text-2xl"
     >
       {activeType ? activeType.label : "All opportunities"}
     </h2>
@@ -90,27 +92,27 @@ const pageDescription =
             {page.data.map((vacancy, index) => (
               <>
                 <ClickableCard
-                  class="anim-card group relative col-span-2 hover:bg-secondary/60 transition-colors opacity-0 translate-y-4"
+                  class="anim-card group relative col-span-2 translate-y-4 opacity-0 transition-colors hover:bg-secondary/60"
                   href={opportunityPath(vacancy)}
                   label={vacancy.title}
                 >
                   <CareersCard data={vacancy} />
                 </ClickableCard>
                 {index < page.data.length - 1 && (
-                  <div class="anim-divider col-span-2 my-6 border-b-2 border-dashed border-secondary-foreground opacity-0 translate-y-4" />
+                  <div class="anim-divider col-span-2 my-6 translate-y-4 border-b-2 border-dashed border-secondary-foreground opacity-0" />
                 )}
               </>
             ))}
           </div>
-          <div class="anim-pagination flex justify-center mt-16 opacity-0">
+          <div class="anim-pagination mt-16 flex justify-center opacity-0">
             <Pagination
               url={page.url}
-              class="font-mono text-sm uppercase tracking-widest"
+              class="font-mono text-sm tracking-widest uppercase"
             />
           </div>
         </>
       ) : (
-        <div class="anim-empty-state opacity-0 scale-95">
+        <div class="anim-empty-state scale-95 opacity-0">
           <Empty
             title="No opportunities right now"
             description="We don't have any open jobs, scholarships or calls right now. Please check back later."
@@ -138,20 +140,49 @@ const pageDescription =
 
       const tl = gsap
         .timeline({ defaults: { ease: "power3.out" } })
-        .to(".anim-header-badge", { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.5)" })
+        .to(".anim-header-badge", {
+          scale: 1,
+          opacity: 1,
+          duration: 0.6,
+          ease: "back.out(1.5)",
+        })
         .set(".anim-header-title", { autoAlpha: 1 }, "-=0.3")
-        .from(titleSplit.words, { yPercent: 100, opacity: 0, duration: 0.8, stagger: 0.04, ease: "power4.out" }, "<")
+        .from(
+          titleSplit.words,
+          {
+            yPercent: 100,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.04,
+            ease: "power4.out",
+          },
+          "<",
+        )
         .to(".anim-header-desc", { y: 0, opacity: 1, duration: 0.6 }, "-=0.4")
-        .to(".anim-section-title", { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" }, "-=0.4");
+        .to(
+          ".anim-section-title",
+          { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
+          "-=0.4",
+        );
 
       if (document.querySelector(".anim-card")) {
         tl.to(
           ".anim-card, .anim-divider",
-          { y: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: "power2.out" },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.5,
+            stagger: 0.08,
+            ease: "power2.out",
+          },
           "-=0.3",
         ).add(() => initCardSplitTextAnimation(), "<");
       } else {
-        tl.to(".anim-empty-state", { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.2)" }, "-=0.2");
+        tl.to(
+          ".anim-empty-state",
+          { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.2)" },
+          "-=0.2",
+        );
       }
 
       if (document.querySelector(".anim-pagination")) {

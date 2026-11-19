@@ -4,7 +4,8 @@ import type {
 	LessonSummary,
 } from "@/sanity/lib/queries/courses";
 
-export const coursePath = (course: Pick<Course, "slug">) => `/courses/${course.slug}/`;
+export const coursePath = (course: Pick<Course, "slug">) =>
+	`/courses/${course.slug}/`;
 
 export const lessonPath = (
 	course: Pick<Course, "slug">,
@@ -22,7 +23,8 @@ export const courseLessons = (course: Pick<Course, "modules">) =>
 	course.modules.flatMap((module) => module.lessons);
 
 /** Lessons count as at least a minute so totals never read "0 min". */
-const lessonMinutes = (lesson: LessonSummary) => Math.max(1, lesson.minutes ?? 0);
+const lessonMinutes = (lesson: LessonSummary) =>
+	Math.max(1, lesson.minutes ?? 0);
 
 export function courseStats(course: Pick<Course, "modules">) {
 	const lessons = courseLessons(course);
@@ -30,7 +32,10 @@ export function courseStats(course: Pick<Course, "modules">) {
 		lessonCount: lessons.length,
 		moduleCount: course.modules.length,
 		quizCount: lessons.filter((lesson) => lesson.hasQuiz).length,
-		totalMinutes: lessons.reduce((sum, lesson) => sum + lessonMinutes(lesson), 0),
+		totalMinutes: lessons.reduce(
+			(sum, lesson) => sum + lessonMinutes(lesson),
+			0,
+		),
 	};
 }
 
@@ -44,14 +49,18 @@ export function formatDuration(minutes: number) {
 }
 
 /** Previous/next lesson around `lessonId`, crossing module boundaries. */
-export function lessonNeighbours(course: Pick<Course, "modules">, lessonId: string) {
+export function lessonNeighbours(
+	course: Pick<Course, "modules">,
+	lessonId: string,
+) {
 	const lessons = courseLessons(course);
 	const index = lessons.findIndex((lesson) => lesson._id === lessonId);
 	return {
 		index,
 		total: lessons.length,
 		previous: index > 0 ? lessons[index - 1] : undefined,
-		next: index >= 0 && index < lessons.length - 1 ? lessons[index + 1] : undefined,
+		next:
+			index >= 0 && index < lessons.length - 1 ? lessons[index + 1] : undefined,
 	};
 }
 

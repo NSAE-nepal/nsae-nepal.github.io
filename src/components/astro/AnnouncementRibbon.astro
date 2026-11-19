@@ -39,7 +39,9 @@ const hashContent = (str: string) => {
   return Math.abs(hash).toString(36);
 };
 
-const contentSignature = items.map((a) => `${a.label ?? ""}-${a.message}`).join("|");
+const contentSignature = items
+  .map((a) => `${a.label ?? ""}-${a.message}`)
+  .join("|");
 const storageKey = `announcement-dismissed-${id}-${hashContent(contentSignature)}`;
 ---
 
@@ -53,44 +55,35 @@ const storageKey = `announcement-dismissed-${id}-${hashContent(contentSignature)
       data-storage-key={storageKey}
       data-rotation-interval={rotationInterval}
       class:list={[
-        "announcement-ribbon text-sm bg-foreground rounded-md text-background px-4 py-2 md:py-1.5 flex items-center gap-2 mb-4 transition-opacity duration-300",
-        { "font-bold": style === "prominent", "opacity-70": style === "subtle" },
+        "announcement-ribbon mb-4 flex items-center gap-2 rounded-md bg-foreground px-4 py-2 text-sm text-background transition-opacity duration-300 md:py-1.5",
+        {
+          "font-bold": style === "prominent",
+          "opacity-70": style === "subtle",
+        },
         className,
       ]}
     >
-      <script is:inline data-astro-rerun define:vars={{ id, storageKey }}>
-        {
-          const dismissedAt = localStorage.getItem(storageKey);
-          if (dismissedAt && Date.now() < parseInt(dismissedAt, 10)) {
-            const ribbon = document.getElementById(id);
-            if (ribbon) ribbon.style.display = "none";
-          } else if (dismissedAt) {
-            localStorage.removeItem(storageKey);
-          }
-        }
-      </script>
-
       {dismissible && (
         <button
           type="button"
           aria-label="Close announcement"
-          class="cursor-pointer close-ribbon-btn shrink-0 mr-4 md:mr-8 hover:opacity-70 transition-opacity"
+          class="close-ribbon-btn mr-4 shrink-0 cursor-pointer transition-opacity hover:opacity-70 md:mr-8"
         >
-          <IconX class="w-3 h-3" />
+          <IconX class="h-3 w-3" />
         </button>
       )}
 
       <div class="flex-1 overflow-hidden">
-        <div class="announcement-content flex flex-wrap items-baseline gap-1 md:gap-2 transition-all duration-300 ease-in-out">
-          <span class="announcement-label font-mono text-xs uppercase tracking-widest opacity-80">
+        <div class="announcement-content flex flex-wrap items-baseline gap-1 transition-all duration-300 ease-in-out md:gap-2">
+          <span class="announcement-label font-mono text-xs tracking-widest uppercase opacity-80">
             {items[0].label ?? "Announcement"}:
           </span>
-          <span class="announcement-message font-medium line-clamp-1 overflow-hidden">
+          <span class="announcement-message line-clamp-1 overflow-hidden font-medium">
             {items[0].message}
           </span>
           {items[0].href && (
             <a
-              class="announcement-link italic underline decoration-1 underline-offset-2 ml-1 transition-colors hover:opacity-80"
+              class="announcement-link ml-1 italic underline decoration-1 underline-offset-2 transition-colors hover:opacity-80"
               href={items[0].href}
             >
               {items[0].linkText ?? "Learn more"}
@@ -100,17 +93,17 @@ const storageKey = `announcement-dismissed-${id}-${hashContent(contentSignature)
       </div>
 
       {items.length > 1 && (
-        <div class="announcement-dots flex gap-1 shrink-0">
+        <div class="announcement-dots flex shrink-0 gap-1">
           {items.map((_, index) => (
             <button
               type="button"
               aria-label={`Go to announcement ${index + 1}`}
               data-index={index}
               class:list={[
-                "announcement-dot w-1.5 h-1.5 rounded-full transition-all duration-300",
+                "announcement-dot h-1.5 w-1.5 rounded-full transition-all duration-300",
                 index === 0
-                  ? "bg-background opacity-100 scale-110"
-                  : "bg-background/40 opacity-60 hover:opacity-80 scale-100",
+                  ? "scale-110 bg-background opacity-100"
+                  : "scale-100 bg-background/40 opacity-60 hover:opacity-80",
               ]}
             />
           ))}
@@ -120,7 +113,27 @@ const storageKey = `announcement-dismissed-${id}-${hashContent(contentSignature)
   )
 }
 
-<script define:vars={{ id, storageKeyClient: storageKey, items, dismissDuration }}>
+{
+  /*
+   * Hide a dismissed ribbon before first paint. It sits outside the conditional
+   * above because prettier-plugin-astro 0.14 can't parse scripts inside template
+   * expressions; it is a no-op when there is no ribbon. define:vars already
+   * wraps the code in a function.
+   */
+}
+<script is:inline data-astro-rerun define:vars={{ id, storageKey }}>
+  const dismissedAt = localStorage.getItem(storageKey);
+  if (dismissedAt && Date.now() < parseInt(dismissedAt, 10)) {
+    const ribbon = document.getElementById(id);
+    if (ribbon) ribbon.style.display = "none";
+  } else if (dismissedAt) {
+    localStorage.removeItem(storageKey);
+  }
+</script>
+
+<script
+  define:vars={{ id, storageKeyClient: storageKey, items, dismissDuration }}
+>
   function checkDismissed(ribbon) {
     const dismissedAt = localStorage.getItem(storageKeyClient);
 
@@ -151,7 +164,8 @@ const storageKey = `announcement-dismissed-${id}-${hashContent(contentSignature)
     const messageEl = ribbon.querySelector(".announcement-message");
     const dots = Array.from(ribbon.querySelectorAll(".announcement-dot"));
     const closeBtn = ribbon.querySelector(".close-ribbon-btn");
-    const rotationIntervalMs = parseFloat(ribbon.dataset.rotationInterval || "5") * 1000;
+    const rotationIntervalMs =
+      parseFloat(ribbon.dataset.rotationInterval || "5") * 1000;
 
     let currentIndex = 0;
     let isTransitioning = false;
@@ -190,7 +204,10 @@ const storageKey = `announcement-dismissed-${id}-${hashContent(contentSignature)
       if (isTransitioning || index === currentIndex || !contentEl) return;
       isTransitioning = true;
 
-      contentEl.classList.add("opacity-0", direction === "next" ? "-translate-x-4" : "translate-x-4");
+      contentEl.classList.add(
+        "opacity-0",
+        direction === "next" ? "-translate-x-4" : "translate-x-4",
+      );
 
       setTimeout(() => {
         renderIndex(index);
