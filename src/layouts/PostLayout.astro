@@ -68,6 +68,7 @@ const structuredData = [
   subtitle={subtitle}
   description={description}
   image={heroImage || `/og/${section}/${Astro.props.slug}.png`}
+  imageAlt={heroImage ? heroImageAlt : undefined}
   backHref={backHref}
   backLabel={backLabel}
   searchType={type === "notice" ? "Notice" : "Blog"}

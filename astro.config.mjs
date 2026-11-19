@@ -1,6 +1,5 @@
 // @ts-check
 
-import mdx from "@astrojs/mdx";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import sanity from "@sanity/astro";
@@ -40,7 +39,6 @@ export default defineConfig({
 		},
 	},
 	integrations: [
-		mdx(),
 		sitemap({
 			filter: (page) => !page.includes("/studio"),
 		}),

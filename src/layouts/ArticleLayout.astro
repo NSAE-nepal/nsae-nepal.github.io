@@ -20,6 +20,8 @@ interface Props {
   description?: string;
   /** Social preview image (Sanity URL or /og/... path). */
   image?: string;
+  /** Alt text for `image`; defaults to the title. */
+  imageAlt?: string;
   backHref: string;
   backLabel: string;
   /** Pagefind `type:` filter value, e.g. "Blog". */
@@ -36,6 +38,7 @@ const {
   subtitle,
   description,
   image,
+  imageAlt,
   backHref,
   backLabel,
   searchType,
@@ -57,6 +60,7 @@ const relatedCards = Astro.slots.has("related")
   title={title}
   description={description || subtitle || title}
   image={image}
+  imageAlt={imageAlt}
   type="article"
 >
   <slot name="head" slot="head" />

@@ -236,7 +236,6 @@ const totalPoints = quiz.questions
 </div>
 
 <script>
-  import { atom } from "nanostores";
   import { scrollToTarget } from "@/utils/lenis";
 
   const shuffle = <T,>(array: T[]): T[] => {
@@ -343,7 +342,7 @@ const totalPoints = quiz.questions
         }
 
         const totalPages = Math.ceil(questions.length / perPage);
-        const currentPage = atom(0);
+        let currentPage = 0;
         let submitted = false;
 
         const pageOf = (questionIndex: number) =>
@@ -394,7 +393,7 @@ const totalPoints = quiz.questions
             "question-nav-item inline-flex items-center justify-center w-8 h-8 rounded-full text-xs font-semibold border transition-colors motion-reduce:transition-none";
           btn.classList.add(...NAV_UNANSWERED);
           btn.addEventListener("click", () => {
-            currentPage.set(pageOf(i));
+            setPage(pageOf(i));
             requestAnimationFrame(() => {
               scrollToTarget(question, { block: "center" });
             });
@@ -463,13 +462,19 @@ const totalPoints = quiz.questions
           if (i !== -1) updateNavItem(i);
         });
 
-        currentPage.subscribe((page) => {
+        const renderPage = (page: number) => {
           questions.forEach((question, i) => {
             question.hidden = pageOf(i) !== page;
           });
           updateNavButtons(page);
           updateNavCurrentPage(page);
-        });
+        };
+        const setPage = (page: number) => {
+          if (page === currentPage) return;
+          currentPage = page;
+          renderPage(page);
+        };
+        renderPage(currentPage);
 
         if (totalPages <= 1) {
           pageIndicator.hidden = true;
@@ -481,7 +486,7 @@ const totalPoints = quiz.questions
         }
 
         const goToPage = (page: number) => {
-          currentPage.set(Math.min(Math.max(page, 0), totalPages - 1));
+          setPage(Math.min(Math.max(page, 0), totalPages - 1));
           scrollToTarget(container);
         };
 
@@ -505,12 +510,8 @@ const totalPoints = quiz.questions
           return firstUnanswered;
         };
 
-        prevBtn.addEventListener("click", () =>
-          goToPage(currentPage.get() - 1),
-        );
-        nextBtn.addEventListener("click", () =>
-          goToPage(currentPage.get() + 1),
-        );
+        prevBtn.addEventListener("click", () => goToPage(currentPage - 1));
+        nextBtn.addEventListener("click", () => goToPage(currentPage + 1));
 
         const clearGradingState = (question: HTMLElement) => {
           question
@@ -548,8 +549,8 @@ const totalPoints = quiz.questions
           const firstUnanswered = findFirstUnanswered(questions);
           if (firstUnanswered) {
             const targetPage = pageOf(questions.indexOf(firstUnanswered));
-            if (targetPage !== currentPage.get()) {
-              currentPage.set(targetPage);
+            if (targetPage !== currentPage) {
+              setPage(targetPage);
             }
             requestAnimationFrame(() => {
               scrollToTarget(firstUnanswered as HTMLElement, {
@@ -727,8 +728,8 @@ const totalPoints = quiz.questions
           submitted = false;
           updateAllNavItems();
           goToPage(0);
-          updateNavButtons(currentPage.get());
-          updateNavCurrentPage(currentPage.get());
+          updateNavButtons(currentPage);
+          updateNavCurrentPage(currentPage);
           scrollToTarget(form);
         });
       });

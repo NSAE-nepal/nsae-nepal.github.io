@@ -37,6 +37,7 @@ const site = Astro.site!;
   title={event.title}
   description={event.subtitle || SITE_DESCRIPTION}
   image={event.coverImage || `/og/events/${event.slug}.png`}
+  imageAlt={event.coverImage ? event.coverImageAlt : undefined}
 >
   <JsonLd
     slot="head"
