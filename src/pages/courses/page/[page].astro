@@ -47,7 +47,7 @@ const pageTitle =
   <header
     class="flex flex-col items-center justify-center py-16 text-center md:py-24"
   >
-    <div class="anim-header-badge scale-50 opacity-0">
+    <div class="anim-header-badge js:scale-50 js:opacity-0">
       <Badge
         variant="secondary"
         size="sm"
@@ -57,12 +57,12 @@ const pageTitle =
       </Badge>
     </div>
     <h1
-      class="anim-header-title invisible max-w-4xl pt-4 font-sans text-5xl leading-tight font-medium tracking-tighter md:text-7xl"
+      class="anim-header-title max-w-4xl pt-4 font-sans text-5xl leading-tight font-medium tracking-tighter md:text-7xl js:invisible"
     >
       Courses for agricultural engineers
     </h1>
     <p
-      class="anim-header-desc mt-6 max-w-2xl translate-y-4 text-lg text-muted-foreground opacity-0"
+      class="anim-header-desc mt-6 max-w-2xl text-lg text-muted-foreground js:translate-y-4 js:opacity-0"
     >
       Free, self-paced lessons with videos and quizzes. Your progress is saved
       in this browser, so you can pick up where you left off.
@@ -74,7 +74,7 @@ const pageTitle =
   <section class="mb-16" aria-labelledby="all-courses">
     <h2
       id="all-courses"
-      class="anim-section-title mb-8 translate-y-4 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase opacity-0 md:text-2xl"
+      class="anim-section-title mb-8 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase md:text-2xl js:translate-y-4 js:opacity-0"
     >
       All courses
     </h2>
@@ -83,7 +83,7 @@ const pageTitle =
       page.data.length > 0 ? (
         <ul class="grid gap-6 md:grid-cols-2 lg:grid-cols-3" role="list">
           {page.data.map((course) => (
-            <li class="anim-card translate-y-4 opacity-0">
+            <li class="anim-card js:translate-y-4 js:opacity-0">
               <ClickableCard
                 href={coursePath(course)}
                 label={course.title}
@@ -95,7 +95,7 @@ const pageTitle =
           ))}
         </ul>
       ) : (
-        <div class="anim-empty-state scale-95 opacity-0">
+        <div class="anim-empty-state js:scale-95 js:opacity-0">
           <Empty
             title="Courses are on the way"
             description="We're preparing our first courses. Check back soon, or browse our events for upcoming trainings."

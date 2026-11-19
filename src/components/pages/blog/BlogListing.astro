@@ -36,7 +36,7 @@ const pageDescription = activeCategory
   page="blog-listing"
 >
   <header class="flex flex-col items-center justify-center py-16 md:py-24">
-    <div class="anim-header-badge scale-50 opacity-0">
+    <div class="anim-header-badge js:scale-50 js:opacity-0">
       <Badge
         variant={"secondary"}
         size={"sm"}
@@ -46,7 +46,7 @@ const pageDescription = activeCategory
       </Badge>
     </div>
     <h1
-      class="anim-header-title invisible max-w-4xl pt-4 text-center font-sans text-5xl leading-tight font-medium tracking-tighter md:text-7xl"
+      class="anim-header-title max-w-4xl pt-4 text-center font-sans text-5xl leading-tight font-medium tracking-tighter md:text-7xl js:invisible"
     >
       Read our latest articles
     </h1>
@@ -56,11 +56,11 @@ const pageDescription = activeCategory
     featuredPosts.length > 0 && page.currentPage === 1 && (
       <section class="mb-12" data-manual-card-anim>
         <div class="mb-6 flex items-center justify-between border-b border-border/50 pb-2">
-          <h2 class="anim-featured-title translate-y-4 font-sans text-xl font-medium tracking-wider uppercase opacity-0 md:text-2xl">
+          <h2 class="anim-featured-title font-sans text-xl font-medium tracking-wider uppercase md:text-2xl js:translate-y-4 js:opacity-0">
             Featured Posts
           </h2>
           {featuredPosts.length > 1 && (
-            <div class="anim-featured-title flex translate-y-4 gap-2 opacity-0">
+            <div class="anim-featured-title flex gap-2 js:translate-y-4 js:opacity-0">
               <button
                 type="button"
                 class="featured-prev flex size-8 cursor-pointer items-center justify-center rounded-full border border-border/60 bg-secondary text-secondary-foreground transition-colors hover:bg-secondary/40 disabled:pointer-events-none disabled:opacity-30"
@@ -82,7 +82,7 @@ const pageDescription = activeCategory
         <div class="anim-featured-carousel flex snap-x snap-mandatory [scrollbar-width:none] gap-8 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {featuredPosts.map((post) => (
             <ClickableCard
-              class="anim-featured-card shrink-0 basis-full translate-y-4 snap-start opacity-0 lg:basis-[85%]"
+              class="anim-featured-card shrink-0 basis-full snap-start lg:basis-[85%] js:translate-y-4 js:opacity-0"
               href={`/blog/${post.slug}/`}
               label={post.title}
             >
@@ -96,7 +96,7 @@ const pageDescription = activeCategory
 
   <section class="mb-12" data-manual-card-anim>
     <h2
-      class="anim-all-title mb-8 translate-y-4 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase opacity-0 md:text-2xl"
+      class="anim-all-title mb-8 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase md:text-2xl js:translate-y-4 js:opacity-0"
     >
       {activeCategory ? activeCategory.title : "All Posts"}
     </h2>
@@ -115,9 +115,9 @@ const pageDescription = activeCategory
         <>
           <PostGrid
             posts={page.data}
-            cardClass="anim-regular-card opacity-0 translate-y-4"
+            cardClass="anim-regular-card js:opacity-0 js:translate-y-4"
           />
-          <div class="anim-pagination mt-16 flex justify-center opacity-0">
+          <div class="anim-pagination mt-16 flex justify-center js:opacity-0">
             <Pagination
               url={page.url}
               class="font-mono text-sm tracking-widest uppercase"
@@ -125,7 +125,7 @@ const pageDescription = activeCategory
           </div>
         </>
       ) : (
-        <div class="anim-empty-state flex scale-95 flex-col items-center justify-center rounded-xl border border-dashed border-border/60 bg-secondary/5 py-8 text-center opacity-0">
+        <div class="anim-empty-state flex flex-col items-center justify-center rounded-xl border border-dashed border-border/60 bg-secondary/5 py-8 text-center js:scale-95 js:opacity-0">
           <div class="mb-4 rounded-full bg-secondary p-4">
             <IconMoodEmpty class="size-8 text-muted-foreground" />
           </div>

@@ -36,7 +36,7 @@ const { objective, bylaws } = Astro.props as {
         >
       </div>
       <h1
-        class="translate-y-8 font-sans text-5xl leading-[0.9] font-medium tracking-tighter opacity-0 md:text-8xl"
+        class="font-sans text-5xl leading-[0.9] font-medium tracking-tighter md:text-8xl js:translate-y-8 js:opacity-0"
       >
         Objectives of the <br />
         <span class="font-serif text-muted-foreground italic">Society.</span>
@@ -44,7 +44,7 @@ const { objective, bylaws } = Astro.props as {
     </div>
     <div class="max-w-xl lg:max-w-3xl">
       <p
-        class="translate-y-8 font-sans text-base leading-relaxed text-muted-foreground opacity-0 md:text-lg"
+        class="font-sans text-base leading-relaxed text-muted-foreground md:text-lg js:translate-y-8 js:opacity-0"
       >
         <span class="mb-2 block font-mono text-xs text-primary"
           >[ SUMMARIZED OBJECTIVE ]</span
@@ -59,7 +59,7 @@ const { objective, bylaws } = Astro.props as {
     data-mission-cards
   >
     <div
-      class="mission-card group relative min-h-[400px] translate-y-12 scale-95 overflow-hidden rounded-2xl border border-border/50 bg-secondary opacity-0 lg:min-h-[600px]"
+      class="mission-card group relative min-h-[400px] overflow-hidden rounded-2xl border border-border/50 bg-secondary lg:min-h-[600px] js:translate-y-12 js:scale-95 js:opacity-0"
     >
       <Image
         alt={objective.imagePrimary.alt || ""}
@@ -95,7 +95,7 @@ const { objective, bylaws } = Astro.props as {
 
     <div class="grid h-full grid-cols-1 gap-4 md:grid-cols-2">
       <div
-        class="mission-card group flex min-h-[200px] translate-y-12 scale-95 flex-col justify-between rounded-2xl border border-border/50 bg-secondary p-6 opacity-0 transition-colors hover:border-foreground/20 md:p-8"
+        class="mission-card group flex min-h-[200px] flex-col justify-between rounded-2xl border border-border/50 bg-secondary p-6 transition-colors hover:border-foreground/20 md:p-8 js:translate-y-12 js:scale-95 js:opacity-0"
       >
         <div class="flex items-start justify-between">
           <IconPlus class="h-5 w-5 text-muted-foreground" />
@@ -118,7 +118,7 @@ const { objective, bylaws } = Astro.props as {
       </div>
 
       <div
-        class="mission-card group relative min-h-[200px] translate-y-12 scale-95 overflow-hidden rounded-2xl border border-border/50 bg-secondary opacity-0"
+        class="mission-card group relative min-h-[200px] overflow-hidden rounded-2xl border border-border/50 bg-secondary js:translate-y-12 js:scale-95 js:opacity-0"
       >
         <Image
           alt={objective.imageSecondary.alt || ""}
@@ -133,7 +133,7 @@ const { objective, bylaws } = Astro.props as {
       </div>
 
       <div
-        class="mission-card group flex min-h-[200px] translate-y-12 scale-95 flex-col justify-between rounded-2xl border border-border/50 bg-secondary p-6 opacity-0 transition-colors hover:border-foreground/20 md:p-8"
+        class="mission-card group flex min-h-[200px] flex-col justify-between rounded-2xl border border-border/50 bg-secondary p-6 transition-colors hover:border-foreground/20 md:p-8 js:translate-y-12 js:scale-95 js:opacity-0"
       >
         <div class="flex items-start justify-between">
           <IconPlus class="h-5 w-5 text-muted-foreground" />
@@ -156,7 +156,7 @@ const { objective, bylaws } = Astro.props as {
       </div>
 
       <div
-        class="mission-card relative col-span-1 min-h-[250px] translate-y-12 scale-95 overflow-hidden rounded-2xl border border-border/50 bg-black opacity-0 md:col-span-2 lg:col-span-1 xl:col-span-1"
+        class="mission-card relative col-span-1 min-h-[250px] overflow-hidden rounded-2xl border border-border/50 bg-black md:col-span-2 lg:col-span-1 xl:col-span-1 js:translate-y-12 js:scale-95 js:opacity-0"
       >
         <video
           autoplay
@@ -184,7 +184,7 @@ const { objective, bylaws } = Astro.props as {
     </div>
 
     <div
-      class="mission-card group relative flex min-h-[350px] translate-y-12 scale-95 items-center overflow-hidden rounded-2xl border border-border/50 bg-secondary opacity-0 md:col-span-2 lg:col-span-2"
+      class="mission-card group relative flex min-h-[350px] items-center overflow-hidden rounded-2xl border border-border/50 bg-secondary md:col-span-2 lg:col-span-2 js:translate-y-12 js:scale-95 js:opacity-0"
     >
       <Image
         alt="Background"

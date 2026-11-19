@@ -32,7 +32,7 @@ const pageDescription =
   <header
     class="flex flex-col items-center justify-center py-16 text-center md:py-24"
   >
-    <div class="anim-header-badge scale-50 opacity-0">
+    <div class="anim-header-badge js:scale-50 js:opacity-0">
       <Badge
         variant="secondary"
         size="sm"
@@ -42,12 +42,12 @@ const pageDescription =
       </Badge>
     </div>
     <h1
-      class="anim-header-title invisible max-w-4xl pt-4 font-sans text-5xl leading-tight font-medium tracking-tighter md:text-7xl"
+      class="anim-header-title max-w-4xl pt-4 font-sans text-5xl leading-tight font-medium tracking-tighter md:text-7xl js:invisible"
     >
       The engineers behind the work
     </h1>
     <p
-      class="anim-header-desc mt-6 max-w-2xl translate-y-4 font-sans text-lg text-muted-foreground opacity-0"
+      class="anim-header-desc mt-6 max-w-2xl font-sans text-lg text-muted-foreground js:translate-y-4 js:opacity-0"
     >
       {pageDescription}
     </p>
@@ -56,7 +56,7 @@ const pageDescription =
   <section class="mb-16" aria-labelledby="spotlight-heading">
     <h2
       id="spotlight-heading"
-      class="anim-section-title mb-8 translate-y-4 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase opacity-0 md:text-2xl"
+      class="anim-section-title mb-8 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase md:text-2xl js:translate-y-4 js:opacity-0"
     >
       All spotlights
     </h2>
@@ -66,7 +66,7 @@ const pageDescription =
         <>
           <ul class="grid gap-6 md:grid-cols-2 lg:grid-cols-3" role="list">
             {page.data.map((spotlight) => (
-              <li class="anim-card translate-y-4 opacity-0">
+              <li class="anim-card js:translate-y-4 js:opacity-0">
                 <ClickableCard
                   href={spotlightPath(spotlight)}
                   label={spotlight.headline}
@@ -77,7 +77,7 @@ const pageDescription =
               </li>
             ))}
           </ul>
-          <div class="anim-pagination mt-16 flex justify-center opacity-0">
+          <div class="anim-pagination mt-16 flex justify-center js:opacity-0">
             <Pagination
               url={page.url}
               class="font-mono text-sm tracking-widest uppercase"
@@ -85,7 +85,7 @@ const pageDescription =
           </div>
         </>
       ) : (
-        <div class="anim-empty-state scale-95 opacity-0">
+        <div class="anim-empty-state js:scale-95 js:opacity-0">
           <Empty
             title="Spotlights are coming"
             description="We'll soon be sharing the stories of NSAE members and their work. Please check back."

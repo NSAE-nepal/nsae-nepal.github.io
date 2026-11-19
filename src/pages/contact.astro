@@ -37,7 +37,7 @@ const socialIcons: Record<string, typeof IconBrandX> = {
   <header
     class="contact-header flex flex-col items-center justify-center px-4 py-16 text-center md:py-24"
   >
-    <div class="anim-header-badge scale-50 opacity-0">
+    <div class="anim-header-badge js:scale-50 js:opacity-0">
       <Badge
         variant={"secondary"}
         size={"sm"}
@@ -47,12 +47,12 @@ const socialIcons: Record<string, typeof IconBrandX> = {
       </Badge>
     </div>
     <h1
-      class="anim-header-title invisible pb-4 font-sans text-5xl font-medium tracking-tighter md:text-7xl"
+      class="anim-header-title pb-4 font-sans text-5xl font-medium tracking-tighter md:text-7xl js:invisible"
     >
       Get in touch
     </h1>
     <p
-      class="anim-header-desc max-w-2xl translate-y-4 font-sans text-xl leading-relaxed text-muted-foreground opacity-0"
+      class="anim-header-desc max-w-2xl font-sans text-xl leading-relaxed text-muted-foreground js:translate-y-4 js:opacity-0"
     >
       Have a question or a project in mind? We'd love to hear from you.
     </p>
@@ -60,7 +60,7 @@ const socialIcons: Record<string, typeof IconBrandX> = {
 
   <section class="grid grid-cols-1 gap-6 px-4 pb-24 lg:grid-cols-3">
     <div
-      class="anim-contact-card col-span-1 flex translate-y-8 flex-col justify-between gap-12 rounded-2xl border border-border/50 bg-secondary/30 p-8 opacity-0 transition-colors hover:bg-secondary/50"
+      class="anim-contact-card col-span-1 flex flex-col justify-between gap-12 rounded-2xl border border-border/50 bg-secondary/30 p-8 transition-colors hover:bg-secondary/50 js:translate-y-8 js:opacity-0"
     >
       <div class="space-y-6">
         <span
@@ -89,7 +89,7 @@ const socialIcons: Record<string, typeof IconBrandX> = {
     </div>
 
     <div
-      class="anim-contact-card col-span-1 flex translate-y-8 flex-col justify-between gap-12 rounded-2xl border border-border/50 bg-secondary/30 p-8 opacity-0 transition-colors hover:bg-secondary/50"
+      class="anim-contact-card col-span-1 flex flex-col justify-between gap-12 rounded-2xl border border-border/50 bg-secondary/30 p-8 transition-colors hover:bg-secondary/50 js:translate-y-8 js:opacity-0"
     >
       <div class="space-y-6">
         <span
@@ -118,7 +118,7 @@ const socialIcons: Record<string, typeof IconBrandX> = {
     </div>
 
     <div
-      class="anim-contact-card col-span-1 flex translate-y-8 flex-col justify-between gap-12 rounded-2xl border border-border/50 bg-secondary/30 p-8 opacity-0 transition-colors hover:bg-secondary/50"
+      class="anim-contact-card col-span-1 flex flex-col justify-between gap-12 rounded-2xl border border-border/50 bg-secondary/30 p-8 transition-colors hover:bg-secondary/50 js:translate-y-8 js:opacity-0"
     >
       <div class="space-y-6">
         <span
@@ -151,7 +151,7 @@ const socialIcons: Record<string, typeof IconBrandX> = {
 
     {
       socials && (
-        <div class="anim-socials-wrapper col-span-1 mt-4 flex translate-y-8 flex-col items-center justify-between gap-6 rounded-2xl border border-border/50 bg-secondary/30 p-8 opacity-0 md:flex-row lg:col-span-3">
+        <div class="anim-socials-wrapper col-span-1 mt-4 flex flex-col items-center justify-between gap-6 rounded-2xl border border-border/50 bg-secondary/30 p-8 md:flex-row lg:col-span-3 js:translate-y-8 js:opacity-0">
           <span class="font-mono text-xs tracking-widest text-muted-foreground uppercase">
             Follow our socials
           </span>
@@ -165,7 +165,7 @@ const socialIcons: Record<string, typeof IconBrandX> = {
                   href={socialData.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="anim-social-icon scale-50 rounded-full border border-border/50 bg-background p-3 opacity-0 transition-all duration-300 hover:border-primary hover:text-primary"
+                  class="anim-social-icon rounded-full border border-border/50 bg-background p-3 transition-all duration-300 hover:border-primary hover:text-primary js:scale-50 js:opacity-0"
                   aria-label={`Follow on ${platform}`}
                   title={socialData.handle ? `@${socialData.handle}` : platform}
                 >

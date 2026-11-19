@@ -45,7 +45,7 @@ const pageDescription =
   <header
     class="flex flex-col items-center justify-center py-16 text-center md:py-24"
   >
-    <div class="anim-header-badge scale-50 opacity-0">
+    <div class="anim-header-badge js:scale-50 js:opacity-0">
       <Badge
         variant={"secondary"}
         size={"sm"}
@@ -55,12 +55,12 @@ const pageDescription =
       </Badge>
     </div>
     <h1
-      class="anim-header-title invisible max-w-4xl pt-4 font-sans text-5xl leading-tight font-medium tracking-tighter md:text-7xl"
+      class="anim-header-title max-w-4xl pt-4 font-sans text-5xl leading-tight font-medium tracking-tighter md:text-7xl js:invisible"
     >
       Your Next Chapter Starts Here
     </h1>
     <p
-      class="anim-header-desc mt-6 max-w-2xl translate-y-4 font-sans text-lg text-muted-foreground opacity-0"
+      class="anim-header-desc mt-6 max-w-2xl font-sans text-lg text-muted-foreground js:translate-y-4 js:opacity-0"
     >
       {pageDescription}
     </p>
@@ -68,7 +68,7 @@ const pageDescription =
 
   <section class="mb-12" data-manual-card-anim>
     <h2
-      class="anim-section-title mb-8 translate-y-4 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase opacity-0 md:text-2xl"
+      class="anim-section-title mb-8 border-b border-border/50 pb-2 font-sans text-xl font-medium tracking-wider uppercase md:text-2xl js:translate-y-4 js:opacity-0"
     >
       {activeType ? activeType.label : "All opportunities"}
     </h2>
@@ -93,19 +93,19 @@ const pageDescription =
             {page.data.map((vacancy, index) => (
               <>
                 <ClickableCard
-                  class="anim-card group relative col-span-2 translate-y-4 opacity-0 transition-colors hover:bg-secondary/60"
+                  class="anim-card group relative col-span-2 transition-colors hover:bg-secondary/60 js:translate-y-4 js:opacity-0"
                   href={opportunityPath(vacancy)}
                   label={vacancy.title}
                 >
                   <CareersCard data={vacancy} />
                 </ClickableCard>
                 {index < page.data.length - 1 && (
-                  <div class="anim-divider col-span-2 my-6 translate-y-4 border-b-2 border-dashed border-secondary-foreground opacity-0" />
+                  <div class="anim-divider col-span-2 my-6 border-b-2 border-dashed border-secondary-foreground js:translate-y-4 js:opacity-0" />
                 )}
               </>
             ))}
           </div>
-          <div class="anim-pagination mt-16 flex justify-center opacity-0">
+          <div class="anim-pagination mt-16 flex justify-center js:opacity-0">
             <Pagination
               url={page.url}
               class="font-mono text-sm tracking-widest uppercase"
@@ -113,7 +113,7 @@ const pageDescription =
           </div>
         </>
       ) : (
-        <div class="anim-empty-state scale-95 opacity-0">
+        <div class="anim-empty-state js:scale-95 js:opacity-0">
           <Empty
             title="No opportunities right now"
             description="We don't have any open jobs, scholarships or calls right now. Please check back later."

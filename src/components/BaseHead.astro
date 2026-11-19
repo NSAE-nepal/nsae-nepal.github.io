@@ -91,22 +91,43 @@ const socialImageAlt =
 />
 
 <!--
-  Without JavaScript the GSAP entrance animations never run, so reveal
-  everything that starts hidden waiting for them (hover-only reveals and the
-  fixed custom cursor stay hidden).
+  Content waiting for a GSAP entrance animation is hidden with `js:` classes
+  (js:opacity-0, js:invisible, js:translate-y-4, …), which only apply once
+  this marks <html class="js">, so without JavaScript nothing is hidden. If
+  the animations haven't started 3 s after a page loads (onPage() sets
+  html.anim-ready), or a script fails to load, html.no-anim reveals it all.
 -->
-<noscript>
-  <style>
-    .opacity-0:not([class*="hover:opacity"]):not(.fixed),
-    .invisible {
-      opacity: 1 !important;
-      visibility: visible !important;
-      translate: none !important;
-      scale: none !important;
-      transform: none !important;
-    }
-  </style>
-</noscript>
+<script is:inline>
+  (() => {
+    const html = document.documentElement;
+    let timer;
+    const arm = () => {
+      html.classList.add("js");
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (
+          !html.classList.contains("anim-ready") &&
+          document.querySelector('[class*="js:"]')
+        ) {
+          html.classList.add("no-anim");
+        }
+      }, 3000);
+    };
+    arm();
+    // ClientRouter copies <html> attributes from the next page on each swap.
+    document.addEventListener("astro:after-swap", arm);
+    // A script that fails to load, e.g. the GSAP chunk.
+    addEventListener(
+      "error",
+      (event) => {
+        if (event.target instanceof HTMLScriptElement) {
+          html.classList.add("no-anim");
+        }
+      },
+      true,
+    );
+  })();
+</script>
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />

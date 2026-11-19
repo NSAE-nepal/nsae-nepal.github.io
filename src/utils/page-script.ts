@@ -71,8 +71,12 @@ export function onPage(
 					ctx,
 					onCleanup: (fn) => cleanups.push(fn),
 				});
+				// Animations are running; BaseHead's fallback timer stands down.
+				document.documentElement.classList.add("anim-ready");
 			} catch (error) {
-				// One broken section must not stop the others from setting up.
+				// One broken section must not stop the others from setting up,
+				// but reveal anything it would have animated in (see BaseHead).
+				document.documentElement.classList.add("no-anim");
 				console.error(`[onPage ${rootSelector}] setup failed`, error);
 			}
 		});

@@ -83,7 +83,7 @@ function formatPosition(position: string) {
     class="about-hero-section relative flex min-h-[60vh] items-center overflow-hidden rounded-2xl px-6 py-20 text-white md:min-h-[90vh] md:px-12 md:py-32"
   >
     <div
-      class="about-est-text absolute top-32 left-6 z-20 hidden opacity-0 md:left-12 md:block"
+      class="about-est-text absolute top-32 left-6 z-20 hidden md:left-12 md:block js:opacity-0"
     >
       <span
         class="vertical-lr font-mono text-xs tracking-widest text-white/60 uppercase"
@@ -93,7 +93,7 @@ function formatPosition(position: string) {
     </div>
 
     <div class="relative z-20 mt-12 flex max-w-4xl flex-col gap-6 md:gap-8">
-      <div class="anim-hero-badge translate-y-4 opacity-0">
+      <div class="anim-hero-badge js:translate-y-4 js:opacity-0">
         <Badge
           variant="outline"
           class="w-fit border-white/30 font-mono text-xs tracking-widest text-white uppercase"
@@ -103,7 +103,7 @@ function formatPosition(position: string) {
       </div>
 
       <h1
-        class="invisible font-sans text-5xl leading-[1.02] font-medium tracking-tighter md:text-7xl lg:text-8xl"
+        class="font-sans text-5xl leading-[1.02] font-medium tracking-tighter md:text-7xl lg:text-8xl js:invisible"
       >
         <span class="anim-split-text inline-block">Engineering the</span>
         <br />
@@ -113,7 +113,7 @@ function formatPosition(position: string) {
       </h1>
 
       <p
-        class="anim-hero-desc max-w-2xl translate-y-4 font-sans text-lg leading-relaxed text-white/90 opacity-0 md:text-xl"
+        class="anim-hero-desc max-w-2xl font-sans text-lg leading-relaxed text-white/90 md:text-xl js:translate-y-4 js:opacity-0"
       >
         The Nepal Society of Agricultural Engineers (NSAE) is dedicated to
         advancing the profession and promoting sustainable agricultural
@@ -141,7 +141,7 @@ function formatPosition(position: string) {
         class="flex flex-col items-start justify-between gap-6 lg:flex-row lg:gap-24"
       >
         <div class="flex flex-col gap-4 lg:sticky lg:top-32 lg:w-1/2">
-          <div class="anim-mission-header flex items-center gap-4 opacity-0">
+          <div class="anim-mission-header flex items-center gap-4 js:opacity-0">
             <Badge
               class="font-mono text-xs tracking-widest uppercase"
               size="sm"
@@ -155,7 +155,7 @@ function formatPosition(position: string) {
             </span>
           </div>
           <h2
-            class="anim-split-heading invisible font-sans text-4xl leading-tight font-medium tracking-tighter md:text-6xl"
+            class="anim-split-heading font-sans text-4xl leading-tight font-medium tracking-tighter md:text-6xl js:invisible"
           >
             Bridging traditional farming with modern engineering.
           </h2>
@@ -163,7 +163,7 @@ function formatPosition(position: string) {
           <div class="grid gap-6">
             {
               values.map((val) => (
-                <div class="anim-value-card group flex translate-y-8 gap-4 rounded-xl border border-border/50 bg-card/50 p-5 opacity-0 transition-colors hover:bg-secondary/40">
+                <div class="anim-value-card group flex gap-4 rounded-xl border border-border/50 bg-card/50 p-5 transition-colors hover:bg-secondary/40 js:translate-y-8 js:opacity-0">
                   <div class="h-fit shrink-0 rounded-lg bg-primary/10 p-2 text-primary">
                     <val.icon class="size-6" />
                   </div>
@@ -184,21 +184,21 @@ function formatPosition(position: string) {
         <div
           class="prose prose-lg lg:w-1/2 dark:prose-invert prose-headings:font-sans prose-p:font-sans"
         >
-          <div class="anim-mission-text translate-y-8 opacity-0">
+          <div class="anim-mission-text js:translate-y-8 js:opacity-0">
             <p class="lead text-xl font-medium text-foreground">
               Our mission is to unite agricultural engineers under a common
               umbrella to foster professional growth, ethical standards, and
               technological advancement.
             </p>
           </div>
-          <div class="anim-mission-text translate-y-8 opacity-0">
+          <div class="anim-mission-text js:translate-y-8 js:opacity-0">
             <p class="text-foreground/80">
               By collaborating with governmental bodies, educational
               institutions, and the private sector, we strive to influence
               policies that enhance food security and rural development.
             </p>
           </div>
-          <div class="anim-mission-text translate-y-8 opacity-0">
+          <div class="anim-mission-text js:translate-y-8 js:opacity-0">
             <p class="text-foreground/80">
               We believe that engineering solutions are the key to unlocking
               Nepal's agricultural potential. From irrigation systems to
@@ -215,7 +215,9 @@ function formatPosition(position: string) {
         class="flex flex-col items-start justify-between gap-12 pb-12 md:flex-row lg:gap-24"
       >
         <div class="space-y-4">
-          <div class="anim-focus-header mb-4 flex items-center gap-4 opacity-0">
+          <div
+            class="anim-focus-header mb-4 flex items-center gap-4 js:opacity-0"
+          >
             <Badge
               class="font-mono text-xs tracking-widest uppercase"
               size="sm"
@@ -229,7 +231,7 @@ function formatPosition(position: string) {
             </span>
           </div>
           <h2
-            class="anim-split-heading invisible font-sans text-4xl font-medium tracking-tighter text-balance md:text-5xl"
+            class="anim-split-heading font-sans text-4xl font-medium tracking-tighter text-balance md:text-5xl js:invisible"
           >
             Strategic Focus
           </h2>
@@ -239,7 +241,7 @@ function formatPosition(position: string) {
       <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
         {
           focusAreas.map((area) => (
-            <div class="anim-focus-card group translate-y-12 rounded-2xl border border-border/50 bg-secondary/30 p-8 opacity-0 transition-colors hover:border-primary/50">
+            <div class="anim-focus-card group rounded-2xl border border-border/50 bg-secondary/30 p-8 transition-colors hover:border-primary/50 js:translate-y-12 js:opacity-0">
               <div class="mb-6 flex h-12 w-12 items-center justify-center rounded-full border border-border bg-background text-muted-foreground transition-colors group-hover:border-primary/50 group-hover:text-primary">
                 <area.icon class="size-6" />
               </div>
@@ -260,7 +262,9 @@ function formatPosition(position: string) {
         class="flex flex-col items-start justify-between gap-6 pb-12 md:flex-row"
       >
         <div class="space-y-4">
-          <div class="anim-team-header mb-4 flex items-center gap-4 opacity-0">
+          <div
+            class="anim-team-header mb-4 flex items-center gap-4 js:opacity-0"
+          >
             <Badge
               class="font-mono text-xs tracking-widest uppercase"
               size="sm"
@@ -280,13 +284,13 @@ function formatPosition(position: string) {
           </h2>
           {
             latestCommittee && (
-              <p class="anim-team-iter font-mono text-sm tracking-widest text-muted-foreground uppercase opacity-0">
+              <p class="anim-team-iter font-mono text-sm tracking-widest text-muted-foreground uppercase js:opacity-0">
                 Current Iteration: {latestCommittee.committeeIteration}
               </p>
             )
           }
         </div>
-        <div class="anim-team-btn opacity-0">
+        <div class="anim-team-btn js:opacity-0">
           <Button
             href={`/past-committee/${latestCommittee?.committeeIteration}`}
             variant="ghost"
@@ -301,7 +305,7 @@ function formatPosition(position: string) {
         latestCommittee ? (
           <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {featuredMembers.map((member) => (
-              <div class="anim-member-card group relative translate-y-12 overflow-hidden rounded-lg opacity-0 shadow-lg">
+              <div class="anim-member-card group relative overflow-hidden rounded-lg shadow-lg js:translate-y-12 js:opacity-0">
                 {member.profileImage ? (
                   <Image
                     src={sanityImage(member.profileImage, { width: 600 })}
@@ -349,7 +353,7 @@ function formatPosition(position: string) {
 
     <section class="py-24 md:py-32">
       <div
-        class="anim-cta-box relative flex scale-95 flex-col items-center gap-8 overflow-hidden rounded-3xl bg-secondary p-8 text-center text-secondary-foreground opacity-0 md:p-16"
+        class="anim-cta-box relative flex flex-col items-center gap-8 overflow-hidden rounded-3xl bg-secondary p-8 text-center text-secondary-foreground md:p-16 js:scale-95 js:opacity-0"
       >
         <div class="relative z-10 flex flex-col items-center gap-6">
           <h2
