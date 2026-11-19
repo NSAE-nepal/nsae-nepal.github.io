@@ -10,6 +10,7 @@ import type { ContactsDetails } from "@/sanity/lib/queries/contacts";
 import type { Course, LessonDetails } from "@/sanity/lib/queries/courses";
 import type { EventDetails, LocationDetails } from "@/sanity/lib/queries/events";
 import type { PostDetails } from "@/sanity/lib/queries/posts";
+import type { ResourceDetails } from "@/sanity/lib/queries/resources";
 import { sanityImage } from "@/sanity/lib/url-for-image";
 
 const ORG_NAME = "Nepalese Society of Agricultural Engineers";
@@ -377,5 +378,39 @@ export function lessonLd(
       name: course.title,
       url: abs(`/courses/${course.slug}/`, site),
     },
+  };
+}
+
+/**
+ * A library item: Dataset for datasets, otherwise CreativeWork. Files are
+ * listed as downloads (distribution / associatedMedia), links as sameAs.
+ */
+export function resourceLd(resource: ResourceDetails, site: Site) {
+  const isDataset = resource.resourceType === "dataset";
+  const files = resource.attachments.filter((item) => item._type === "resourceFile");
+  const links = resource.attachments.filter((item) => item._type === "resourceLink");
+  const media = files.map((file) => ({
+    "@type": isDataset ? "DataDownload" : "MediaObject",
+    name: file.title || file.filename,
+    contentUrl: file.url,
+    encodingFormat: file.extension,
+  }));
+
+  return {
+    "@context": CONTEXT,
+    "@type": isDataset ? "Dataset" : "CreativeWork",
+    name: resource.title,
+    description: resource.description || resource.title,
+    url: abs(`/resources/${resource.slug}/`, site),
+    sameAs: nonEmpty(links.map((link) => link.url)),
+    publisher: resource.publisher
+      ? { "@type": "Organization", name: resource.publisher }
+      : undefined,
+    copyrightYear: resource.year,
+    about: nonEmpty(resource.categories.map((category) => category.title)),
+    isAccessibleForFree: true,
+    ...(isDataset
+      ? { distribution: nonEmpty(media) }
+      : { associatedMedia: nonEmpty(media) }),
   };
 }

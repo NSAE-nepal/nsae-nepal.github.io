@@ -28,6 +28,7 @@ import { homeType } from "./homepage";
 import { minutesType } from "./minutes";
 import { postType } from "./posts";
 import { quizType } from "./quiz";
+import { resourceType } from "./resources";
 
 export const schema: { types: SchemaTypeDefinition[] } = {
 	types: [
@@ -55,6 +56,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
 		courseModuleType,
 		courseType,
 		lessonType,
+		resourceType,
 		homeType,
 		blockContentSimpleType,
 	],

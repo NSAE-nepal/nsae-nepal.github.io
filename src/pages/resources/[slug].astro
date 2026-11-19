@@ -1,0 +1,123 @@
+---
+import type { GetStaticPaths } from "astro";
+import Badge from "@/components/astro/Badge.astro";
+import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
+import ResourceCard from "@/components/astro/Card/ResourceCard.astro";
+import Categories from "@/components/Categories.astro";
+import FormattedDate from "@/components/FormattedDate.astro";
+import PortableText from "@/components/PortableText.astro";
+import ResourceAttachments from "@/components/pages/resources/ResourceAttachments.astro";
+import JsonLd from "@/components/seo/JsonLd.astro";
+import TableOfContents from "@/components/TableOfContents.astro";
+import ArticleLayout from "@/layouts/ArticleLayout.astro";
+import { resourcePath, resourcesPath, resourceTypeLabel } from "@/lib/resources";
+import { breadcrumbLd, resourceLd } from "@/lib/structured-data";
+import {
+  getResourceDetails,
+  getResources,
+  relatedResources,
+  resourceFormat,
+} from "@/sanity/lib/queries/resources";
+
+export const getStaticPaths = (async () => {
+  const resources = await getResources();
+  return resources.map((resource) => ({
+    params: { slug: resource.slug },
+    props: { related: relatedResources(resource, resources) },
+  }));
+}) satisfies GetStaticPaths;
+
+const { related } = Astro.props;
+const resource = await getResourceDetails(Astro.params.slug);
+const site = Astro.site!;
+const typeLabel = resourceTypeLabel(resource.resourceType);
+const body = resource.body ?? [];
+// Same rule of thumb as a long blog post: a TOC once there's structure to it.
+const headingCount = body.filter(
+  (block) => block._type === "block" && /^h[1-6]$/.test(String(block.style ?? "")),
+).length;
+---
+
+<ArticleLayout
+  title={resource.title}
+  subtitle={resource.description}
+  description={resource.description ?? `${typeLabel} from the NSAE resource library.`}
+  image={`/og/resources/${resource.slug}.png`}
+  backHref={resourcesPath()}
+  backLabel="Back to All Resources"
+  searchType="Resource"
+  shareLabel="Share this resource"
+  sharePath={resourcePath(resource)}
+  showToc={headingCount >= 3}
+  relatedSubtitle="More from the library on similar topics"
+>
+  <JsonLd
+    slot="head"
+    data={[
+      resourceLd(resource, site),
+      breadcrumbLd(
+        [
+          { name: "Home", path: "/" },
+          { name: "Resources", path: resourcesPath() },
+          { name: resource.title, path: resourcePath(resource) },
+        ],
+        site,
+      ),
+    ]}
+  />
+
+  {
+    (resource.publisher || resource.year) && (
+      <p slot="byline" class="pt-2 font-sans text-sm text-muted-foreground">
+        {resource.publisher ? (
+          <>
+            Published by{" "}
+            <span class="font-medium text-foreground">{resource.publisher}</span>
+            {resource.year && <>, {resource.year}</>}
+          </>
+        ) : (
+          <>Published {resource.year}</>
+        )}
+      </p>
+    )
+  }
+
+  <div slot="meta-start" class="flex flex-wrap items-center gap-2" data-pagefind-ignore>
+    <a href={resourcesPath(resource.resourceType)}>
+      <Badge size="xs" class="tracking-wide">{typeLabel}</Badge>
+    </a>
+    {resource.categories.length > 0 && <Categories categories={resource.categories} />}
+  </div>
+
+  <span
+    slot="meta-end"
+    class="font-mono text-xs text-muted-foreground uppercase tracking-wider border-l border-border/50 pl-6"
+    data-pagefind-meta={`date:${resource.publishedAt}`}
+    data-pagefind-ignore
+  >
+    <FormattedDate date={new Date(resource.publishedAt)} />
+    <span aria-hidden="true"> · </span>
+    <span>{resourceFormat(resource)}</span>
+  </span>
+
+  <ResourceAttachments slot="hero" attachments={resource.attachments} class="mx-auto max-w-3xl" />
+
+  {body.length > 0 && <PortableText portableText={body} />}
+  {headingCount >= 3 && <TableOfContents slot="toc" blocks={body} />}
+
+  {
+    related.length > 0 && (
+      <Fragment slot="related">
+        {related.map((item) => (
+          <ClickableCard
+            href={resourcePath(item)}
+            label={item.title}
+            class="group relative rounded-xl border border-border/60 hover:bg-secondary/60 transition-colors"
+          >
+            <ResourceCard data={item} />
+          </ClickableCard>
+        ))}
+      </Fragment>
+    )
+  }
+</ArticleLayout>

@@ -1,4 +1,5 @@
 import {
+	IconBooks,
 	IconBriefcase,
 	IconCalendar,
 	IconFileText,
@@ -63,6 +64,7 @@ const SUGGESTIONS = [
 	{ href: "/notices/page/1", label: "Notices", Icon: IconFileText },
 	{ href: "/events/page/1", label: "Events", Icon: IconCalendar },
 	{ href: "/minutes/page/1", label: "Minutes", Icon: IconFileText },
+	{ href: "/resources/page/1", label: "Resources", Icon: IconBooks },
 	{ href: "/careers/page/1", label: "Opportunities", Icon: IconBriefcase },
 ];
 

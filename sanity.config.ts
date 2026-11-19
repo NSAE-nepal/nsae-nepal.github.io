@@ -5,7 +5,7 @@ import { schema } from "./src/sanity/schemaTypes";
 
 const SINGLETON_TYPES = ["contacts", "donate", "faq", "home"];
 // Grouped under their own desk items below instead of the generic list.
-const GROUPED_TYPES = ["posts", "course", "lesson"];
+const GROUPED_TYPES = ["posts", "course", "lesson", "resource"];
 
 export default defineConfig({
 	projectId: import.meta.env.PUBLIC_SANITY_PROJECT_ID,
@@ -68,10 +68,10 @@ export default defineConfig({
 							),
 
 						S.listItem()
-							.title("Learning")
+							.title("Learning & Resources")
 							.child(
 								S.list()
-									.title("Learning")
+									.title("Learning & Resources")
 									.items([
 										S.documentTypeListItem("course").title("Courses"),
 										S.documentTypeListItem("lesson").title("All lessons"),
@@ -84,6 +84,8 @@ export default defineConfig({
 														'_type == "lesson" && !(_id in *[_type == "course"].modules[].lessons[]._ref)',
 													),
 											),
+										S.divider(),
+										S.documentTypeListItem("resource").title("Resource library"),
 									]),
 							),
 

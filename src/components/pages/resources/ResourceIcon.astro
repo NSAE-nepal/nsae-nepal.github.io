@@ -1,0 +1,42 @@
+---
+import {
+  IconBook,
+  IconChartBar,
+  IconCertificate,
+  IconClipboardText,
+  IconDatabase,
+  IconFileDescription,
+  IconFileText,
+  IconGavel,
+  IconPresentation,
+  IconTemplate,
+  IconTool,
+} from "@tabler/icons-astro";
+import type { ResourceType } from "@/lib/resources";
+
+/** Icon for a resource type. */
+interface Props {
+  type: ResourceType;
+  class?: string;
+}
+
+const { type, class: className } = Astro.props;
+
+const ICONS = {
+  standard: IconCertificate,
+  manual: IconBook,
+  guideline: IconClipboardText,
+  policy: IconGavel,
+  report: IconChartBar,
+  paper: IconFileDescription,
+  template: IconTemplate,
+  dataset: IconDatabase,
+  software: IconTool,
+  presentation: IconPresentation,
+  other: IconFileText,
+} satisfies Record<ResourceType, unknown>;
+
+const Icon = ICONS[type] ?? IconFileText;
+---
+
+<Icon class={className} aria-hidden="true" />

@@ -1,0 +1,28 @@
+---
+import type { GetStaticPaths } from "astro";
+import ResourceListing from "@/components/pages/resources/ResourceListing.astro";
+import { PAGE_SIZE } from "@/consts";
+import { summarizeResourceTypes } from "@/lib/resources";
+import { getResources } from "@/sanity/lib/queries/resources";
+
+// One paginated listing per resource type that has items.
+export const getStaticPaths = (async ({ paginate }) => {
+  const resources = await getResources();
+  const types = summarizeResourceTypes(resources);
+
+  return types.flatMap((type) =>
+    paginate(
+      resources.filter((resource) => resource.resourceType === type.value),
+      {
+        pageSize: PAGE_SIZE,
+        params: { type: type.value },
+        props: { types, activeType: type },
+      },
+    ),
+  );
+}) satisfies GetStaticPaths;
+
+const { page, types, activeType } = Astro.props;
+---
+
+<ResourceListing page={page} types={types} activeType={activeType} />

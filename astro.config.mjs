@@ -88,6 +88,7 @@ export default defineConfig({
 		"/minutes": "/minutes/page/1",
 		"/events": "/events/page/1",
 		"/courses": "/courses/page/1",
+		"/resources": "/resources/page/1",
 	},
 	devToolbar: {
 		enabled: true,

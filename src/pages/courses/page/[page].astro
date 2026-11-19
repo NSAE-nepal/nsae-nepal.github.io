@@ -11,11 +11,17 @@ import { COURSE_PAGE_SIZE } from "@/consts";
 import PageLayout from "@/layouts/PageLayout.astro";
 import { categoryPath, summarizeCategories } from "@/lib/categories";
 import { coursePath } from "@/lib/courses";
+import { resourcesPath } from "@/lib/resources";
 import { getCourses } from "@/sanity/lib/queries/courses";
 import { getPosts } from "@/sanity/lib/queries/posts";
+import { getResources } from "@/sanity/lib/queries/resources";
 
 export const getStaticPaths = (async ({ paginate }) => {
-  const [courses, posts] = await Promise.all([getCourses(), getPosts("blog")]);
+  const [courses, posts, resources] = await Promise.all([
+    getCourses(),
+    getPosts("blog"),
+    getResources(),
+  ]);
   // Short how-tos live on the blog under a "Tutorial(s)" category.
   const tutorials = summarizeCategories(posts ?? []).find((category) =>
     ["tutorial", "tutorials"].includes(category.slug),
@@ -23,11 +29,11 @@ export const getStaticPaths = (async ({ paginate }) => {
 
   return paginate(courses, {
     pageSize: COURSE_PAGE_SIZE,
-    props: { allCourses: courses, tutorials },
+    props: { allCourses: courses, tutorials, resourceCount: resources.length },
   });
 }) satisfies GetStaticPaths;
 
-const { page, allCourses, tutorials } = Astro.props;
+const { page, allCourses, tutorials, resourceCount } = Astro.props;
 const pageTitle =
   page.currentPage === 1 ? "Courses" : `Courses, page ${page.currentPage}`;
 ---
@@ -105,19 +111,42 @@ const pageTitle =
   </section>
 
   {
-    tutorials && (
-      <a
-        href={categoryPath("/blog", tutorials.slug)}
-        class="group mb-16 flex items-center justify-between gap-4 rounded-2xl border border-border/60 p-5 transition-colors hover:border-primary/50 hover:bg-secondary/50"
-      >
-        <span>
-          <span class="block font-medium">Looking for a quick how-to?</span>
-          <span class="block text-sm text-muted-foreground">
-            Browse {tutorials.count} short tutorial{tutorials.count === 1 ? "" : "s"} on the blog.
-          </span>
-        </span>
-        <IconArrowRight class="size-5 shrink-0 text-primary transition-transform group-hover:translate-x-1" />
-      </a>
+    (tutorials || resourceCount > 0) && (
+      <div class="mb-16 grid gap-4 md:grid-cols-2">
+        {
+          tutorials && (
+            <a
+              href={categoryPath("/blog", tutorials.slug)}
+              class="group flex items-center justify-between gap-4 rounded-2xl border border-border/60 p-5 transition-colors hover:border-primary/50 hover:bg-secondary/50"
+            >
+              <span>
+                <span class="block font-medium">Looking for a quick how-to?</span>
+                <span class="block text-sm text-muted-foreground">
+                  Browse {tutorials.count} short tutorial{tutorials.count === 1 ? "" : "s"} on the blog.
+                </span>
+              </span>
+              <IconArrowRight class="size-5 shrink-0 text-primary transition-transform group-hover:translate-x-1" />
+            </a>
+          )
+        }
+
+        {
+          resourceCount > 0 && (
+            <a
+              href={resourcesPath()}
+              class="group flex items-center justify-between gap-4 rounded-2xl border border-border/60 p-5 transition-colors hover:border-primary/50 hover:bg-secondary/50"
+            >
+              <span>
+                <span class="block font-medium">Need a standard, manual or template?</span>
+                <span class="block text-sm text-muted-foreground">
+                  Browse {resourceCount} free download{resourceCount === 1 ? "" : "s"} in the resource library.
+                </span>
+              </span>
+              <IconArrowRight class="size-5 shrink-0 text-primary transition-transform group-hover:translate-x-1" />
+            </a>
+          )
+        }
+      </div>
     )
   }
 </PageLayout>
