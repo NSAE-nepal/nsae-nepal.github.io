@@ -1,17 +1,15 @@
 ---
 import { Image } from "astro:assets";
-import { IconArrowLeft } from "@tabler/icons-astro";
 import AvatarGroup from "@/components/astro/AvatarGroup.astro";
 import BlogCard from "@/components/astro/Card/BlogCard.astro";
 import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
 import Categories from "@/components/Categories.astro";
-import ShareBar from "@/components/ShareBar.astro";
 import { formatName, formatReadingTime } from "@/lib/utils";
 import type { Post, PostDetails } from "@/sanity/lib/queries/posts";
 import FormattedDate from "../components/FormattedDate.astro";
 import JsonLd from "@/components/seo/JsonLd.astro";
 import { articleLd, breadcrumbLd } from "@/lib/structured-data";
-import PageLayout from "./PageLayout.astro";
+import ArticleLayout from "./ArticleLayout.astro";
 import { sanityImage } from "@/sanity/lib/url-for-image";
 
 type Props = PostDetails & {
@@ -62,230 +60,118 @@ const structuredData = [
 ];
 ---
 
-<PageLayout
+<ArticleLayout
   title={title}
-  description={description || subtitle || title}
+  subtitle={subtitle}
+  description={description}
   image={heroImage || `/og/${section}/${Astro.props.slug}.png`}
-  type="article"
+  backHref={backHref}
+  backLabel={backLabel}
+  searchType={type === "notice" ? "Notice" : "Blog"}
+  shareLabel={type === "notice" ? "Share this notice" : "Share this article"}
+  sharePath={`/${section}/${Astro.props.slug}/`}
+  showToc={showToc}
 >
   <JsonLd slot="head" data={structuredData} />
-  <div
-    class="pointer-events-none fixed inset-x-0 top-0 z-50 h-1 origin-left scale-x-0 bg-primary"
-    data-reading-progress
-    aria-hidden="true"
-  >
-  </div>
-  <article
-    class="py-8 space-y-10"
-    data-pagefind-body
-    data-pagefind-filter={`type:${type === "notice" ? "Notice" : "Blog"}`}
-  >
-    {/* Category filters for search (no visible content). */}
+
+  {/* Category filters for search (no visible content). */}
+  <Fragment slot="filters">
     {(categories ?? [])
       .filter((category) => category?.title)
       .map((category) => (
         <span data-pagefind-filter={`category:${category.title}`} hidden />
       ))}
-    <header class="space-y-8 border-b border-border pb-10">
-      <a
-        data-pagefind-ignore
-        href={backHref}
-        class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors px-4"
-      >
-        <IconArrowLeft class="size-4" />
-        {backLabel}
-      </a>
-      <div class="space-y-4 text-center">
-        <h1
-          class="font-sans text-3xl md:text-5xl font-medium tracking-tighter first-letter:capitalize"
-          data-pagefind-meta="title"
-        >
-          {title}
-        </h1>
-        {
-          subtitle && (
-            <p
-              data-pagefind-meta="sub_title"
-              class="font-sans text-lg text-muted-foreground leading-relaxed first-letter:capitalize max-w-3xl mx-auto"
-            >
-              {subtitle}
-            </p>
-          )
-        }
-        {
-          bylineAuthors.length > 0 && (
-            <div
-              class="flex flex-wrap items-center justify-center gap-3 pt-2"
-              data-pagefind-ignore
-            >
-              <AvatarGroup data={bylineAuthors} />
-              <p class="font-sans text-sm text-muted-foreground">
-                By{" "}
-                {bylineAuthors.map((author, index) => (
-                  <>
-                    {index > 0 &&
-                      (index === bylineAuthors.length - 1 ? " and " : ", ")}
-                    {author.slug ? (
-                      <a
-                        href={`/authors/${author.slug}/`}
-                        class="font-medium text-foreground underline-offset-4 hover:text-primary hover:underline"
-                      >
-                        {formatName(author.name, author.prefix)}
-                      </a>
-                    ) : (
-                      <span class="font-medium text-foreground">
-                        {formatName(author.name, author.prefix)}
-                      </span>
-                    )}
-                  </>
-                ))}
-              </p>
-            </div>
-          )
-        }
-      </div>
+  </Fragment>
 
-      <div class="flex flex-row justify-around items-center text-xs">
-        {
-          categories?.length > 0 ? (
-            <Categories categories={categories} basePath={`/${section}`} />
-          ) : (
-            <div />
-          )
-        }
-
-        {
-          publishedAt && (
-            <span
-              class="font-mono text-xs text-muted-foreground uppercase tracking-wider border-l border-border/50 pl-6"
-              data-pagefind-meta={`date:${publishedAt}`}
-              data-pagefind-ignore
-            >
-              <FormattedDate date={new Date(publishedAt)} />
-              {readingTime && <span aria-hidden="true"> · </span>}
-              {readingTime && <span>{readingTime}</span>}
-            </span>
-          )
-        }
-      </div>
-    </header>
-
-    {
-      heroImage && (
-        <div class="flex items-center justify-center overflow-hidden">
-          <Image
-            data-pagefind-meta="image[src], image_alt[alt]"
-            inferSize
-            class="object-cover rounded-xl max-h-1/2"
-            src={sanityImage(heroImage, { width: 1600 })}
-            widths={[640, 1024, 1600]}
-            sizes="(min-width: 1280px) 1280px, 100vw"
-            loading="eager"
-            alt={heroImageAlt ?? ""}
-          />
-        </div>
-      )
-    }
-
-    <div class={`mx-auto max-w-7xl ${showToc ? "xl:flex xl:gap-12" : ""}`}>
+  {
+    bylineAuthors.length > 0 && (
       <div
-        class="prose w-full min-w-0 max-w-none dark:prose-invert"
-        data-reading-target
+        slot="byline"
+        class="flex flex-wrap items-center justify-center gap-3 pt-2"
+        data-pagefind-ignore
       >
-        <slot />
+        <AvatarGroup data={bylineAuthors} />
+        <p class="font-sans text-sm text-muted-foreground">
+          By{" "}
+          {bylineAuthors.map((author, index) => (
+            <>
+              {index > 0 &&
+                (index === bylineAuthors.length - 1 ? " and " : ", ")}
+              {author.slug ? (
+                <a
+                  href={`/authors/${author.slug}/`}
+                  class="font-medium text-foreground underline-offset-4 hover:text-primary hover:underline"
+                >
+                  {formatName(author.name, author.prefix)}
+                </a>
+              ) : (
+                <span class="font-medium text-foreground">
+                  {formatName(author.name, author.prefix)}
+                </span>
+              )}
+            </>
+          ))}
+        </p>
       </div>
+    )
+  }
 
-      {
-        showToc && (
-          <div class="hidden xl:block xl:w-64 xl:shrink-0">
-            <div class="sticky top-24 max-h-[calc(100vh-6rem)] overflow-y-auto">
-              <slot name="toc" />
-            </div>
-          </div>
-        )
-      }
-    </div>
+  {
+    categories?.length > 0 ? (
+      <Categories slot="meta-start" categories={categories} basePath={`/${section}`} />
+    ) : (
+      <div slot="meta-start" />
+    )
+  }
 
-    <ShareBar
-      class="justify-center border-t border-border/50 pt-8"
-      label={type === "notice" ? "Share this notice" : "Share this article"}
-      title={title}
-      text={subtitle || title}
-      url={`/${section}/${Astro.props.slug}/`}
-    />
+  {
+    publishedAt && (
+      <span
+        slot="meta-end"
+        class="font-mono text-xs text-muted-foreground uppercase tracking-wider border-l border-border/50 pl-6"
+        data-pagefind-meta={`date:${publishedAt}`}
+        data-pagefind-ignore
+      >
+        <FormattedDate date={new Date(publishedAt)} />
+        {readingTime && <span aria-hidden="true"> · </span>}
+        {readingTime && <span>{readingTime}</span>}
+      </span>
+    )
+  }
 
-    {
-      related.length > 0 && (
-        <section
-          class="border-t border-border/50 pt-12 space-y-8"
-          aria-labelledby="keep-reading"
-          data-pagefind-ignore
-        >
-          <div class="flex flex-col text-center gap-2">
-            <h2
-              id="keep-reading"
-              class="font-sans text-2xl font-medium tracking-tight"
-            >
-              Keep reading
-            </h2>
-            <p class="font-sans text-muted-foreground">
-              More from NSAE on similar topics
-            </p>
-          </div>
+  {
+    heroImage && (
+      <div slot="hero" class="flex items-center justify-center overflow-hidden">
+        <Image
+          data-pagefind-meta="image[src], image_alt[alt]"
+          inferSize
+          class="object-cover rounded-xl max-h-1/2"
+          src={sanityImage(heroImage, { width: 1600 })}
+          widths={[640, 1024, 1600]}
+          sizes="(min-width: 1280px) 1280px, 100vw"
+          loading="eager"
+          alt={heroImageAlt ?? ""}
+        />
+      </div>
+    )
+  }
 
-          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {related.map((post) => (
-              <ClickableCard
-                href={relatedHref(post)}
-                label={post.title}
-                class="group relative rounded-xl border border-border/60 hover:bg-secondary/60 transition-colors"
-              >
-                <BlogCard data={post} href={relatedHref(post)} />
-              </ClickableCard>
-            ))}
-          </div>
-        </section>
-      )
-    }
-  </article>
-</PageLayout>
+  <slot />
+  <slot name="toc" slot="toc" />
 
-<script>
-  // Thin bar at the top of article pages that fills as you read the body.
-  let cleanup: (() => void) | undefined;
-
-  document.addEventListener("astro:page-load", () => {
-    cleanup?.();
-    cleanup = undefined;
-    const bar = document.querySelector<HTMLElement>("[data-reading-progress]");
-    const target = document.querySelector<HTMLElement>("[data-reading-target]");
-    if (!bar || !target) return;
-
-    let frame = 0;
-    const update = () => {
-      frame = 0;
-      const rect = target.getBoundingClientRect();
-      const scrollable = rect.height - window.innerHeight;
-      const progress =
-        scrollable > 0 ? Math.min(1, Math.max(0, -rect.top / scrollable)) : 1;
-      bar.style.transform = `scaleX(${progress})`;
-    };
-    const schedule = () => {
-      if (!frame) frame = requestAnimationFrame(update);
-    };
-
-    update();
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
-    cleanup = () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
-    };
-  });
-
-  document.addEventListener("astro:before-swap", () => {
-    cleanup?.();
-    cleanup = undefined;
-  });
-</script>
+  {
+    related.length > 0 && (
+      <Fragment slot="related">
+        {related.map((post) => (
+          <ClickableCard
+            href={relatedHref(post)}
+            label={post.title}
+            class="group relative rounded-xl border border-border/60 hover:bg-secondary/60 transition-colors"
+          >
+            <BlogCard data={post} href={relatedHref(post)} />
+          </ClickableCard>
+        ))}
+      </Fragment>
+    )
+  }
+</ArticleLayout>
