@@ -30,11 +30,43 @@ export type CommitteeMember = {
 	necRegNo?: string;
 };
 
+export type CommitteeMemberPreview = {
+	_key: string;
+	name: string;
+	position?: CommitteePosition;
+	prefix?: NamePrefix[];
+	profileImage?: string;
+};
+
+/** Office-bearer positions, in order of seniority. */
+export const OFFICE_BEARER_POSITIONS = [
+	"president",
+	"vice-president",
+	"secretary",
+	"joint-secretary",
+	"treasurer",
+] as const satisfies readonly CommitteePosition[];
+
+export const positionLabel = (position: string) =>
+	position
+		.split("-")
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(" ");
+
+/** The committee's office bearers, most senior first. */
+export function officeBearers(members: CommitteeMemberPreview[]) {
+	return OFFICE_BEARER_POSITIONS.flatMap((position) =>
+		members.filter((member) => member.position === position),
+	);
+}
+
 export type Committee = {
 	_id: string;
 	title: string;
 	committeeIteration: number;
 	memberCount: number;
+	/** Everyone on the committee, in Studio order. */
+	members: CommitteeMemberPreview[];
 };
 
 export type CommitteeDetails = {
@@ -52,14 +84,25 @@ export async function getCommittees(): Promise<Committee[]> {
     _id,
     title,
     committeeIteration,
-    "memberCount": count(committeeMembers)
+    "memberCount": count(committeeMembers),
+    "members": committeeMembers[defined(name)]{
+      _key,
+      name,
+      position,
+      prefix,
+      "profileImage": profileImage.asset->url
+    }
   }`;
 
 	const { data } = await loadQuery<Committee[]>({
 		query: COMMITTEES_QUERY,
 	});
 
-	return data;
+	return (data ?? []).map((committee) => ({
+		...committee,
+		memberCount: committee.memberCount ?? 0,
+		members: committee.members ?? [],
+	}));
 }
 
 export async function getCommitteeDetails(
