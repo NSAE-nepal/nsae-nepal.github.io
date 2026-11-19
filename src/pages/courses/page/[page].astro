@@ -84,18 +84,20 @@ const pageTitle =
           ))}
         </ul>
       ) : (
-        <Empty
-          title="Courses are on the way"
-          description="We're preparing our first courses. Check back soon, or browse our events for upcoming trainings."
-        >
-          <IconSchool slot="icon" class="size-8 text-muted-foreground" />
-          <a
-            href="/events/page/1/"
-            class="mt-4 font-mono text-xs uppercase tracking-widest text-primary hover:underline"
+        <div class="anim-empty-state opacity-0 scale-95">
+          <Empty
+            title="Courses are on the way"
+            description="We're preparing our first courses. Check back soon, or browse our events for upcoming trainings."
           >
-            See upcoming events
-          </a>
-        </Empty>
+            <IconSchool slot="icon" class="size-8 text-muted-foreground" />
+            <a
+              href="/events/page/1/"
+              class="mt-4 font-mono text-xs uppercase tracking-widest text-primary hover:underline"
+            >
+              See upcoming events
+            </a>
+          </Empty>
+        </div>
       )
     }
 
@@ -133,14 +135,19 @@ const pageTitle =
         type: "lines, words",
         linesClass: "overflow-hidden",
       });
-      gsap
+      const tl = gsap
         .timeline({ defaults: { ease: "power3.out" } })
         .to(".anim-header-badge", { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.5)" })
         .set(".anim-header-title", { autoAlpha: 1 }, "-=0.3")
         .from(titleSplit.words, { yPercent: 100, opacity: 0, duration: 0.8, stagger: 0.04, ease: "power4.out" }, "<")
         .to(".anim-header-intro", { y: 0, opacity: 1, duration: 0.6 }, "-=0.4")
-        .to(".anim-section-title", { y: 0, opacity: 1, duration: 0.5 }, "-=0.3")
-        .to(".anim-card", { y: 0, opacity: 1, duration: 0.6, stagger: 0.08 }, "-=0.2");
+        .to(".anim-section-title", { y: 0, opacity: 1, duration: 0.5 }, "-=0.3");
+
+      if (document.querySelector(".anim-card")) {
+        tl.to(".anim-card", { y: 0, opacity: 1, duration: 0.6, stagger: 0.08 }, "-=0.2");
+      } else if (document.querySelector(".anim-empty-state")) {
+        tl.to(".anim-empty-state", { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.2)" }, "-=0.2");
+      }
     });
   });
 
