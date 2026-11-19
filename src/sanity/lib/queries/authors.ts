@@ -23,6 +23,8 @@ export type AuthorDetails = {
 		Record<"linkedin" | "x" | "facebook" | "youtube" | "bluesky", SocialLink>
 	>;
 	posts: Post[];
+	/** Member spotlights featuring this person, newest first. */
+	spotlights: { headline: string; slug: string }[];
 };
 
 // Same post shape as getPosts() so author pages can reuse the post cards.
@@ -69,7 +71,13 @@ const AUTHOR_FIELDS = `
     _type == "posts" &&
     references(^._id) &&
     !(_id in path("drafts.**"))
-  ] | order(publishedAt desc) { ${POST_FIELDS} }
+  ] | order(publishedAt desc) { ${POST_FIELDS} },
+  "spotlights": *[
+    _type == "spotlight" &&
+    references(^._id) &&
+    defined(slug.current) &&
+    !(_id in path("drafts.**"))
+  ] | order(publishedAt desc) { headline, "slug": slug.current }
 `;
 
 /** Authors with at least one published post (only they get a public page). */

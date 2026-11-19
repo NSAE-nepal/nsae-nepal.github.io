@@ -8,6 +8,8 @@ import { getCourses } from "@/sanity/lib/queries/courses";
 import { getEvents } from "@/sanity/lib/queries/events";
 import { getPosts } from "@/sanity/lib/queries/posts";
 import { getResources } from "@/sanity/lib/queries/resources";
+import { getSpotlights } from "@/sanity/lib/queries/spotlight";
+import { formatName } from "@/lib/utils";
 import { formatDate } from "@/utils/datetime";
 
 /**
@@ -15,12 +17,13 @@ import { formatDate } from "@/utils/datetime";
  * use these when they have no cover image of their own (see `ogImagePath`).
  */
 export const getStaticPaths: GetStaticPaths = async () => {
-  const [posts, events, vacancies, courses, resources] = await Promise.all([
+  const [posts, events, vacancies, courses, resources, spotlights] = await Promise.all([
     getPosts(),
     getEvents(),
     getVacancies(),
     getCourses(),
     getResources(),
+    getSpotlights(),
   ]);
 
   const date = (value?: string) =>
@@ -76,6 +79,16 @@ export const getStaticPaths: GetStaticPaths = async () => {
         kicker: resourceTypeLabel(resource.resourceType),
         title: resource.title,
         meta: [resource.publisher, resource.year].filter(Boolean).join(" · "),
+      },
+    })),
+    ...spotlights.map((spotlight) => ({
+      path: `spotlight/${spotlight.slug}`,
+      card: {
+        kicker: "Member Spotlight",
+        title: spotlight.headline,
+        meta: [formatName(spotlight.member.name, spotlight.member.prefix), spotlight.location]
+          .filter(Boolean)
+          .join(" · "),
       },
     })),
   ];

@@ -11,6 +11,7 @@ import type { Course, LessonDetails } from "@/sanity/lib/queries/courses";
 import type { EventDetails, LocationDetails } from "@/sanity/lib/queries/events";
 import type { PostDetails } from "@/sanity/lib/queries/posts";
 import type { ResourceDetails } from "@/sanity/lib/queries/resources";
+import type { SpotlightDetails } from "@/sanity/lib/queries/spotlight";
 import { sanityImage } from "@/sanity/lib/url-for-image";
 
 const ORG_NAME = "Nepalese Society of Agricultural Engineers";
@@ -412,5 +413,42 @@ export function resourceLd(resource: ResourceDetails, site: Site) {
     ...(isDataset
       ? { distribution: nonEmpty(media) }
       : { associatedMedia: nonEmpty(media) }),
+  };
+}
+
+/**
+ * A member spotlight as a ProfilePage about the member. `authorUrl` is set
+ * only when the member has a public author page.
+ */
+export function spotlightLd(spotlight: SpotlightDetails, site: Site, authorUrl?: string) {
+  const { member } = spotlight;
+  return {
+    "@context": CONTEXT,
+    "@type": "ProfilePage",
+    name: spotlight.headline,
+    description: spotlight.summary,
+    url: abs(`/spotlight/${spotlight.slug}/`, site),
+    datePublished: spotlight.publishedAt,
+    image: nonEmpty([image(spotlight.coverImage ?? member.profileImage)]),
+    publisher: orgRef(site),
+    mainEntity: {
+      "@type": "Person",
+      name: member.name,
+      url: authorUrl ? abs(authorUrl, site) : undefined,
+      jobTitle: member.position,
+      worksFor: member.company ? { "@type": "Organization", name: member.company } : undefined,
+      memberOf: orgRef(site),
+      image: member.profileImage
+        ? sanityImage(member.profileImage, { width: 600, height: 600 })
+        : undefined,
+      homeLocation: spotlight.location
+        ? { "@type": "Place", name: `${spotlight.location}, Nepal` }
+        : undefined,
+      knowsAbout: nonEmpty(spotlight.specializations),
+      sameAs: nonEmpty([
+        member.portfolio,
+        ...Object.values(member.socials ?? {}).map((social) => social?.link),
+      ]),
+    },
   };
 }

@@ -8,7 +8,9 @@ import {
   IconBrandLinkedin,
   IconBrandX,
   IconBrandYoutube,
+  IconArrowRight,
   IconId,
+  IconUserStar,
 } from "@tabler/icons-astro";
 import Badge from "@/components/astro/Badge.astro";
 import PostGrid from "@/components/astro/PostGrid.astro";
@@ -197,6 +199,25 @@ const description =
               )}
             </ul>
           )
+        }
+
+        {
+          (author.spotlights ?? []).map((spotlight) => (
+            <a
+              href={`/spotlight/${spotlight.slug}/`}
+              class="group flex max-w-2xl items-center gap-3 rounded-2xl border border-border/60 bg-secondary/30 p-4 text-left transition-colors hover:border-primary/50 hover:bg-secondary/60"
+              data-pagefind-ignore
+            >
+              <IconUserStar class="size-5 shrink-0 text-primary" aria-hidden="true" />
+              <span class="min-w-0 flex-1">
+                <span class="block font-mono text-xs uppercase tracking-widest text-muted-foreground">
+                  Featured in Member Spotlight
+                </span>
+                <span class="block font-medium">{spotlight.headline}</span>
+              </span>
+              <IconArrowRight class="size-4 shrink-0 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+            </a>
+          ))
         }
       </div>
     </header>

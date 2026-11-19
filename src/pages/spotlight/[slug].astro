@@ -1,0 +1,326 @@
+---
+import { Image } from "astro:assets";
+import {
+  IconArrowUpRight,
+  IconBrandBluesky,
+  IconBrandFacebook,
+  IconBrandLinkedin,
+  IconBrandX,
+  IconBrandYoutube,
+  IconMapPin,
+} from "@tabler/icons-astro";
+import type { GetStaticPaths } from "astro";
+import Avatar from "@/components/astro/Avatar/Avatar.astro";
+import AvatarFallback from "@/components/astro/Avatar/AvatarFallback.astro";
+import AvatarImage from "@/components/astro/Avatar/AvatarImage.astro";
+import Badge from "@/components/astro/Badge.astro";
+import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
+import SpotlightCard from "@/components/astro/Card/SpotlightCard.astro";
+import FormattedDate from "@/components/FormattedDate.astro";
+import PortableText from "@/components/PortableText.astro";
+import JsonLd from "@/components/seo/JsonLd.astro";
+import TableOfContents from "@/components/TableOfContents.astro";
+import ArticleLayout from "@/layouts/ArticleLayout.astro";
+import { breadcrumbLd, spotlightLd } from "@/lib/structured-data";
+import { formatName } from "@/lib/utils";
+import { getAuthorsWithPosts } from "@/sanity/lib/queries/authors";
+import {
+  getSpotlightDetails,
+  getSpotlights,
+  SPOTLIGHTS_PATH,
+  spotlightPath,
+} from "@/sanity/lib/queries/spotlight";
+import { sanityImage } from "@/sanity/lib/url-for-image";
+
+export const getStaticPaths = (async () => {
+  const [spotlights, authors] = await Promise.all([getSpotlights(), getAuthorsWithPosts()]);
+  const authorSlugs = new Set(authors.map((author) => author.slug));
+
+  return spotlights.map((spotlight) => {
+    const tags = new Set(spotlight.specializations.map((tag) => tag.toLowerCase()));
+    // Others sharing specializations first, then the newest; never the same member.
+    const related = spotlights
+      .filter((other) => other._id !== spotlight._id && other.member._id !== spotlight.member._id)
+      .map((other) => ({
+        other,
+        shared: other.specializations.filter((tag) => tags.has(tag.toLowerCase())).length,
+      }))
+      .sort((a, b) => b.shared - a.shared)
+      .slice(0, 3)
+      .map(({ other }) => other);
+
+    return {
+      params: { slug: spotlight.slug },
+      props: {
+        related,
+        hasAuthorPage: Boolean(spotlight.member.slug && authorSlugs.has(spotlight.member.slug)),
+      },
+    };
+  });
+}) satisfies GetStaticPaths;
+
+const { related, hasAuthorPage } = Astro.props;
+const spotlight = await getSpotlightDetails(Astro.params.slug);
+const { member } = spotlight;
+const site = Astro.site!;
+const name = formatName(member.name, member.prefix);
+const role = [member.position, member.company].filter(Boolean).join(" · ");
+const authorUrl = hasAuthorPage ? `/authors/${member.slug}/` : undefined;
+const initials = member.name
+  .split(" ")
+  .map((part) => part[0])
+  .join("")
+  .slice(0, 2)
+  .toUpperCase();
+
+const body = spotlight.body ?? [];
+const headingCount = body.filter(
+  (block) => block._type === "block" && /^h[1-6]$/.test(String(block.style ?? "")),
+).length;
+
+const socialIcons = {
+  linkedin: { Icon: IconBrandLinkedin, label: "LinkedIn" },
+  x: { Icon: IconBrandX, label: "X" },
+  facebook: { Icon: IconBrandFacebook, label: "Facebook" },
+  youtube: { Icon: IconBrandYoutube, label: "YouTube" },
+  bluesky: { Icon: IconBrandBluesky, label: "Bluesky" },
+} as const;
+const socials = Object.entries(member.socials ?? {}).flatMap(([platform, social]) => {
+  const meta = socialIcons[platform as keyof typeof socialIcons];
+  return meta && social?.link ? [{ ...meta, link: social.link }] : [];
+});
+---
+
+<ArticleLayout
+  title={spotlight.headline}
+  subtitle={spotlight.summary}
+  image={spotlight.coverImage || `/og/spotlight/${spotlight.slug}.png`}
+  backHref={SPOTLIGHTS_PATH}
+  backLabel="Back to All Spotlights"
+  searchType="Spotlight"
+  shareLabel="Share this story"
+  sharePath={spotlightPath(spotlight)}
+  showToc={headingCount >= 3}
+  relatedTitle="More member stories"
+  relatedSubtitle="Meet other NSAE members"
+>
+  <JsonLd
+    slot="head"
+    data={[
+      spotlightLd(spotlight, site, authorUrl),
+      breadcrumbLd(
+        [
+          { name: "Home", path: "/" },
+          { name: "Member Spotlight", path: SPOTLIGHTS_PATH },
+          { name: spotlight.headline, path: spotlightPath(spotlight) },
+        ],
+        site,
+      ),
+    ]}
+  />
+
+  <div slot="byline" class="flex flex-wrap items-center justify-center gap-3 pt-2">
+    <Avatar size="md">
+      {member.profileImage && <AvatarImage src={member.profileImage} alt="" />}
+      <AvatarFallback class="text-xs">{initials}</AvatarFallback>
+    </Avatar>
+    <p class="font-sans text-sm text-muted-foreground">
+      {
+        authorUrl ? (
+          <a
+            href={authorUrl}
+            class="font-medium text-foreground underline-offset-4 hover:text-primary hover:underline"
+          >
+            {name}
+          </a>
+        ) : (
+          <span class="font-medium text-foreground">{name}</span>
+        )
+      }
+      {role && <span>, {role}</span>}
+    </p>
+  </div>
+
+  {
+    spotlight.specializations.length > 0 ? (
+      <div slot="meta-start" class="flex flex-wrap items-center gap-2" data-pagefind-ignore>
+        {spotlight.specializations.map((tag) => (
+          <Badge size="xs" variant="secondary" class="tracking-wide">
+            {tag}
+          </Badge>
+        ))}
+      </div>
+    ) : (
+      <div slot="meta-start" />
+    )
+  }
+
+  <span
+    slot="meta-end"
+    class="font-mono text-xs text-muted-foreground uppercase tracking-wider border-l border-border/50 pl-6"
+    data-pagefind-meta={`date:${spotlight.publishedAt}`}
+    data-pagefind-ignore
+  >
+    <FormattedDate date={new Date(spotlight.publishedAt)} />
+    {
+      spotlight.location && (
+        <>
+          <span aria-hidden="true"> · </span>
+          <span>{spotlight.location}</span>
+        </>
+      )
+    }
+  </span>
+
+  {
+    spotlight.coverImage && (
+      <div slot="hero" class="flex items-center justify-center overflow-hidden">
+        <Image
+          data-pagefind-meta="image[src], image_alt[alt]"
+          inferSize
+          class="object-cover rounded-xl max-h-1/2"
+          src={sanityImage(spotlight.coverImage, { width: 1600 })}
+          widths={[640, 1024, 1600]}
+          sizes="(min-width: 1280px) 1280px, 100vw"
+          loading="eager"
+          alt={spotlight.coverImageAlt ?? ""}
+        />
+      </div>
+    )
+  }
+
+  {body.length > 0 && <PortableText portableText={body} />}
+  {headingCount >= 3 && <TableOfContents slot="toc" blocks={body} />}
+
+  {
+    spotlight.projects.length > 0 && (
+      <section class="not-prose mt-12 space-y-6" aria-labelledby="spotlight-projects">
+        <h2 id="spotlight-projects" class="font-sans text-2xl font-medium tracking-tight">
+          Projects
+        </h2>
+        <ul class="grid gap-6 md:grid-cols-2" role="list">
+          {spotlight.projects.map((project) => (
+            <li class="flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-secondary/30">
+              {project.image && (
+                <div class="aspect-[16/9] overflow-hidden bg-muted">
+                  <Image
+                    src={sanityImage(project.image, { width: 960, height: 540 })}
+                    width={960}
+                    height={540}
+                    widths={[480, 960]}
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                    alt={project.imageAlt ?? ""}
+                    class="size-full object-cover"
+                  />
+                </div>
+              )}
+              <div class="flex flex-1 flex-col gap-2 p-5">
+                <div class="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs uppercase tracking-wider text-muted-foreground">
+                  {project.year && <span>{project.year}</span>}
+                  {project.location && (
+                    <span class="flex items-center gap-1">
+                      <IconMapPin class="size-3.5" aria-hidden="true" />
+                      {project.location}
+                    </span>
+                  )}
+                </div>
+                <h3 class="font-sans text-lg font-medium leading-snug">{project.title}</h3>
+                {project.summary && (
+                  <p class="text-sm leading-relaxed text-muted-foreground">{project.summary}</p>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <aside
+    class="not-prose mt-12 flex flex-col items-center gap-5 rounded-2xl border border-border/60 bg-secondary/30 p-6 text-center sm:flex-row sm:items-start sm:text-left"
+    aria-label={`About ${member.name}`}
+  >
+    <div class="size-20 shrink-0 overflow-hidden rounded-full border-2 border-border bg-muted">
+      {
+        member.profileImage ? (
+          <img
+            src={sanityImage(member.profileImage, { width: 160, height: 160 })}
+            alt=""
+            width="80"
+            height="80"
+            loading="lazy"
+            decoding="async"
+            class="size-full object-cover"
+          />
+        ) : (
+          <span class="flex size-full items-center justify-center font-medium text-muted-foreground" aria-hidden="true">
+            {initials}
+          </span>
+        )
+      }
+    </div>
+    <div class="min-w-0 flex-1 space-y-2">
+      <p class="font-mono text-xs uppercase tracking-widest text-muted-foreground">About the member</p>
+      <p class="font-sans text-lg font-medium">{name}</p>
+      {role && <p class="text-sm text-muted-foreground">{role}</p>}
+      {member.bio && <p class="text-sm leading-relaxed whitespace-pre-line">{member.bio}</p>}
+      {
+        (socials.length > 0 || member.portfolio || authorUrl) && (
+          <ul class="flex flex-wrap justify-center gap-2 pt-2 sm:justify-start" data-pagefind-ignore>
+            {authorUrl && (
+              <li>
+                <a
+                  href={authorUrl}
+                  class="flex items-center gap-1.5 rounded-full border border-border bg-background px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary"
+                >
+                  Articles by {member.name.split(" ")[0]}
+                </a>
+              </li>
+            )}
+            {socials.map(({ Icon, label, link }) => (
+              <li>
+                <a
+                  href={link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex items-center justify-center rounded-full border border-border bg-background p-2.5 transition-colors hover:border-primary hover:text-primary"
+                  aria-label={`${member.name} on ${label}`}
+                >
+                  <Icon class="size-5" />
+                </a>
+              </li>
+            ))}
+            {member.portfolio && (
+              <li>
+                <a
+                  href={member.portfolio}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex items-center gap-1.5 rounded-full border border-border bg-background px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary"
+                >
+                  Portfolio <IconArrowUpRight class="size-4" />
+                </a>
+              </li>
+            )}
+          </ul>
+        )
+      }
+    </div>
+  </aside>
+
+  {
+    related.length > 0 && (
+      <Fragment slot="related">
+        {related.map((item) => (
+          <ClickableCard
+            href={spotlightPath(item)}
+            label={item.headline}
+            class="group relative overflow-hidden rounded-xl border border-border/60 hover:bg-secondary/60 transition-colors"
+          >
+            <SpotlightCard data={item} />
+          </ClickableCard>
+        ))}
+      </Fragment>
+    )
+  }
+</ArticleLayout>

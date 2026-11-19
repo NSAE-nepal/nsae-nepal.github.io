@@ -1,0 +1,129 @@
+---
+import { Image } from "astro:assets";
+import { IconArrowNarrowRight, IconArrowRight, IconUserCircle } from "@tabler/icons-astro";
+import Badge from "@/components/astro/Badge.astro";
+import ClickableCard from "@/components/astro/Card/ClickableCard.astro";
+import { formatName } from "@/lib/utils";
+import {
+  getFeaturedSpotlight,
+  SPOTLIGHTS_PATH,
+  spotlightPath,
+} from "@/sanity/lib/queries/spotlight";
+import { sanityImage } from "@/sanity/lib/url-for-image";
+
+/** Home page: the most recent featured member spotlight. Hidden when none. */
+const spotlight = await getFeaturedSpotlight();
+const member = spotlight?.member;
+const photo = spotlight?.coverImage ?? member?.profileImage;
+const photoAlt = spotlight?.coverImage ? spotlight.coverImageAlt : member?.profileImageAlt;
+const role = [member?.position, member?.company].filter(Boolean).join(" · ");
+---
+
+{
+  spotlight && member && (
+    <section class="member-spotlight-section pt-24 md:pt-32" aria-labelledby="member-spotlight-heading">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+        <div class="anim-spotlight-header space-y-4 opacity-0 translate-y-8">
+          <Badge variant="secondary" size="sm" class="font-mono text-xs uppercase tracking-widest">
+            Member Spotlight
+          </Badge>
+          <h2
+            id="member-spotlight-heading"
+            class="font-sans text-4xl md:text-5xl font-medium tracking-tighter"
+          >
+            Meet our members
+          </h2>
+        </div>
+        <a
+          href={SPOTLIGHTS_PATH}
+          class="anim-spotlight-header group flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors opacity-0 translate-y-8"
+        >
+          All spotlights
+          <IconArrowRight class="size-4 transition-transform group-hover:translate-x-1" />
+        </a>
+      </div>
+
+      <ClickableCard
+        href={spotlightPath(spotlight)}
+        label={spotlight.headline}
+        class="anim-spotlight-card overflow-hidden rounded-2xl border border-border/60 bg-secondary/30 transition-colors hover:bg-secondary/60 opacity-0 translate-y-8"
+      >
+        <article class="grid lg:grid-cols-2">
+          <div class="aspect-[4/3] overflow-hidden bg-secondary lg:aspect-auto lg:min-h-[420px]">
+            {photo ? (
+              <Image
+                src={sanityImage(photo, { width: 1200, height: 900 })}
+                width={1200}
+                height={900}
+                widths={[600, 1200]}
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                alt={photoAlt ?? ""}
+                class="size-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+              />
+            ) : (
+              <div class="flex size-full items-center justify-center" aria-hidden="true">
+                <IconUserCircle class="size-24 text-muted-foreground/40" />
+              </div>
+            )}
+          </div>
+
+          <div class="flex flex-col justify-center gap-5 p-6 md:p-10">
+            <div>
+              <p class="font-medium">{formatName(member.name, member.prefix)}</p>
+              {role && <p class="text-sm text-muted-foreground">{role}</p>}
+            </div>
+            <h3 class="font-sans text-3xl md:text-4xl font-medium leading-tight tracking-tight transition-colors group-hover:text-primary">
+              {spotlight.headline}
+            </h3>
+            <p class="text-lg leading-relaxed text-muted-foreground">{spotlight.summary}</p>
+            {spotlight.specializations.length > 0 && (
+              <ul class="flex flex-wrap gap-2" aria-label="Specializations">
+                {spotlight.specializations.map((tag) => (
+                  <li class="rounded-full border border-border/60 px-3 py-1 text-xs text-muted-foreground">
+                    {tag}
+                  </li>
+                ))}
+              </ul>
+            )}
+            <span
+              class="inline-flex items-center gap-2 pt-2 font-mono text-xs uppercase tracking-widest"
+              aria-hidden="true"
+            >
+              Read the story
+              <IconArrowNarrowRight class="size-4 transition-transform group-hover:translate-x-1" />
+            </span>
+          </div>
+        </article>
+      </ClickableCard>
+    </section>
+  )
+}
+
+<script>
+  import { gsap } from "@/utils/gsap-init";
+
+  let ctx: gsap.Context | undefined;
+
+  document.addEventListener("astro:page-load", () => {
+    if (!document.querySelector(".member-spotlight-section")) return;
+    ctx = gsap.context(() => {
+      gsap
+        .timeline({
+          scrollTrigger: { trigger: ".member-spotlight-section", start: "top 75%" },
+        })
+        .to(".anim-spotlight-header", {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "power3.out",
+        })
+        .to(".anim-spotlight-card", { y: 0, opacity: 1, duration: 0.8, ease: "power2.out" }, "-=0.4");
+    });
+  });
+
+  document.addEventListener("astro:before-swap", () => {
+    ctx?.revert();
+    ctx = undefined;
+  });
+</script>

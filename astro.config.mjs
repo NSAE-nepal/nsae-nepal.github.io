@@ -89,6 +89,7 @@ export default defineConfig({
 		"/events": "/events/page/1",
 		"/courses": "/courses/page/1",
 		"/resources": "/resources/page/1",
+		"/spotlight": "/spotlight/page/1",
 	},
 	devToolbar: {
 		enabled: true,
