@@ -1,0 +1,81 @@
+---
+import { IconWifi, IconWifiOff, IconX } from "@tabler/icons-astro";
+
+/**
+ * Connection notice: shown while the browser is offline, then briefly
+ * "Back online". Persists across ClientRouter navigations.
+ */
+---
+
+<div
+  transition:persist="offline-status"
+  role="status"
+  aria-live="polite"
+  class="pointer-events-none fixed inset-x-0 top-4 z-50 flex justify-center px-4"
+  data-pagefind-ignore="all"
+>
+  <div
+    hidden
+    data-offline-status
+    data-state="offline"
+    class="pointer-events-auto flex max-w-md animate-in items-center gap-3 rounded-full bg-foreground py-2 pr-2 pl-4 text-sm text-background shadow-lg fade-in slide-in-from-top-2"
+  >
+    <IconWifiOff
+      class="size-4 shrink-0 in-data-[state=online]:hidden"
+      aria-hidden="true"
+    />
+    <IconWifi
+      class="size-4 shrink-0 text-primary in-data-[state=offline]:hidden"
+      aria-hidden="true"
+    />
+    <span data-offline-message></span>
+    <button
+      type="button"
+      data-offline-dismiss
+      aria-label="Dismiss"
+      class="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors hover:bg-background/15"
+    >
+      <IconX class="size-4" aria-hidden="true" />
+    </button>
+  </div>
+</div>
+
+<script>
+  const ONLINE_NOTICE_MS = 3000;
+  let hideTimer: number | undefined;
+
+  const toast = () =>
+    document.querySelector<HTMLElement>("[data-offline-status]");
+
+  function show(state: "offline" | "online") {
+    const el = toast();
+    const message = el?.querySelector<HTMLElement>("[data-offline-message]");
+    if (!el || !message) return;
+    clearTimeout(hideTimer);
+    el.dataset.state = state;
+    message.textContent =
+      state === "offline"
+        ? "You're offline. Saved pages still open; search needs a connection."
+        : "Back online.";
+    el.hidden = false;
+    if (state === "online") {
+      hideTimer = window.setTimeout(() => {
+        el.hidden = true;
+      }, ONLINE_NOTICE_MS);
+    }
+  }
+
+  addEventListener("offline", () => show("offline"));
+  addEventListener("online", () => show("online"));
+
+  document.addEventListener("click", (event) => {
+    if ((event.target as Element).closest?.("[data-offline-dismiss]")) {
+      clearTimeout(hideTimer);
+      const el = toast();
+      if (el) el.hidden = true;
+    }
+  });
+
+  // Opened while offline (e.g. a saved page from the home screen).
+  if (!navigator.onLine) show("offline");
+</script>

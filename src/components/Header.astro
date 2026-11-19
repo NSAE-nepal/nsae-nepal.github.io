@@ -1,5 +1,11 @@
 ---
-import { IconArrowUpRight, IconDots, IconSearch } from "@tabler/icons-astro";
+import {
+  IconArrowLeft,
+  IconArrowUpRight,
+  IconDeviceMobileDown,
+  IconDots,
+  IconSearch,
+} from "@tabler/icons-astro";
 
 import Button from "./astro/Button/Button.astro";
 import HeaderLink from "./HeaderLink.astro";
@@ -28,9 +34,19 @@ const pillButton =
 ---
 
 <header
-  class="fixed bottom-4 left-1/2 z-40 flex -translate-x-1/2 flex-row items-center gap-2"
+  class="fixed bottom-4 left-1/2 z-40 flex -translate-x-1/2 flex-row items-center gap-2 select-none"
   data-pagefind-ignore="all"
 >
+  <!-- The installed app has no browser toolbar, so it gets its own back button. -->
+  <Button
+    type="button"
+    data-history-back
+    aria-label="Go back"
+    class={`${pillButton} hidden standalone:flex`}
+  >
+    <IconArrowLeft class="h-4 w-4 shrink-0" />
+  </Button>
+
   <nav
     aria-label="Main"
     class="flex flex-nowrap items-center gap-1 rounded-full bg-foreground p-2 whitespace-nowrap text-background"
@@ -81,7 +97,7 @@ const pillButton =
   popover
   aria-label="More pages"
   data-pagefind-ignore="all"
-  class="inset-auto bottom-20 left-1/2 m-0 w-[min(20rem,calc(100vw-2rem))] -translate-x-1/2 rounded-2xl border border-border bg-popover p-2 text-popover-foreground shadow-lg"
+  class="inset-auto bottom-20 left-1/2 m-0 w-[min(20rem,calc(100vw-2rem))] -translate-x-1/2 rounded-2xl border border-border bg-popover p-2 text-popover-foreground shadow-lg select-none"
 >
   <ul class="grid gap-1">
     {
@@ -97,6 +113,17 @@ const pillButton =
         </li>
       ))
     }
+    <!-- Shown by src/scripts/install-app.ts when this browser can install. -->
+    <li data-install-app hidden>
+      <button
+        type="button"
+        data-install-trigger
+        class="flex w-full cursor-pointer items-center gap-2 rounded-xl px-4 py-2.5 text-left text-sm transition-colors hover:bg-secondary"
+      >
+        <IconDeviceMobileDown class="size-4 text-primary" aria-hidden="true" />
+        Install the app
+      </button>
+    </li>
   </ul>
 </nav>
 
@@ -107,8 +134,13 @@ const pillButton =
   const openSearch = () => loadSearch().then((m) => m.openSearch());
 
   document.addEventListener("click", (event) => {
-    if ((event.target as Element).closest("[data-search-trigger]")) {
+    const target = event.target as Element;
+    if (target.closest("[data-search-trigger]")) {
       openSearch();
+    } else if (target.closest("[data-history-back]")) {
+      // Opened straight from the home screen: nothing to go back to.
+      if (history.length > 1) history.back();
+      else location.assign("/");
     }
   });
 

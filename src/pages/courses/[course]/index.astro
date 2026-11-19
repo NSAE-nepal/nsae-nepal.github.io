@@ -18,6 +18,7 @@ import FormattedDate from "@/components/FormattedDate.astro";
 import CourseProgress from "@/components/pages/courses/CourseProgress.astro";
 import CourseSyllabus from "@/components/pages/courses/CourseSyllabus.astro";
 import ResourceList from "@/components/pages/courses/ResourceList.astro";
+import SaveOffline from "@/components/pages/courses/SaveOffline.astro";
 import PortableText from "@/components/PortableText.astro";
 import JsonLd from "@/components/seo/JsonLd.astro";
 import ShareBar from "@/components/ShareBar.astro";
@@ -31,7 +32,7 @@ import {
   lessonPath,
 } from "@/lib/courses";
 import { breadcrumbLd, courseLd } from "@/lib/structured-data";
-import { formatName } from "@/lib/utils";
+import { cn, formatName } from "@/lib/utils";
 import { getAuthorsWithPosts } from "@/sanity/lib/queries/authors";
 import { type Course, getCourses } from "@/sanity/lib/queries/courses";
 import { sanityImage } from "@/sanity/lib/url-for-image";
@@ -65,6 +66,7 @@ const lessonIds = lessons.map((lesson) => lesson._id);
 const { lessonCount, moduleCount, quizCount, totalMinutes } =
   courseStats(course);
 const firstLesson = lessons[0];
+const hasCover = Boolean(course.coverImage);
 const upcomingEvents = course.relatedEvents.filter(
   (event) => !getEventStatus(event).hasEnded,
 );
@@ -121,8 +123,20 @@ const stats = [
       <IconArrowLeft class="size-4" /> All courses
     </a>
 
-    <header class="grid gap-8 lg:grid-cols-[3fr_2fr] lg:items-center">
-      <div class="space-y-6">
+    <!--
+      One markup, two layouts (lg): with a cover, the intro and actions stack
+      on the left of the image; without one, the actions become a card in the
+      right-hand column, lined up with the sidebar below.
+    -->
+    <header
+      class={cn(
+        "grid gap-6",
+        hasCover
+          ? "lg:grid-cols-[3fr_2fr] lg:gap-x-8"
+          : "lg:grid-cols-[3fr_1.5fr] lg:gap-x-12",
+      )}
+    >
+      <div class={cn("space-y-6", hasCover && "lg:self-end")}>
         <div class="flex flex-wrap items-center gap-2">
           <Badge class="font-mono text-xs tracking-widest uppercase"
             >Course</Badge
@@ -140,20 +154,6 @@ const stats = [
           {course.title}
         </h1>
         <p class="max-w-2xl text-lg text-muted-foreground">{course.summary}</p>
-
-        <ul
-          class="flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs tracking-wider text-muted-foreground uppercase"
-          data-pagefind-ignore
-        >
-          {
-            stats.map(({ icon: Icon, label }) => (
-              <li class="inline-flex items-center gap-1.5">
-                <Icon class="size-4 text-primary" aria-hidden="true" />
-                {label}
-              </li>
-            ))
-          }
-        </ul>
 
         {
           course.instructors.length > 0 && (
@@ -185,13 +185,40 @@ const stats = [
             </div>
           )
         }
+      </div>
 
-        <div class="max-w-md space-y-4" data-pagefind-ignore>
+      <div
+        class={cn(
+          "space-y-6",
+          hasCover
+            ? "lg:self-start"
+            : "lg:col-start-2 lg:row-start-1 lg:self-start lg:rounded-2xl lg:border lg:border-border/60 lg:p-6",
+        )}
+        data-pagefind-ignore
+      >
+        <ul
+          class={cn(
+            "flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs tracking-wider text-muted-foreground uppercase",
+            !hasCover && "lg:gap-y-3",
+          )}
+        >
+          {
+            stats.map(({ icon: Icon, label }) => (
+              <li class="inline-flex items-center gap-1.5 whitespace-nowrap">
+                <Icon class="size-4 text-primary" aria-hidden="true" />
+                {label}
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class={cn("max-w-md space-y-4", !hasCover && "lg:max-w-none")}>
           {
             firstLesson && (
               <Button
                 href={lessonPath(course, firstLesson)}
                 size="lg"
+                class={cn(!hasCover && "lg:w-full")}
                 data-course-cta
                 data-course-id={course._id}
                 data-lesson-ids={lessonIds.join(",")}
@@ -202,12 +229,30 @@ const stats = [
             )
           }
           <CourseProgress courseId={course._id} lessonIds={lessonIds} />
+          {
+            lessons.length > 0 && (
+              <SaveOffline
+                class={cn(
+                  // Inside the card: a section with a divider, not a nested box.
+                  !hasCover &&
+                    "lg:rounded-none lg:border-x-0 lg:border-b-0 lg:px-0 lg:pt-5 lg:pb-0",
+                )}
+                courseId={course._id}
+                title={course.title}
+                path={coursePath(course)}
+                pages={[
+                  coursePath(course),
+                  ...lessons.map((lesson) => lessonPath(course, lesson)),
+                ]}
+              />
+            )
+          }
         </div>
       </div>
 
       {
         course.coverImage && (
-          <div class="overflow-hidden rounded-2xl">
+          <div class="overflow-hidden rounded-2xl lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-center">
             <Image
               inferSize
               src={sanityImage(course.coverImage, { width: 1200, height: 900 })}

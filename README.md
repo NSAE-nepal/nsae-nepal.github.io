@@ -64,6 +64,14 @@ Pull requests run `.github/workflows/ci.yml` (type-check and build).
 
 The token expires; renew it and update the webhook header before then.
 
+## Offline support (PWA)
+
+The site can be installed on phones and desktops. A service worker keeps pages that visitors have opened available offline, and courses can be saved in full from their course page. Details are in [`CLAUDE.md`](./CLAUDE.md) under "Offline support".
+
+- The worker is only registered in production builds. To try it, run `bun run build && bun run preview`. In Chrome DevTools, the **Application** tab shows the manifest, the service worker and its caches, and **Network → Offline** simulates having no connection.
+- Every deploy ships a new worker automatically. Visitors pick it up on their next visit, and pages they already cached keep working.
+- **Kill switch:** if the worker ever misbehaves, set `SERVICE_WORKER_ENABLED = false` in `src/lib/offline.ts` and deploy. `/sw.js` then becomes a worker that deletes the site's caches, unregisters itself and reloads open tabs, and pages stop registering it. Leave that deployed for a few weeks before turning it back on.
+
 ## Project structure
 
 ```
@@ -75,6 +83,7 @@ src/
     schemaTypes/      Sanity schemas
     lib/queries/      GROQ queries + result types
     lib/url-for-image.ts  sanityImage() for right-sized CDN images
+  service-worker/     sw.js, served as /sw.js by src/pages/sw.js.ts
   utils/              date helpers, GSAP setup, animations
   styles/global.css   Tailwind theme
 public/               static files (fonts, icons, robots.txt)
