@@ -32,5 +32,8 @@ jobs:
       - name: Lint
         run: bun --bun run lint
 
+      - name: Check formatting
+        run: bun --bun run format:check
+
       - name: Build
         run: bun run build
